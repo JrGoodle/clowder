@@ -10,43 +10,113 @@ from typing import Optional
 # import pygoodle.filesystem as fs
 # import pygoodle.git as git
 from pygoodle.format import Format
-from pygoodle.git import GitConfig, Ref, Remote, Repo
+from pygoodle.git import Protocol, Ref, Remote, Repo
 from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.util.error import UnknownTypeError
+from clowder.data import ResolvedProject
+from clowder.data.model import Defaults, Project, Section
 
 
-class ProjectRepo:
-    """Class encapsulating git utilities for projects
+def project_repo_exists(func):
+    """If no git repo exists, print message and return"""
 
-    :ivar str repo_path: Absolute path to repo
-    :ivar GitRef default_ref: Default ref
-    :ivar str remote: Default remote name
-    :ivar Repo Optional[repo]: Repo instance
-    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """Wrapper"""
 
-    def __init__(self, path: Path, default_remote: Remote, default_ref: Ref, depth: Optional[int] = None,
-                 recursive: bool = False, rebase: bool = False, upstream_remote: Optional[Remote] = None,
-                 fetch: bool = False, config: Optional[GitConfig] = None):
+        instance = args[0]
+        if not Path(instance.full_path / '.git').is_dir():
+            CONSOLE.stdout(Format.red('- Project missing'))
+            return
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+class ProjectRepo(ResolvedProject):
+    """Class encapsulating git utilities for projects"""
+
+    def __init__(self, project: Project, defaults: Optional[Defaults] = None,
+                 section: Optional[Section] = None, protocol: Optional[Protocol] = None):
         """ProjectRepo __init__
 
-        :param Path path: Absolute path to repo
-        :param Remote default_remote: Default remote name
-        :param Ref default_ref: Default ref
+        :param Project project: Project model instance
+        :param Optional[Defaults] defaults: Defaults instance
+        :param Optional[Section] section: Section instance
         """
 
-        self.path: Path = path
-        self.repo: Repo = Repo(path, default_remote=default_remote)
-        self.default_ref: Ref = default_ref
-        self.depth: Optional[int] = depth
-        self.recursive: bool = recursive
-        self.rebase: bool = rebase
-        self.upstream_remote: Optional[Remote] = upstream_remote
-        self.fetch: bool = fetch
-        self.config: Optional[GitConfig] = config
+        super(ProjectRepo, self).__init__(project=project, defaults=defaults, section=section, protocol=protocol)
+        remote = Remote(self.full_path, self.remote)
+        self._repo: Repo = Repo(self.full_path, remote)
+
+    @project_repo_exists
+    def branch(self, local: bool = False, remote: bool = False) -> None:
+        """Print branches for project
+
+        :param bool local: Print local branches
+        :param bool remote: Print remote branches
+        """
+
+        if not is_offline() and remote:
+            self.repo.fetch(self.remote, depth=self.git_settings.depth)
+            if self.upstream:
+                self.repo.fetch(self.upstream.remote)
+
+        if local:
+            self.repo.print_local_branches()
+
+        if remote:
+            if self.upstream:
+                CONSOLE.stdout(fmt.upstream(self.name))
+
+            self.repo.print_remote_branches()
+
+            if self.upstream:
+                CONSOLE.stdout(fmt.upstream(self.upstream.name))
+                self.upstream.repo.print_remote_branches()
+
+    @project_repo_exists
+    def checkout(self, branch: str) -> None:
+        """Checkout branch
+
+        :param str branch: Branch to check out
+        """
+
+        self.repo.checkout(branch, allow_failure=True)
+        self._pull_lfs()
+
+    @project_repo_exists
+    def clean(self, args: str = '', submodules: bool = False) -> None:  # noqa
+        """Discard changes for project
+
+        :param str args: Git clean options
+            - ``d`` Remove untracked directories in addition to untracked files
+            - ``f`` Delete directories with .git sub directory or file
+            - ``X`` Remove only files ignored by git
+            - ``x`` Remove all untracked files
+        :param bool submodules: Clean submodules recursively
+        """
+
+        # FIXME: Need to honor submodules parameter even if recursive is not true
+        # self.repo(self.git_settings.recursive or submodules).clean(args=args)
+        self.repo.clean(args=args)
+
+    @project_repo_exists
+    def clean_all(self) -> None:
+        """Discard all changes for project
+
+        Equivalent to:
+        ``git clean -ffdx; git reset --hard; git rebase --abort``
+        ``git submodule foreach --recursive git clean -ffdx``
+        ``git submodule foreach --recursive git reset --hard``
+        ``git submodule update --checkout --recursive --force``
+        """
+
+        self.repo.clean(args='fdx')
 
     # def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
     #     """Clone clowder git repo from url at path
@@ -89,10 +159,10 @@ class ProjectRepo:
         :param str upstream_remote_url: Upstream remote url
         """
 
-        if not self.repo.exists:
+        if not self.exists:
             return
 
-        for remote in self.repo.remotes:
+        for remote in self.remotes:
             if remote_url == remote.fetch_url and remote.name != remote_name:
                 remote.rename(remote_name)
                 continue
@@ -101,13 +171,45 @@ class ProjectRepo:
         self._compare_remotes(remote_name, remote_url, upstream_remote_name, upstream_remote_url)
 
     @property
+    def current_timestamp(self) -> str:
+        """Timestamp of current HEAD commit"""
+
+        return self.repo.current_timestamp
+
+    @project_repo_exists
+    def diff(self) -> None:
+        """Show git diff for project
+
+        Equivalent to: ``git status -vv``
+        """
+
+        self.repo.status_verbose()
+
+    @property
+    def exists(self) -> bool:
+        """Check if project exists"""
+
+        return self._repo.exists
+
+    @project_repo_exists
+    def fetch_all(self) -> None:
+        """Fetch upstream changes if project exists on disk"""
+
+        if self.upstream is None:
+            self.repo.fetch(self.remote, depth=self.git_settings.depth)
+            return
+
+        self.repo.fetch(self.upstream.remote)
+        self.repo.fetch(self.remote)
+
+    @property
     def formatted_name(self) -> str:
         """Formatted project name"""
 
-        if not self.repo.exists:
+        if not self.exists:
             return str(self.path)
 
-        if not self.repo.is_valid():
+        if self.is_dirty:
             return f'{self.path}*'
         else:
             return str(self.path)
@@ -125,6 +227,40 @@ class ProjectRepo:
 
         return Format.green(project)
 
+    def herd_entrypoint(self, branch: Optional[str] = None, tag: Optional[str] = None,
+                        depth: Optional[int] = None, rebase: bool = False) -> None:
+        """Clone project or update latest from upstream
+
+        :param Optional[str] branch: Branch to attempt to herd
+        :param Optional[str] tag: Tag to attempt to herd
+        :param Optional[int] depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+        :param bool rebase: Whether to use rebase instead of pulling latest changes
+        """
+
+        herd_depth = self.git_settings.depth if depth is None else depth
+
+        CONSOLE.stdout(self.status())
+
+        if self.upstream:
+            self.repo.configure_remotes(self.remote, self.url,
+                                        self.upstream.remote, self.upstream.url)
+
+        if branch:
+            self.repo.herd_branch(self.url, branch, depth=herd_depth, rebase=rebase,
+                                  config=self.git_settings.get_processed_config())
+        elif tag:
+            self.repo.herd_tag(self.url, tag, depth=herd_depth, rebase=rebase,
+                               config=self.git_settings.get_processed_config())
+        else:
+            self.repo.herd(self.url, depth=herd_depth, rebase=rebase,
+                           config=self.git_settings.get_processed_config())
+
+        self._pull_lfs()
+
+        if self.upstream:
+            CONSOLE.stdout(fmt.upstream(self.upstream.name))
+            self.upstream.repo.herd_remote(self.upstream.url, self.upstream.remote, branch=branch)
+
     def herd(self,  url: str, ref: Optional[Ref]) -> None:
         """Herd ref
 
@@ -132,14 +268,14 @@ class ProjectRepo:
         :param Optional[Ref] ref: Ref to attempt to herd
         """
 
-        is_initial = not self.repo.exists
+        is_initial = not self.exists
         if is_initial:
-            self.repo.clone(self.path, url, depth=self.depth, ref=ref)
-        self.install_project_git_herd_alias()
+            self.clone(self.path, url, depth=self.depth, ref=ref)
+        self.install_git_herd_alias()
         if self.config is not None:
-            self.repo.update_git_config(self.config)
+            self.update_git_config(self.config)
         if not is_initial:
-            self._herd(self.remote, self.default_ref, depth=depth, fetch=fetch, rebase=rebase)
+            self._herd(self.default_remote, self.default_ref)
 
     def herd_branch(self, branch: str) -> None:
         """Herd branch
@@ -147,19 +283,19 @@ class ProjectRepo:
         :param str branch: Branch name
         """
 
-        if not self.repo.exists:
-            self._herd_branch_initial(url, branch, depth=depth)
-            self.install_project_git_herd_alias()
+        if not self.exists:
+            self._herd_branch_initial(url, branch)
+            self.install_git_herd_alias()
             if config is not None:
-                self.repo.update_git_config(config)
+                self.update_git_config(self.config)
             return
 
         if config is not None:
             self.install_project_git_herd_alias()
-            self.repo.update_git_config(config)
+            self.update_git_config(self.config)
 
-        if self.repo.has_local_branch(branch):
-            self._herd_branch_existing_local(branch, depth=depth, rebase=rebase, upstream_remote=upstream_remote)
+        if self.has_local_branch(branch):
+            self._herd_branch_existing_local(branch)
             return
 
         branch_ref = Ref(branch=branch)
@@ -172,12 +308,11 @@ class ProjectRepo:
         if upstream_remote:
             self.fetch(upstream_remote, depth=depth, ref=branch_ref)
             if self.has_remote_branch(branch, upstream_remote):
-                self._herd(upstream_remote, branch_ref, depth=depth, fetch=False, rebase=rebase)
+                self._herd(upstream_remote, branch_ref)
                 return
             CONSOLE.stdout(f' - No existing remote branch {fmt.remote(upstream_remote)} {fmt.ref(branch)}')
 
-        fetch = depth != 0
-        self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
+        self.herd(url)
 
     def herd_tag(self, tag: str) -> None:
         """Herd tag
@@ -185,9 +320,7 @@ class ProjectRepo:
         :param str tag: Tag name
         """
 
-        fetch = depth != 0
-
-        if not existing_git_repo(self.repo_path):
+        if not self.exists:
             self._init_repo()
             self._create_remote(self.remote, url, remove_dir=True)
             try:
@@ -199,39 +332,107 @@ class ProjectRepo:
 
         self.install_project_git_herd_alias()
         if config is not None:
-            self._update_git_config(config)
+            self.update_git_config(config)
         try:
             self.fetch(self.remote, ref=GitRef(tag=tag), depth=depth)
             self._checkout_tag(tag)
         except Exception as err:
             LOG.debug('Failed fetch and checkout tag', err)
-            self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
+            self.herd(url)
 
     def herd_upstream(self) -> None:
         """Herd upstream repo"""
 
+        if self.upstream_remote is None:
+            return
+
         self._create_remote(remote, url)
 
         if branch is None:
-            self.fetch(remote, ref=self.default_ref)
+            self.upstream_remote.fetch(remote, ref=self.default_ref)
             return
 
         try:
-            self.fetch(remote, ref=GitRef(branch=branch))
+            self.upstream_remote.fetch(remote, ref=GitRef(branch=branch))
         except Exception as err:
             LOG.debug('Failed fetch', err)
-            self.fetch(remote, ref=self.default_ref)
+            self.upstream_remote.fetch(remote, ref=self.default_ref)
 
-    def install_project_git_herd_alias(self) -> None:
+    def install_git_herd_alias(self) -> None:
         """Install 'git herd' alias for project"""
 
         from clowder.environment import ENVIRONMENT
 
         config = {
-            'alias.herd': f'!clowder herd {self.repo.path.relative_to(ENVIRONMENT.clowder_dir)}'
+            'alias.herd': f'!clowder herd {self.path.relative_to(ENVIRONMENT.clowder_dir)}'
         }
         CONSOLE.stdout(" - Update git herd alias")
-        self.repo.update_git_config(config)
+        self.update_git_config(config)
+
+    def is_valid(self, allow_missing_repo: bool = True) -> bool:
+        """Validate status of project
+
+        :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
+        :return: True, if not dirty or if the project doesn't exist on disk
+        """
+
+        return self.repo.validate_repo(allow_missing_repo=allow_missing_repo)
+
+    @property
+    def is_dirty(self) -> bool:
+        """Check if project is dirty"""
+
+        return not self.repo.validate_repo()
+
+    def print_validation(self, allow_missing_repo: bool = True) -> None:
+        """Print validation message for project
+
+        :param bool allow_missing_repo: Whether to allow validation to succeed with missing repo
+        """
+
+        if not self.is_valid(allow_missing_repo=allow_missing_repo):
+            CONSOLE.stdout(self.status())
+            self.repo.print_validation()
+
+    @project_repo_exists
+    def prune(self, branch: str, force: bool = False,
+              local: bool = False, remote: bool = False) -> None:
+        """Prune branch
+
+        :param str branch: Branch to prune
+        :param bool force: Force delete branch
+        :param bool local: Delete local branch
+        :param bool remote: Delete remote branch
+        """
+
+        if local and self.repo.has_local_branch(branch):
+            self.repo.prune_branch_local(branch, force)
+
+        if remote:
+            if self.repo.has_remote_branch(branch, self.remote):
+                self.repo.prune_branch_remote(branch, self.remote)
+
+    def reset(self, timestamp: Optional[str] = None) -> None:  # noqa
+        """Reset project branch to upstream or checkout tag/sha as detached HEAD
+
+        :param Optional[str] timestamp: Reset to commit at timestamp, or closest previous commit
+        """
+
+        # TODO: Restore timestamp author
+        # if timestamp:
+        #     repo.reset_timestamp(timestamp, self.timestamp_author, self.ref)
+        #     self._pull_lfs(repo)
+        #     return
+
+        if self.upstream is None:
+            self.repo.reset(depth=self.git_settings.depth)
+        else:
+            CONSOLE.stdout(self.upstream.status())
+            self.repo.configure_remotes(self.remote, self.url, self.upstream.remote, self.upstream.url)
+            CONSOLE.stdout(fmt.upstream(self.name))
+            self.repo.reset()
+
+        self._pull_lfs()
 
     def prune_branch_local(self, branch: str, force: bool) -> None:
         """Prune local branch
@@ -240,7 +441,7 @@ class ProjectRepo:
         :param bool force: Force delete branch
         """
 
-        if branch not in self.repo.heads:
+        if self.has_local_branch(branch):
             CONSOLE.stdout(f" - Local branch {fmt.ref(branch)} doesn't exist")
             return
 
@@ -306,6 +507,58 @@ class ProjectRepo:
         else:
             raise UnknownTypeError('Unknown GitRefEnum type')
 
+    def run(self, command: str, ignore_errors: bool) -> None:
+        """Run commands or script in project directory
+
+        :param str command: Commands to run
+        :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
+        """
+
+        if not existing_git_repo(self.full_path):
+            CONSOLE.stdout(Format.red(" - Project missing\n"))
+            return
+
+        forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
+                      'PROJECT_PATH': self.full_path,
+                      'PROJECT_NAME': self.name,
+                      'PROJECT_REMOTE': self.remote,
+                      'PROJECT_REF': self.ref.formatted_ref}
+
+        # TODO: Add tests for presence of these variables in test scripts
+        # if self.branch:
+        #     forall_env['UPSTREAM_BRANCH'] = self.branch
+        # if self.tag:
+        #     forall_env['UPSTREAM_TAG'] = self.tag
+        # if self.commit:
+        #     forall_env['UPSTREAM_COMMIT'] = self.commit
+
+        if self.upstream:
+            forall_env['UPSTREAM_REMOTE'] = self.upstream.remote
+            forall_env['UPSTREAM_NAME'] = self.upstream.name
+            forall_env['UPSTREAM_REF'] = self.upstream.ref.formatted_ref
+
+        self._run_forall_command(command, forall_env, ignore_errors)
+
+    def sha(self, short: bool = False) -> str:
+        """Return sha for currently checked out commit
+
+        :param bool short: Whether to return short or long commit sha
+        :return: Commit sha
+        """
+
+        return self.repo.sha(short=short)
+
+    @project_repo_exists
+    def start(self, branch: str, tracking: bool) -> None:
+        """Start a new feature branch
+
+        :param str branch: Local branch name to create
+        :param bool tracking: Whether to create a remote branch with tracking relationship
+        """
+
+        depth = self.git_settings.depth
+        self.repo.start(self.remote, branch, depth, tracking)
+
     def start(self, remote: str, branch: str, depth: int, tracking: bool) -> None:
         """Start new branch in repository and checkout
 
@@ -334,9 +587,42 @@ class ProjectRepo:
         if tracking and not is_offline():
             self._create_branch_remote_tracking(branch, remote, depth)
 
+    def status(self, padding: Optional[int] = None) -> str:
+        """Return formatted status for project
+
+        :param Optional[int] padding: Amount of padding to use for printing project on left and current ref on right
+        :return: Formatting project name and status
+        """
+
+        if not existing_git_repo(self.full_path):
+            project_output = self.name
+            if padding:
+                project_output = project_output.ljust(padding)
+                project_output = Format.green(project_output)
+                missing_output = Format.red('-')
+                return f'{project_output} {missing_output}'
+            project_output = Format.green(project_output)
+            return project_output
+
+        project_output = self.repo.formatted_name(self.path)
+        if padding:
+            project_output = project_output.ljust(padding)
+        project_output = self.repo.colored_name(project_output)
+        return f'{project_output} {self.repo.formatted_ref}'
+
+    @project_repo_exists
+    def stash(self) -> None:
+        """Stash changes for project if dirty"""
+
+        if self.is_dirty:
+            self.repo.stash()
+        else:
+            CONSOLE.stdout(" - No changes to stash")
+
+
     def _compare_remotes(self, remote_name: str, remote_url: str,
                          upstream_remote_name: str, upstream_remote_url: str) -> None:
-        """Compare remotes names for  and upstream
+        """Compare remotes names for project and upstream
 
         :param str remote_name: Project remote name
         :param str remote_url: Project remote url
@@ -355,7 +641,6 @@ class ProjectRepo:
 
         :param str remote: Remote name
         :param GitRef ref: Git ref
-        :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
         :param bool fetch: Whether to fetch
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         :raise UnknownTypeError:
@@ -477,3 +762,12 @@ class ProjectRepo:
             return
 
         self._pull(remote, branch)
+
+    def _pull_lfs(self) -> None:
+        """Pull lfs files"""
+
+        if not self.git_settings.lfs:
+            return
+
+        self.repo.install_lfs_hooks()
+        self.repo.pull_lfs()

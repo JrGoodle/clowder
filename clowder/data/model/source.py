@@ -6,7 +6,7 @@
 
 from typing import Dict, Optional
 
-from clowder.git import GitProtocol
+from pygoodle.git import Protocol
 
 SourceName = str
 
@@ -29,7 +29,7 @@ class Source:
         self.name: SourceName = name
         self.url: str = yaml['url']
         protocol = yaml.get("protocol", None)
-        self.protocol: Optional[GitProtocol] = None if protocol is None else GitProtocol(protocol)
+        self.protocol: Optional[Protocol] = None if protocol is None else Protocol(protocol)
 
     def get_yaml(self) -> Dict[str, str]:
         """Return python object representation for saving yaml

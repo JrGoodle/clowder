@@ -196,16 +196,6 @@ def project_options_help_message(message: str) -> str:
     return message
 
 
-def path(text: Path) -> str:
-    """Return formatted path
-
-    :param Path text: Path name
-    :return: Formatted path name
-    """
-
-    return Format.cyan(text.resolve())
-
-
 def version_options_help_message(message: str, versions: Tuple[str, ...]) -> str:
     """Help message for projects/groups options
 

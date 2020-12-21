@@ -10,8 +10,6 @@ from typing import Any, Optional
 from pygoodle.format import Format
 
 from clowder.environment import ENVIRONMENT
-from clowder.git import GitProtocol, GitRef, ProjectRepo
-from clowder.git.util import existing_git_repo
 
 from .model import Defaults, Section, Source, Upstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
