@@ -11,7 +11,8 @@ from pygoodle.git import Protocol, Remote
 
 from clowder.environment import ENVIRONMENT
 from clowder.model import Defaults, Section, Source, Upstream
-from clowder.controller import SOURCE_CONTROLLER, GITHUB
+
+from .source_controller import SOURCE_CONTROLLER, GITHUB
 
 T = TypeVar('T')
 

@@ -10,4 +10,4 @@ from .project_repo import ProjectRepo, project_repo_exists
 from .resolved_git_settings import ResolvedGitSettings
 from .resolved_project import ResolvedProject
 from .resolved_upstream import ResolvedUpstream
-from .source_controller import SourceController, SOURCE_CONTROLLER, GITHUB, BITBUCKET, GITLAB
+from .source_controller import SourceController, SOURCE_CONTROLLER

@@ -23,11 +23,10 @@ from pygoodle.git import (
 from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
 
-# import clowder.util.formatting as fmt
-# from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.controller import ResolvedProject
 from clowder.model import Defaults, Project, Section
+
+from .resolved_project import ResolvedProject
 
 
 def configure_remotes(func):

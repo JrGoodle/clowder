@@ -15,9 +15,11 @@ from pygoodle.git import Commit, ORIGIN, Protocol, Ref, Remote, RemoteTag, Track
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import DuplicateRemoteError
-
-from clowder.controller import SOURCE_CONTROLLER, ResolvedGitSettings, ResolvedUpstream, GITHUB
 from clowder.model import Defaults, Project, Source, Section
+
+from .source_controller import SOURCE_CONTROLLER
+from .resolved_git_settings import ResolvedGitSettings
+from .resolved_upstream import ResolvedUpstream, GITHUB
 
 T = TypeVar('T')
 
