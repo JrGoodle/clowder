@@ -180,7 +180,7 @@ class ClowderController:
         timestamp = None
         for project in self.projects:
             if project.name == timestamp_project:
-                timestamp = project.current_timestamp
+                timestamp = project.repo.current_timestamp
 
         if timestamp is None:
             raise Exception("Failed to find timestamp")

@@ -180,12 +180,6 @@ class ProjectRepo(ResolvedProject):
         if submodules:
             raise NotImplementedError
 
-    @property
-    def current_timestamp(self) -> str:
-        """Timestamp of current HEAD commit"""
-
-        return self.repo.current_timestamp
-
     @project_repo_exists
     def diff(self) -> None:
         """Show git diff for project
