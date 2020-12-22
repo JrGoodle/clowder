@@ -23,4 +23,4 @@ class RepoAddCommand(Subcommand):
     @clowder_git_repo_required
     @print_clowder_repo_status
     def run(self, args) -> None:
-        ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).add(args.files)
+        ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).add_files(args.files)

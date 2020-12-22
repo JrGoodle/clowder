@@ -14,7 +14,7 @@ from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status
 class RepoCommitCommand(Subcommand):
     class Meta:
         name = 'commit'
-        help = 'Commit current changes in clowder repo yaml files'
+        help = 'Commit current changes in clowder repo'
         args = [
             SingleArgument('message', help='commit message')
         ]

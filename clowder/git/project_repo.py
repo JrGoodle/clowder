@@ -300,31 +300,6 @@ class ProjectRepo(ResolvedProject):
         CONSOLE.stdout(" - Update git herd alias")
         self.repo.update_git_config(config)
 
-    def is_valid(self, allow_missing: bool = True) -> bool:
-        """Validate status of project
-
-        :param bool allow_missing: Whether to allow validation to succeed with missing repo
-        :return: True, if not dirty or if the project doesn't exist on disk
-        """
-
-        return self.repo.is_valid(allow_missing=allow_missing)
-
-    @property
-    def is_dirty(self) -> bool:
-        """Check if project is dirty"""
-
-        return not self.repo.is_dirty
-
-    def print_validation(self, allow_missing: bool = True) -> None:
-        """Print validation message for project
-
-        :param bool allow_missing: Whether to allow validation to succeed with missing repo
-        """
-
-        if not self.is_valid(allow_missing=allow_missing):
-            CONSOLE.stdout(self.status())
-            self.repo.print_validation()
-
     @project_repo_exists
     def prune(self, branch: str, force: bool = False,
               local: bool = False, remote: bool = False) -> None:
@@ -415,35 +390,19 @@ class ProjectRepo(ResolvedProject):
             CONSOLE.stdout(Format.red(' - Project missing\n'))
             return
 
-        forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
-                      'PROJECT_PATH': self.full_path,
-                      'PROJECT_NAME': self.name,
-                      'PROJECT_REMOTE': self.default_remote.name,
-                      'PROJECT_REF': self.default_ref.formatted_ref}
-
-        # TODO: Add tests for presence of these variables in test scripts
-        # if self.branch:
-        #     forall_env['UPSTREAM_BRANCH'] = self.branch
-        # if self.tag:
-        #     forall_env['UPSTREAM_TAG'] = self.tag
-        # if self.commit:
-        #     forall_env['UPSTREAM_COMMIT'] = self.commit
+        forall_env = {
+            'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
+            'PROJECT_PATH': self.full_path,
+            'PROJECT_NAME': self.name,
+            'PROJECT_REMOTE': self.default_remote.name,
+            'PROJECT_REF': self.default_ref.formatted_ref
+        }
 
         if self.upstream:
             forall_env['UPSTREAM_REMOTE'] = self.upstream.remote
             forall_env['UPSTREAM_NAME'] = self.upstream.name
-            forall_env['UPSTREAM_REF'] = self.upstream.ref.formatted_ref
 
         self._run_forall_command(command, forall_env, ignore_errors)
-
-    def sha(self, short: bool = False) -> str:
-        """Return sha for currently checked out commit
-
-        :param bool short: Whether to return short or long commit sha
-        :return: Commit sha
-        """
-
-        return self.repo.current_commit(short=short).short_ref
 
     @project_repo_exists
     def start(self, branch: str, tracking: bool) -> None:
@@ -455,7 +414,6 @@ class ProjectRepo(ResolvedProject):
 
         local_branch = LocalBranch(self.full_path, branch)
         self._start_local_branch(local_branch)
-        local_branch.checkout()
 
         if not tracking:
             return
@@ -475,14 +433,15 @@ class ProjectRepo(ResolvedProject):
 
     @staticmethod
     def _start_local_branch(local_branch: LocalBranch) -> None:
-        if local_branch.exists:
-            CONSOLE.stdout(f' - {Format.Git.ref(local_branch.name)} already exists')
-            if local_branch.is_checked_out:
-                CONSOLE.stdout(' - On correct branch')
-            else:
-                local_branch.checkout()
-        else:
+        if not local_branch.exists:
             local_branch.create()
+            local_branch.checkout()
+            return
+        CONSOLE.stdout(f' - {Format.Git.ref(local_branch.name)} already exists')
+        if local_branch.is_checked_out:
+            CONSOLE.stdout(' - On correct branch')
+            return
+        local_branch.checkout()
 
     def status(self, padding: Optional[int] = None) -> str:
         """Return formatted status for project

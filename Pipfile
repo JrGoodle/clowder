@@ -5,6 +5,8 @@ verify_ssl = true
 
 [dev-packages]
 coverage = "*"
+flake8 = "*"
+pylint = "*"
 pytest = "*"
 pytest-bdd = "*"
 pytest-xdist = "*"

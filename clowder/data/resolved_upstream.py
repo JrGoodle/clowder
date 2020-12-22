@@ -7,7 +7,7 @@
 from pathlib import Path
 from typing import Any, Optional
 
-from pygoodle.git import Protocol, Ref, Remote
+from pygoodle.git import Protocol, Remote
 
 from clowder.environment import ENVIRONMENT
 
@@ -39,7 +39,6 @@ class ResolvedUpstream:
 
         self.path: Path = path
         self.name: str = upstream.name
-        self.ref: Optional[Ref] = None
         remote = self._get_property('remote', upstream, defaults, section, default='upstream')
         self.remote: Remote = Remote(self.full_path, remote)
 
