@@ -11,10 +11,14 @@ from pygoodle.connectivity import network_connection_required
 from pygoodle.git import Protocol
 
 import clowder.util.parallel as parallel
-from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
+from clowder.controller import (
+    CLOWDER_CONTROLLER,
+    print_clowder_name,
+    print_clowder_repo_status_fetch,
+    SOURCE_CONTROLLER,
+    valid_clowder_yaml_required
+)
 from clowder.config import Config
-from clowder.data.source_controller import SOURCE_CONTROLLER
-from clowder.git.clowder_repo import print_clowder_repo_status_fetch
 
 from .util import CountArgument, JobsArgument, ProjectsArgument
 

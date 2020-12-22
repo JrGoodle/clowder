@@ -16,10 +16,8 @@ from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import DuplicateRemoteError
 
-from .resolved_git_settings import ResolvedGitSettings
-from .resolved_upstream import ResolvedUpstream
-from .source_controller import SOURCE_CONTROLLER, GITHUB
-from .model import Defaults, Project, Source, Section
+from clowder.controller import SOURCE_CONTROLLER, ResolvedGitSettings, ResolvedUpstream, GITHUB
+from clowder.model import Defaults, Project, Source, Section
 
 T = TypeVar('T')
 

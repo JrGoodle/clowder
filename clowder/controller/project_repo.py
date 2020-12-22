@@ -26,8 +26,8 @@ from pygoodle.console import CONSOLE
 # import clowder.util.formatting as fmt
 # from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.data import ResolvedProject
-from clowder.data.model import Defaults, Project, Section
+from clowder.controller import ResolvedProject
+from clowder.model import Defaults, Project, Section
 
 
 def configure_remotes(func):

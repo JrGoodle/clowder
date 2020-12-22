@@ -5,7 +5,6 @@
 """
 
 import math
-from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
 from pygoodle.console import CONSOLE
@@ -96,7 +95,7 @@ def project_options_help_message(message: str) -> str:
         length = len(max(options, key=len))
         return length + spacing
 
-    from clowder.clowder_controller import CLOWDER_CONTROLLER
+    from clowder.controller import CLOWDER_CONTROLLER
 
     project_names = CLOWDER_CONTROLLER.project_names
     upstream_names = CLOWDER_CONTROLLER.upstream_names

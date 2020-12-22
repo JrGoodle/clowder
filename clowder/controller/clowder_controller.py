@@ -16,11 +16,10 @@ from pygoodle.util import sorted_tuple
 from pygoodle.yaml import load_yaml_file, validate_yaml_file, MissingYamlError
 
 import clowder.util.formatting as fmt
-from clowder.git import ProjectRepo
+from clowder.controller import ProjectRepo, SOURCE_CONTROLLER
 from clowder.log import LOG
+from clowder.model import ClowderBase
 from clowder.environment import ENVIRONMENT
-from clowder.data import SOURCE_CONTROLLER
-from clowder.data.model import ClowderBase
 from clowder.util.error import (
     DuplicatePathError,
     ProjectNotFoundError,

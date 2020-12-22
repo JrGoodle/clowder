@@ -90,7 +90,7 @@ class Project:
         :raise UnknownTypeError:
         """
 
-        from clowder.clowder_controller import CLOWDER_CONTROLLER
+        from clowder.controller import CLOWDER_CONTROLLER
 
         if self._is_string:
             if not resolved:

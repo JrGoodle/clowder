@@ -7,7 +7,7 @@
 from pygoodle.app import Argument, CountArgument
 
 import clowder.util.formatting as fmt
-from clowder.clowder_controller import CLOWDER_CONTROLLER
+from clowder.controller import CLOWDER_CONTROLLER
 
 
 class JobsArgument(CountArgument):

@@ -7,8 +7,9 @@
 from pygoodle.app import BoolArgument, Subcommand
 from pygoodle.console import CONSOLE
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
-from clowder.util.yaml import yaml_string
+from pygoodle.yaml import yaml_string
+
+from clowder.controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
 
 
 class YamlCommand(Subcommand):

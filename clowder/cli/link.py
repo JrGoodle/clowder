@@ -8,8 +8,7 @@ from pygoodle.app import Argument, Subcommand
 from pygoodle.format import Format
 
 import clowder.util.formatting as fmt
-from clowder.clowder_controller import print_clowder_name
-from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status
+from clowder.controller import ClowderRepo, print_clowder_name, print_clowder_repo_status
 from clowder.environment import clowder_repo_required, ENVIRONMENT
 from clowder.util.error import ExistingSymlinkError
 from clowder.util.yaml import link_clowder_yaml_default, link_clowder_yaml_version

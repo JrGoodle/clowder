@@ -10,9 +10,8 @@ from typing import Optional, TypeVar
 from pygoodle.git import Protocol, Remote
 
 from clowder.environment import ENVIRONMENT
-
-from .model import Defaults, Section, Source, Upstream
-from .source_controller import SOURCE_CONTROLLER, GITHUB
+from clowder.model import Defaults, Section, Source, Upstream
+from clowder.controller import SOURCE_CONTROLLER, GITHUB
 
 T = TypeVar('T')
 

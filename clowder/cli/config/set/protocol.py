@@ -7,10 +7,14 @@
 from pygoodle.app import SingleArgument, Subcommand
 from pygoodle.console import CONSOLE
 
+from pygoodle.git import Protocol
+
 import clowder.util.formatting as fmt
-from clowder.clowder_controller import print_clowder_name, valid_clowder_yaml_required
+from clowder.controller import (
+    print_clowder_name,
+    valid_clowder_yaml_required
+)
 from clowder.config import Config, print_config
-from clowder.git import GitProtocol
 
 
 class ConfigSetProtocolCommand(Subcommand):
@@ -29,5 +33,5 @@ class ConfigSetProtocolCommand(Subcommand):
     def run(self, args) -> None:
         CONSOLE.stdout(' - Set protocol config value')
         config = Config()
-        config.protocol = GitProtocol(args.protocol[0])
+        config.protocol = Protocol(args.protocol[0])
         config.save()

@@ -7,10 +7,10 @@
 import copy
 from typing import Dict, Optional
 
-from clowder.data.model import Defaults, Section, Project
-from clowder.util.error import UnknownArgumentError, UnknownTypeError
+from pygoodle.git import GitConfig
 
-from .model.git_settings import GitSettings, GitConfig
+from clowder.model import Defaults, Section, Project, GitSettings
+from clowder.util.error import UnknownArgumentError, UnknownTypeError
 
 
 class ResolvedGitSettings:

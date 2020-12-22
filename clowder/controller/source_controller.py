@@ -8,10 +8,8 @@ from typing import Dict, Optional, Set, Union
 
 from pygoodle.git import Protocol
 
+from clowder.model import Source, SourceName
 from clowder.util.error import SourcesValidatedError, UnknownSourceError, UnknownTypeError
-
-from .model import Source
-from .model import SourceName
 
 GITHUB: SourceName = SourceName("github")
 GITLAB: SourceName = SourceName("gitlab")

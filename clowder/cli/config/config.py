@@ -6,7 +6,10 @@
 
 from pygoodle.app import Subcommand
 
-from clowder.clowder_controller import print_clowder_name, valid_clowder_yaml_required
+from clowder.controller import (
+    print_clowder_name,
+    valid_clowder_yaml_required
+)
 from clowder.config import print_config
 
 from .clear import ConfigClearCommand

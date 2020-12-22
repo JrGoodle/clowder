@@ -4,15 +4,12 @@
 
 """
 
-import pkg_resources
 from pathlib import Path
 
-import yaml as pyyaml
 import pygoodle.filesystem as fs
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
 
-import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import MissingFileError
@@ -43,7 +40,7 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
 
     target_file = clowder_dir / relative_source_file.name
 
-    CONSOLE.stdout(f" - Symlink {fmt.path(Path(target_file.name))} -> {fmt.path(relative_source_file)}")
+    CONSOLE.stdout(f" - Symlink {Format.path(Path(target_file.name))} -> {Format.path(relative_source_file)}")
 
     symlink_clowder_yaml(relative_source_file, target_file)
 
@@ -58,11 +55,11 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
             existing_file = file
 
     if existing_file is not None and existing_file.is_symlink():
-        CONSOLE.stdout(f" - Remove previously existing file {fmt.path(existing_file)}")
+        CONSOLE.stdout(f" - Remove previously existing file {Format.path(existing_file)}")
         try:
             fs.remove_file(existing_file)
         except OSError:
-            LOG.error(f"Failed to remove file {fmt.path(existing_file)}")
+            LOG.error(f"Failed to remove file {Format.path(existing_file)}")
             raise
 
 
@@ -88,7 +85,7 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
 
     target_file = clowder_dir / Format.remove_prefix(relative_source_file.name, f"{version}.")
 
-    CONSOLE.stdout(f" - Symlink {fmt.path(Path(target_file.name))} -> {fmt.path(relative_source_file)}")
+    CONSOLE.stdout(f" - Symlink {Format.path(Path(target_file.name))} -> {Format.path(relative_source_file)}")
 
     symlink_clowder_yaml(relative_source_file, target_file)
 
@@ -103,11 +100,11 @@ def link_clowder_yaml_version(clowder_dir: Path, version: str) -> None:
             existing_file = file
 
     if existing_file is not None and existing_file.is_symlink():
-        CONSOLE.stdout(f" - Remove previously existing file {fmt.path(existing_file)}")
+        CONSOLE.stdout(f" - Remove previously existing file {Format.path(existing_file)}")
         try:
             fs.remove_file(existing_file)
         except OSError:
-            LOG.error(f"Failed to remove file {fmt.path(existing_file)}")
+            LOG.error(f"Failed to remove file {Format.path(existing_file)}")
             raise
 
 
@@ -118,20 +115,6 @@ def print_clowder_yaml() -> None:
         _print_yaml(ENVIRONMENT.clowder_yaml)
 
 
-def yaml_string(yaml_output: dict) -> str:
-    """Return yaml string from python data structures
-
-    :param dict yaml_output: YAML python object
-    :return: YAML as a string
-    """
-
-    try:
-        return pyyaml.safe_dump(yaml_output, default_flow_style=False, indent=2, sort_keys=False)
-    except pyyaml.YAMLError:
-        LOG.error(f"Failed to dump yaml file contents",)
-        raise
-
-
 def _format_yaml_symlink(yaml_symlink: Path, yaml_file: Path) -> str:
     """Return formatted string for yaml symlink
 
@@ -140,7 +123,7 @@ def _format_yaml_symlink(yaml_symlink: Path, yaml_file: Path) -> str:
     :return: Formatted string for yaml symlink
     """
 
-    return f"\n{fmt.path(yaml_symlink)} -> {fmt.path(yaml_file)}\n"
+    return f"\n{Format.path(yaml_symlink)} -> {Format.path(yaml_file)}\n"
 
 
 def _format_yaml_file(yaml_file: Path) -> str:
@@ -151,18 +134,7 @@ def _format_yaml_file(yaml_file: Path) -> str:
     """
 
     path = yaml_file.resolve().relative_to(ENVIRONMENT.clowder_dir)
-    return f"\n{fmt.path(Path(path))}\n"
-
-
-def _load_json_schema(file_prefix: str) -> dict:
-    """Return json schema file
-
-    :param str file_prefix: File prefix for json schema
-    :return: Loaded json dict
-    """
-
-    clowder_config_schema = pkg_resources.resource_string(__name__, f"{file_prefix}.schema.json")
-    return pyyaml.safe_load(clowder_config_schema)
+    return f"\n{Format.path(Path(path))}\n"
 
 
 def _print_yaml(yaml_file: Path) -> None:

@@ -6,7 +6,7 @@
 
 from typing import List, Optional
 
-from clowder.git import GitProtocol
+from pygoodle.git import Protocol
 
 from .clowder import Clowder
 from .defaults import Defaults
@@ -20,7 +20,7 @@ class ClowderBase:
     :ivar Optional[Defaults] defaults: Name of clowder
     :ivar Optional[List[Source]] sources: Sources
     :ivar Clowder clowder: Clowder model
-    :ivar Optional[GitProtocol] protocol: Git protocol
+    :ivar Optional[Protocol] protocol: Git protocol
     """
 
     def __init__(self, yaml: dict):
@@ -36,7 +36,7 @@ class ClowderBase:
             self.sources: Optional[List[Source]] = [Source(SourceName(name), source)
                                                     for name, source in yaml["sources"].items()]
         protocol = yaml.get("protocol", None)
-        self.protocol: Optional[GitProtocol] = None if protocol is None else GitProtocol(protocol)
+        self.protocol: Optional[Protocol] = None if protocol is None else Protocol(protocol)
         self.clowder: Clowder = Clowder(yaml["clowder"])
 
     def get_yaml(self, resolved: bool = False) -> dict:

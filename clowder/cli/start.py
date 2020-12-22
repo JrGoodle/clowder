@@ -8,9 +8,13 @@ from pygoodle.app import BoolArgument, SingleArgument, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 
-from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
+from clowder.controller import (
+    CLOWDER_CONTROLLER,
+    print_clowder_name,
+    print_clowder_repo_status,
+    valid_clowder_yaml_required
+)
 from clowder.config import Config
-from clowder.git.clowder_repo import print_clowder_repo_status
 
 from .util import ProjectsArgument
 

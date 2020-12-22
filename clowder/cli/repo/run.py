@@ -6,9 +6,12 @@
 
 from pygoodle.app import SingleArgument, Subcommand
 
-from clowder.clowder_controller import print_clowder_name
+from clowder.controller import (
+    ClowderRepo,
+    print_clowder_name,
+    print_clowder_repo_status
+)
 from clowder.environment import clowder_git_repo_required, ENVIRONMENT
-from clowder.git.clowder_repo import ClowderRepo, print_clowder_repo_status
 
 
 class RepoRunCommand(Subcommand):

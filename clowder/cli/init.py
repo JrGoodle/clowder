@@ -11,7 +11,7 @@ from pygoodle.format import Format
 
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.git.clowder_repo import ClowderRepo
+from clowder.controller import ClowderRepo
 
 
 class InitCommand(Subcommand):

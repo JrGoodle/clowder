@@ -8,7 +8,9 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional
 
-import clowder.util.formatting as fmt
+from pygoodle.format import Format
+from pygoodle.git import offline
+
 from clowder.util.error import (
     AmbiguousYamlError,
     ExistingFileError,
@@ -16,7 +18,6 @@ from clowder.util.error import (
     MissingClowderRepoError,
     MissingClowderGitRepoError
 )
-from clowder.git.util import existing_git_repo
 
 
 def clowder_repo_required(func):
@@ -33,7 +34,7 @@ def clowder_repo_required(func):
         if ENVIRONMENT.existing_clowder_repo_file_error is not None:
             raise ENVIRONMENT.existing_clowder_repo_file_error
         if ENVIRONMENT.clowder_repo_dir is None:
-            raise MissingClowderRepoError(f"No {fmt.path(Path('.clowder'))} directory found")
+            raise MissingClowderRepoError(f"No {Format.path(Path('.clowder'))} directory found")
 
         return func(*args, **kwargs)
 
@@ -51,7 +52,7 @@ def clowder_git_repo_required(func):
         """Wrapper"""
 
         if ENVIRONMENT.clowder_git_repo_dir is None:
-            raise MissingClowderGitRepoError(f"No {fmt.path(Path('.clowder'))} git repository found")
+            raise MissingClowderGitRepoError(f"No {Format.path(Path('.clowder'))} git repository found")
         return func(*args, **kwargs)
 
     return wrapper
@@ -108,8 +109,8 @@ class ClowderEnvironment:
         has_ambiguous_clowder_yaml_files = clowder_yml_exists and clowder_yaml_exists
 
         if has_ambiguous_clowder_yaml_files:
-            yml_file = fmt.path(Path('clowder.yml'))
-            yaml_file = fmt.path(Path('clowder.yaml'))
+            yml_file = Format.path(Path('clowder.yml'))
+            yaml_file = Format.path(Path('clowder.yaml'))
             message = f"Found {yml_file} and {yaml_file} files in same directory"
             self.ambiguous_yaml_error = AmbiguousYamlError(message)
         else:
@@ -143,7 +144,7 @@ class ClowderEnvironment:
             clowder_yml_exists = clowder_yml.is_file() or clowder_yml.is_symlink()
             clowder_yaml_exists = clowder_yaml.is_file() or clowder_yaml.is_symlink()
             clowder_repo_file_exists = clowder_repo_dir.is_symlink() or clowder_repo_dir.is_file()
-            if clowder_repo_dir.is_dir() and existing_git_repo(clowder_repo_dir):
+            if offline.is_repo_cloned(clowder_repo_dir):
                 self.clowder_dir: Optional[Path] = path
                 self.clowder_repo_dir: Optional[Path] = clowder_repo_dir.resolve()
                 self.clowder_git_repo_dir: Optional[Path] = clowder_repo_dir
@@ -155,7 +156,7 @@ class ClowderEnvironment:
             elif clowder_yml_exists or clowder_yaml_exists or clowder_repo_file_exists:
                 # FIXME: Is this right?
                 if clowder_repo_file_exists:
-                    message = f"Found non-directory file {fmt.path(clowder_repo_dir)} " \
+                    message = f"Found non-directory file {Format.path(clowder_repo_dir)} " \
                               f"where clowder repo directory should be"
                     self.existing_clowder_repo_file_error: Optional[ExistingFileError] = ExistingFileError(message)
                 self.clowder_dir: Optional[Path] = path
@@ -195,9 +196,8 @@ class ClowderEnvironment:
 
         # Broken symlink pointing to missing source
         if yaml_file.is_symlink() and not yaml_file.exists():
-            target = fmt.path(yaml_file)
-            source = fmt.path((yaml_file.resolve()))
-            message = f"Found symlink {target} but source {source} appears to be missing"
+            message = f"Found symlink {Format.path(yaml_file)} but " \
+                      f"source {Format.path((yaml_file.resolve()))} appears to be missing"
             self.missing_source_error: Optional[MissingSourceError] = MissingSourceError(message)
             return
 
