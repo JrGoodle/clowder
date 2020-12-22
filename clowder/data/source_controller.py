@@ -6,7 +6,8 @@
 
 from typing import Dict, Optional, Set, Union
 
-from clowder.git import GitProtocol
+from pygoodle.git import Protocol
+
 from clowder.util.error import SourcesValidatedError, UnknownSourceError, UnknownTypeError
 
 from .model import Source
@@ -32,7 +33,7 @@ class SourceController:
         self._has_been_validated: bool = False
         self._source_names: Set[SourceName] = {GITHUB, GITLAB, BITBUCKET}
         # TODO: Make into @property method and check validation
-        self.protocol_override: Optional[GitProtocol] = None
+        self.protocol_override: Optional[Protocol] = None
 
         self._sources: Dict[SourceName, Source] = {
             GITHUB: Source(GITHUB, GITHUB_YAML),
@@ -87,7 +88,7 @@ class SourceController:
 
         return self._sources[source_name]
 
-    def get_default_protocol(self) -> GitProtocol:
+    def get_default_protocol(self) -> Protocol:
         """Returns default protocol
 
         :return: Default git protocol
@@ -100,7 +101,7 @@ class SourceController:
         if self.protocol_override is not None:
             return self.protocol_override
         else:
-            return GitProtocol.SSH
+            return Protocol.SSH
 
     def validate_sources(self) -> None:
         """Validate sources: check for unknown names

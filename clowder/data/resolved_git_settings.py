@@ -8,7 +8,7 @@ import copy
 from typing import Dict, Optional
 
 from clowder.data.model import Defaults, Section, Project
-from clowder.util.error import ClowderGitError, UnknownArgumentError, UnknownTypeError
+from clowder.util.error import UnknownArgumentError, UnknownTypeError
 
 from .model.git_settings import GitSettings, GitConfig
 
@@ -93,7 +93,7 @@ class ResolvedGitSettings:
             elif self.config[key] is None:
                 pass
             else:
-                raise ClowderGitError(f"Invalid git config value - {key}: {value}")
+                raise Exception(f"Invalid git config value - {key}: {value}")
         return config
 
     def _update(self, git_settings: GitSettings) -> None:

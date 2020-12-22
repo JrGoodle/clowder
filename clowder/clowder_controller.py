@@ -16,11 +16,9 @@ from pygoodle.yaml import load_yaml_file, validate_yaml_file, MissingYamlError
 import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.git.util import get_default_project_branch, get_default_upstream_branch
 from clowder.data import ResolvedProject, SOURCE_CONTROLLER
 from clowder.data.model import ClowderBase
 from clowder.util.error import (
-    ClowderGitError,
     DuplicatePathError,
     ProjectNotFoundError,
     ProjectStatusError

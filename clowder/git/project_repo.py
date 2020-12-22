@@ -105,8 +105,7 @@ class ProjectRepo(ResolvedProject):
         """
 
         super(ProjectRepo, self).__init__(project=project, defaults=defaults, section=section, protocol=protocol)
-        remote = Remote(self.full_path, self.default_remote.name)
-        self.repo: Repo = Repo(self.full_path, remote)
+        self.repo: Repo = Repo(self.full_path, self.default_remote.name)
 
     @property
     def upstream_remote(self) -> Optional[Remote]:
@@ -226,30 +225,6 @@ class ProjectRepo(ResolvedProject):
         if self.upstream is not None:
             self.upstream_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth)
 
-    @property
-    def formatted_name(self) -> str:
-        """Formatted project name"""
-
-        if not self.repo.exists:
-            return str(self.path)
-
-        if self.is_dirty:
-            return f'{self.path}*'
-        else:
-            return str(self.path)
-
-    @staticmethod
-    def colored_name(name: str) -> str:
-        """Return formatted colored project name
-
-        :param str name: Formatted project name
-        """
-
-        if '*' in name:
-            return Format.red(name)
-
-        return Format.green(name)
-
     @configure_remotes
     def herd_entrypoint(self, branch: Optional[str] = None, tag: Optional[str] = None,
                         depth: Optional[int] = None, rebase: bool = False) -> None:
@@ -262,22 +237,6 @@ class ProjectRepo(ResolvedProject):
         """
 
         CONSOLE.stdout(self.status())
-        self.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
-        self._pull_lfs()
-        if self.upstream:
-            CONSOLE.stdout(Format.Git.upstream(self.upstream.name))
-            self.upstream.repo.herd_remote(self.upstream.url, self.upstream.remote, branch=branch)
-
-    def herd(self, branch: Optional[str], tag: Optional[str] = None,
-             depth: Optional[int] = None, rebase: bool = False) -> None:
-        """Herd ref
-
-        :param Optional[str] branch: Git branch
-        :param Optional[str] tag: Git tag
-        :param Optional[int] depth: Git depth
-        :param bool rebase: Whether to pull with rebase
-        """
-
         if not self.repo.exists:
             if self.full_path.exists() and fs.has_contents(self.full_path):
                 raise Exception('Non-empty directory already exists')
@@ -317,6 +276,11 @@ class ProjectRepo(ResolvedProject):
             remote_tag = RemoteTag(self.full_path, tag, self.default_remote.name)
             if remote_tag.exists:
                 remote_tag.checkout()
+
+        self._pull_lfs()
+        if self.upstream:
+            CONSOLE.stdout(Format.Git.upstream(self.upstream.name))
+            self.upstream.repo.herd_remote(self.upstream.url, self.upstream.remote, branch=branch)
 
     # def herd_upstream(self) -> None:
     #     """Herd upstream repo"""
@@ -554,6 +518,13 @@ class ProjectRepo(ResolvedProject):
             project_output = project_output.ljust(padding)
         project_output = self.colored_name(project_output)
         return f'{project_output} {self.repo.formatted_ref}'
+        # FIxME: Also print upstream if it exists
+        # if not existing_git_repo(self.path):
+        #     return Format.green(self.path)
+        #
+        # repo = ProjectRepo(self.full_path, self.remote, self.ref)
+        # project_output = repo.format_project_string(self.path)
+        # return f"{project_output} {repo.formatted_ref}"
 
     @project_repo_exists
     def stash(self) -> None:

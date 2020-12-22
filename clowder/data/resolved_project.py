@@ -150,8 +150,7 @@ class ResolvedProject:
 
         if self.default_branch is None and self.default_tag is None and self.default_commit is None:
             self.default_branch = TrackingBranch(self.full_path, branch,
-                                                 upstream_branch=branch, upstream_remote=self.default_remote.name,
-                                                 push_branch=branch, push_remote=self.default_remote.name)
+                                                 upstream_branch=branch, upstream_remote=self.default_remote.name)
 
     @property
     def url(self) -> str:

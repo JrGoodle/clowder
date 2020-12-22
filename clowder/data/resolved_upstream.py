@@ -7,7 +7,7 @@
 from pathlib import Path
 from typing import Any, Optional
 
-from pygoodle.format import Format
+from pygoodle.git import Protocol, Ref, Remote
 
 from clowder.environment import ENVIRONMENT
 
@@ -23,70 +23,40 @@ class ResolvedUpstream:
     :ivar Source source: Upstream source
     :ivar str remote: Upstream remote name
     :ivar str ref: Upstream git ref
-    :ivar Optional[GitProtocol] default_protocol: Default git protocol to use
+    :ivar Optional[Protocol] protocol: Default git protocol to use
     """
 
     def __init__(self, path: Path, upstream: Upstream, defaults: Optional[Defaults],
-                 section: Optional[Section], protocol: Optional[GitProtocol]):
+                 section: Optional[Section], protocol: Optional[Protocol]):
         """Upstream __init__
 
         :param Path path: Parent project path
         :param Upstream upstream: Upstream model instance
         :param Optional[Defaults] defaults: Defaults model instance
         :param Optional[Section] section: Section model instance
-        :param Optional[GitProtocol] protocol: Git protocol
+        :param Optional[Protocol] protocol: Git protocol
         """
-
-        self._repo: Optional[ProjectRepo] = None
 
         self.path: Path = path
         self.name: str = upstream.name
-        self.ref: Optional[GitRef] = None
-        self.remote: str = self._get_property('remote', upstream, defaults, section, default='upstream')
+        self.ref: Optional[Ref] = None
+        remote = self._get_property('remote', upstream, defaults, section, default='upstream')
+        self.remote: Remote = Remote(self.full_path, remote)
 
         source = self._get_property('source', upstream, defaults, section, default=GITHUB)
         self.source: Source = SOURCE_CONTROLLER.get_source(source)
 
-        self.default_protocol: Optional[GitProtocol] = None
+        self.default_protocol: Optional[Protocol] = None
         if self.source.protocol is not None:
-            self.default_protocol: Optional[GitProtocol] = self.source.protocol
+            self.default_protocol: Optional[Protocol] = self.source.protocol
         elif protocol is not None:
-            self.default_protocol: Optional[GitProtocol] = protocol
+            self.default_protocol: Optional[Protocol] = protocol
 
     @property
     def full_path(self) -> Path:
         """Full path to project"""
 
         return ENVIRONMENT.clowder_dir / self.path
-
-    @property
-    def repo(self) -> ProjectRepo:
-        """ProjectRepo instance"""
-
-        if self._repo is not None:
-            return self._repo
-
-        self._repo = ProjectRepo(self.full_path, self.remote, self.ref)
-        return self._repo
-
-    def status(self) -> str:
-        """Return formatted upstream status
-
-        :return: Formatted upstream status
-        """
-
-        if not existing_git_repo(self.path):
-            return Format.green(self.path)
-
-        repo = ProjectRepo(self.full_path, self.remote, self.ref)
-        project_output = repo.format_project_string(self.path)
-        return f"{project_output} {repo.formatted_ref}"
-
-    def update_default_branch(self, branch: str) -> None:
-        """Update ref with default branch if none set"""
-
-        if self.ref is None:
-            self.ref = GitRef(branch=branch)
 
     @property
     def url(self) -> str:

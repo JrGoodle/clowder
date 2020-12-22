@@ -13,14 +13,13 @@ import pygoodle.command as cmd
 from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
+from pygoodle.git import LocalBranch, Repo
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import DuplicateVersionsError
 from clowder.util.yaml import link_clowder_yaml_default
-
-from .project_repo import ProjectRepo
 
 
 def print_clowder_repo_status(func):
@@ -51,7 +50,7 @@ def print_clowder_repo_status_fetch(func):
     return wrapper
 
 
-class ClowderRepo(ProjectRepo):
+class ClowderRepo(Repo):
     """Class encapsulating git utilities for clowder repo
 
     :ivar str repo_path: Absolute path to repo
@@ -59,58 +58,16 @@ class ClowderRepo(ProjectRepo):
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, repo_path: Path, remote: str = 'origin', default_ref: Ref = GitRef(branch='master')):
+    def __init__(self, path: Path, remote: str = 'origin'):
         """ProjectRepo __init__"""
 
-        super().__init__(repo_path, remote, default_ref)
-
-    def add(self, files: str) -> None:
-        """Add files in clowder repo to git index
-
-        :param str files: Files to git add
-        """
-
-        super().add(files)
+        super().__init__(path, remote)
 
     def branches(self) -> None:
         """Print current local branches"""
 
         self.print_local_branches()
         self.print_remote_branches()
-
-    def checkout(self, ref: str, allow_failure: bool = False) -> None:
-        """Checkout ref in clowder repo
-
-        :param str ref: Ref to git checkout
-        :param bool allow_failure: Whether to allow failing to checkout branch
-        """
-
-        if self.is_dirty:
-            CONSOLE.stdout(' - Dirty repo. Please stash, commit, or discard your changes')
-            self.status_verbose()
-            return
-        super().checkout(ref)
-
-    def clean(self, args: str = 'fdx') -> None:
-        """Discard changes in clowder repo
-
-        Equivalent to: ``git clean -ffdx``
-        """
-
-        if self.is_dirty:
-            CONSOLE.stdout(' - Discard current changes')
-            super().clean(args=args)
-            return
-
-        CONSOLE.stdout(' - No changes to discard')
-
-    def commit(self, message: str) -> None:
-        """Commit current changes in clowder repo
-
-        :param str message: Git commit message
-        """
-
-        super().commit(message)
 
     @classmethod
     def get_saved_version_names(cls) -> Optional[Tuple[str, ...]]:
@@ -132,14 +89,6 @@ class ClowderRepo(ProjectRepo):
 
         return tuple(sorted(versions))
 
-    def git_status(self) -> None:
-        """Print clowder repo git status
-
-        Equivalent to: ``git status -vv``
-        """
-
-        self.status_verbose()
-
     def init(self, url: str, branch: str) -> None:
         """Clone clowder repo from url
 
@@ -148,22 +97,19 @@ class ClowderRepo(ProjectRepo):
         :raise AmbiguousYamlError:
         """
 
+        if self.exists:
+            raise Exception('Repo already exists')
+
+        branch = LocalBranch(self.path, branch)
+        self.clone(self.path, url, ref=branch)
         try:
-            self.create_clowder_repo(url, branch)
-        except BaseException:
-            # if self.repo_path.is_dir():
-            #     remove_directory(self.repo_path, check=False)
-            LOG.error("Failed to initialize clowder repo")
+            link_clowder_yaml_default(ENVIRONMENT.current_dir)
+        except Exception:
+            LOG.error('Failed to link yaml file after clowder repo init')
             raise
         else:
-            try:
-                link_clowder_yaml_default(ENVIRONMENT.current_dir)
-            except Exception:
-                LOG.error('Failed to link yaml file after clowder repo init')
-                raise
-            else:
-                if ENVIRONMENT.has_ambiguous_clowder_yaml_files():
-                    raise ENVIRONMENT.ambiguous_yaml_error
+            if ENVIRONMENT.has_ambiguous_clowder_yaml_files():
+                raise ENVIRONMENT.ambiguous_yaml_error
 
     def print_status(self, fetch: bool = False) -> None:
         """Print clowder repo status
@@ -196,29 +142,19 @@ class ClowderRepo(ProjectRepo):
 
         if fetch and not is_offline():
             CONSOLE.stdout(' - Fetch upstream changes for clowder repo')
-            self.fetch(self.remote)
+            self.default_remote.fetch(prune=True, tags=True)
 
-        clowder_git_repo_output = self.format_project_string(ENVIRONMENT.clowder_git_repo_dir.name)
+        clowder_git_repo_output = self.colored_name(self.formatted_name)
         CONSOLE.stdout(f"{clowder_git_repo_output} {self.formatted_ref}")
         if symlink_output is not None:
             CONSOLE.stdout(symlink_output)
         CONSOLE.stdout()
 
-    def pull(self) -> None:
-        """Pull clowder repo upstream changes"""
-
-        super().pull()
-
-    def push(self) -> None:
-        """Push clowder repo changes"""
-
-        super().push()
-
-    def run_command(self, command: str) -> None:
+    def run(self, command: str, check: bool = True) -> None:
         """Run command in clowder repo
 
         :param str command: Command to run
+        :param bool check: Whether to check for errors
         """
 
-        CONSOLE.stdout(fmt.command(command))
-        cmd.run(command, self.repo_path)
+        cmd.run(command, self.path, print_command=True, check=check)
