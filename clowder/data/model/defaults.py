@@ -6,8 +6,6 @@
 
 from typing import Optional
 
-from clowder.git import GitRef
-
 from .git_settings import GitSettings
 from .source import SourceName
 from .upstream_defaults import UpstreamDefaults
@@ -42,19 +40,6 @@ class Defaults:
         upstream = yaml.get("upstream", None)
         upstream_defaults = None if upstream is None else UpstreamDefaults(upstream)
         self.upstream_defaults: Optional[UpstreamDefaults] = upstream_defaults
-
-    @property
-    def git_ref(self) -> Optional[GitRef]:
-        """git ref"""
-
-        if self.branch is not None:
-            return GitRef(branch=self.branch)
-        elif self.tag is not None:
-            return GitRef(tag=self.tag)
-        elif self.commit is not None:
-            return GitRef(commit=self.commit)
-        else:
-            return None
 
     def get_yaml(self) -> dict:
         """Return python object representation for saving yaml

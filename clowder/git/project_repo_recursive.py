@@ -8,14 +8,13 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Optional
 
+import pygoodle.command as cmd
 from git import GitError
-from pygoodle.command import run_command
 from pygoodle.console import CONSOLE
 
 from clowder.log import LOG
 
-from .git_ref import GitRef
-from .project_repo import GitConfig, ProjectRepo
+from .project_repo import ProjectRepo
 
 
 class ProjectRepoRecursive(ProjectRepo):

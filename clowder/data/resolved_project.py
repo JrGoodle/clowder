@@ -10,7 +10,7 @@ from typing import Any, Optional, Set
 
 import pygoodle.command as cmd
 from pygoodle.format import Format
-from pygoodle.git import Branch, Protocol, Ref
+from pygoodle.git import Branch, Commit, Protocol, Ref, RemoteTag, TrackingBranch
 
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
@@ -59,7 +59,12 @@ class ResolvedProject:
             self.path: Path = self.path / Path(self.name).name
 
         self.remote: str = self._get_property('remote', project, defaults, section, default='origin')
-        self.ref: Optional[Ref] = self._get_property('git_ref', project, defaults, section)
+        self.default_branch: Optional[str] = self._get_property('branch', project, defaults, section)
+        self.default_tag: Optional[str] = self._get_property('tag', project, defaults, section)
+        self.default_commit: Optional[str] = self._get_property('commit', project, defaults, section)
+        self.ref: Optional[Ref] = None
+        if self.default_branch is not None:
+            self.ref = TrackingBranch(self.full_path, )
         self.git_settings: ResolvedGitSettings = ResolvedGitSettings.combine_settings(project, section, defaults)
 
         source = self._get_property('source', project, defaults, section, default=GITHUB)

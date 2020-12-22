@@ -7,7 +7,6 @@
 from pathlib import Path
 from typing import List, Optional, Union
 
-from clowder.git import GitRef
 from clowder.util.error import UnknownTypeError
 
 from .upstream import Upstream
@@ -82,19 +81,6 @@ class Project:
 
         upstream = yaml.get('upstream', None)
         self.upstream: Optional[Upstream] = Upstream(upstream) if upstream is not None else None
-
-    @property
-    def git_ref(self) -> Optional[GitRef]:
-        """git ref"""
-
-        if self.branch is not None:
-            return GitRef(branch=self.branch)
-        elif self.tag is not None:
-            return GitRef(tag=self.tag)
-        elif self.commit is not None:
-            return GitRef(commit=self.commit)
-        else:
-            return None
 
     def get_yaml(self, resolved: bool = False) -> Union[dict, str]:
         """Return python object representation for saving yaml
