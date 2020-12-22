@@ -111,6 +111,37 @@ class ClowderRepo(Repo):
             if ENVIRONMENT.has_ambiguous_clowder_yaml_files():
                 raise ENVIRONMENT.ambiguous_yaml_error
 
+    # def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
+    #     """Clone clowder git repo from url at path
+    #
+    #     :param str url: URL of repo
+    #     :param str branch: Branch name
+    #     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
+    #     :raise ExistingFileError:
+    #     """
+    #
+    #     if self.repo.exists:
+    #         # TODO: Throw error if repo doesn't match one trying to create
+    #         return
+    #
+    #     if self.repo_path.is_dir():
+    #         try:
+    #             self.repo_path.rmdir()
+    #         except OSError:
+    #             LOG.error(f"Directory already exists at {fmt.path(self.repo_path)}")
+    #             raise
+    #
+    #     if self.repo_path.is_symlink():
+    #         fs.remove_file(self.repo_path)
+    #     else:
+    #         from clowder.environment import ENVIRONMENT
+    #         if ENVIRONMENT.existing_clowder_repo_file_error:
+    #             raise ENVIRONMENT.existing_clowder_repo_file_error
+    #
+    #     self._init_repo()
+    #     self._create_remote(self.remote, url, remove_dir=True)
+    #     self._checkout_new_repo_branch(branch, depth)
+
     def print_status(self, fetch: bool = False) -> None:
         """Print clowder repo status
 

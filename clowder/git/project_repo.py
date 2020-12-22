@@ -107,6 +107,13 @@ class ProjectRepo(ResolvedProject):
         super(ProjectRepo, self).__init__(project=project, defaults=defaults, section=section, protocol=protocol)
         self.repo: Repo = Repo(self.path, self.default_remote.name)
 
+        if self.default_branch is None and self.default_tag is None and self.default_commit is None:
+            remote_branch = self.repo.default_remote.default_branch
+            self.default_branch = TrackingBranch(self.path,
+                                                 local_branch=remote_branch.name,
+                                                 upstream_branch=remote_branch.name,
+                                                 upstream_remote=remote_branch.remote.name)
+
     @property
     def upstream_remote(self) -> Optional[Remote]:
         if self.upstream is None:
@@ -148,7 +155,9 @@ class ProjectRepo(ResolvedProject):
 
         branch = Branch(self.path, branch)
         branch.checkout(check=False)
-        self._pull_lfs()
+        if self.git_settings.lfs:
+            self.repo.install_lfs_hooks()
+            self.repo.pull_lfs()
 
     @project_repo_exists
     def clean(self, untracked_directories: bool = False, force: bool = False,
@@ -170,37 +179,6 @@ class ProjectRepo(ResolvedProject):
                         untracked_files=untracked_files)
         if submodules:
             raise NotImplementedError
-
-    # def create_clowder_repo(self, url: str, branch: str, depth: int = 0) -> None:
-    #     """Clone clowder git repo from url at path
-    #
-    #     :param str url: URL of repo
-    #     :param str branch: Branch name
-    #     :param int depth: Git clone depth. 0 indicates full clone, otherwise must be a positive integer
-    #     :raise ExistingFileError:
-    #     """
-    #
-    #     if self.repo.exists:
-    #         # TODO: Throw error if repo doesn't match one trying to create
-    #         return
-    #
-    #     if self.repo_path.is_dir():
-    #         try:
-    #             self.repo_path.rmdir()
-    #         except OSError:
-    #             LOG.error(f"Directory already exists at {fmt.path(self.repo_path)}")
-    #             raise
-    #
-    #     if self.repo_path.is_symlink():
-    #         fs.remove_file(self.repo_path)
-    #     else:
-    #         from clowder.environment import ENVIRONMENT
-    #         if ENVIRONMENT.existing_clowder_repo_file_error:
-    #             raise ENVIRONMENT.existing_clowder_repo_file_error
-    #
-    #     self._init_repo()
-    #     self._create_remote(self.remote, url, remove_dir=True)
-    #     self._checkout_new_repo_branch(branch, depth)
 
     @property
     def current_timestamp(self) -> str:
@@ -268,8 +246,10 @@ class ProjectRepo(ResolvedProject):
             self.default_commit.checkout()
 
         if branch is not None:
-            tracking_branch = TrackingBranch(self.path, branch,
-                                             upstream_branch=branch, upstream_remote=self.default_remote.name)
+            tracking_branch = TrackingBranch(self.path,
+                                             local_branch=branch,
+                                             upstream_branch=branch,
+                                             upstream_remote=self.default_remote.name)
             if tracking_branch.local_branch.exists:
                 tracking_branch.local_branch.checkout()
             if tracking_branch.upstream_branch.exists:
@@ -279,7 +259,9 @@ class ProjectRepo(ResolvedProject):
             if remote_tag.exists:
                 remote_tag.checkout()
 
-        self._pull_lfs()
+        if self.git_settings.lfs:
+            self.repo.install_lfs_hooks()
+            self.repo.pull_lfs()
 
         if self.upstream is not None:
             CONSOLE.stdout(Format.Git.upstream(self.upstream.name))
@@ -360,7 +342,9 @@ class ProjectRepo(ResolvedProject):
             CONSOLE.stdout(Format.Git.upstream(self.name))
             self.repo.reset()
 
-        self._pull_lfs()
+        if self.git_settings.lfs:
+            self.repo.install_lfs_hooks()
+            self.repo.pull_lfs()
 
         self.repo.default_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth, check=False)
         if self.default_branch is not None:
@@ -415,7 +399,8 @@ class ProjectRepo(ResolvedProject):
         if not tracking:
             return
 
-        tracking_branch = TrackingBranch(self.path, branch,
+        tracking_branch = TrackingBranch(self.path,
+                                         local_branch=branch,
                                          upstream_branch=branch,
                                          upstream_remote=self.default_remote.name)
         if not is_offline():
@@ -471,12 +456,3 @@ class ProjectRepo(ResolvedProject):
         """Stash changes for project if dirty"""
 
         self.repo.stash()
-
-    def _pull_lfs(self) -> None:
-        """Pull lfs files"""
-
-        if not self.git_settings.lfs:
-            return
-
-        self.repo.install_lfs_hooks()
-        self.repo.pull_lfs()

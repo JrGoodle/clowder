@@ -103,9 +103,10 @@ class ResolvedProject:
         self.default_tag: Optional[RemoteTag] = None
         self.default_commit: Optional[Commit] = None
         if default_branch is not None:
-            tracking_branch = TrackingBranch(self.path, default_branch,
-                                             upstream_branch=default_branch, upstream_remote=self.default_remote.name,
-                                             push_branch=default_branch, push_remote=self.default_remote.name)
+            tracking_branch = TrackingBranch(self.path,
+                                             local_branch=default_branch,
+                                             upstream_branch=default_branch,
+                                             upstream_remote=self.default_remote.name)
             self.default_branch: Optional[TrackingBranch] = tracking_branch
         elif default_tag is not None:
             self.default_tag: Optional[RemoteTag] = RemoteTag(self.path, default_tag, self.default_remote.name)
@@ -149,13 +150,6 @@ class ResolvedProject:
     #         return str(self.relative_path)
     #
     #     return self.name
-
-    def update_default_branch(self, branch: str) -> None:
-        """Update ref with default branch if none set"""
-
-        if self.default_branch is None and self.default_tag is None and self.default_commit is None:
-            self.default_branch = TrackingBranch(self.path, branch,
-                                                 upstream_branch=branch, upstream_remote=self.default_remote.name)
 
     @property
     def url(self) -> str:
