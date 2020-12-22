@@ -555,10 +555,10 @@ class ProjectRepo(ResolvedProject):
         if local:
             local_branch = LocalBranch(self.full_path, branch)
             if local_branch.exists:
-                local_branch.delete()
+                local_branch.delete(force=force)
 
         if remote:
-            remote_branch = RemoteBranch(branch, self.repo.default_remote)
+            remote_branch = RemoteBranch(self.full_path, branch, self.repo.default_remote.name)
             if remote_branch.exists:
                 remote_branch.delete()
 
@@ -572,7 +572,7 @@ class ProjectRepo(ResolvedProject):
         local_branch = LocalBranch(self.full_path, branch)
         if self.repo.current_branch == local_branch.name:
             self.ref.checkout()
-        local_branch.delete()
+        local_branch.delete(force=force)
 
     def prune_branch_remote(self, branch: str) -> None:
         """Prune remote branch in repository
@@ -580,7 +580,7 @@ class ProjectRepo(ResolvedProject):
         :param str branch: Branch name to delete
         """
 
-        remote_branch = RemoteBranch(branch, self.repo.default_remote)
+        remote_branch = RemoteBranch(self.full_path, branch, self.repo.default_remote.name)
         remote_branch.delete()
 
     @configure_remotes
@@ -668,26 +668,38 @@ class ProjectRepo(ResolvedProject):
         :param bool tracking: Whether to create a remote branch with tracking relationship
         """
 
-        depth = self.git_settings.depth
+        local_branch = LocalBranch(self.full_path, branch)
+        self._start_local_branch(local_branch)
+        local_branch.checkout()
 
-        if branch not in self.repo.heads:
-            if not is_offline():
-                self.fetch(remote, ref=GitRef(branch=branch), depth=depth)
-            try:
-                self._create_branch_local(branch)
-                self._checkout_branch_local(branch)
-            except BaseException as err:
-                LOG.debug('Failed to create and checkout branch', err)
-                raise
-        else:
-            CONSOLE.stdout(f' - {Format.Git.ref(branch)} already exists')
-            if self._is_branch_checked_out(branch):
+        if not tracking:
+            return
+
+        tracking_branch = TrackingBranch(self.full_path, branch,
+                                         upstream_branch=branch,
+                                         upstream_remote=self.remote,
+                                         push_branch=branch,
+                                         push_remote=self.remote)
+        if not is_offline():
+            tracking_branch.upstream_branch.remote.fetch()
+
+        if tracking_branch.upstream_branch.exists:
+            # TODO: Set tracking relationship if not present
+            raise NotImplementedError
+
+        if not is_offline():
+            tracking_branch.create_upstream()
+
+    @staticmethod
+    def _start_local_branch(local_branch: LocalBranch) -> None:
+        if local_branch.exists:
+            CONSOLE.stdout(f' - {Format.Git.ref(local_branch.name)} already exists')
+            if local_branch.is_checked_out:
                 CONSOLE.stdout(' - On correct branch')
             else:
-                self._checkout_branch_local(branch)
-
-        if tracking and not is_offline():
-            self._create_branch_remote_tracking(branch, remote, depth)
+                local_branch.checkout()
+        else:
+            local_branch.create()
 
     def status(self, padding: Optional[int] = None) -> str:
         """Return formatted status for project
