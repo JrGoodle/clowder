@@ -12,8 +12,8 @@ from pygoodle.console import CONSOLE
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config
-from clowder.data import ResolvedProject
 from clowder.environment import ENVIRONMENT
+from clowder.git import ProjectRepo
 from clowder.git.clowder_repo import ClowderRepo
 
 from .util import ProjectsArgument
@@ -48,10 +48,10 @@ class StatusCommand(Subcommand):
 
     @staticmethod
     @network_connection_required
-    def _fetch_projects(projects: Tuple[ResolvedProject, ...]) -> None:
+    def _fetch_projects(projects: Tuple[ProjectRepo, ...]) -> None:
         """fetch all projects
 
-        :param Tuple[ResolvedProject, ...] projects: Projects to fetch
+        :param Tuple[ProjectRepo, ...] projects: Projects to fetch
         """
 
         if ENVIRONMENT.clowder_repo_dir is not None:

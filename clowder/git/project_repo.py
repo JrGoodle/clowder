@@ -111,7 +111,7 @@ class ProjectRepo(ResolvedProject):
     def upstream_remote(self) -> Optional[Remote]:
         if self.upstream is None:
             return None
-        return Remote(self.full_path, self.upstream.remote)
+        return Remote(self.full_path, self.upstream.remote.name)
 
     @project_repo_exists
     def branch(self, local: bool = False, remote: bool = False) -> None:
@@ -134,10 +134,10 @@ class ProjectRepo(ResolvedProject):
                 CONSOLE.stdout(Format.Git.upstream(self.name))
 
             self.repo.print_remote_branches()
-
+            # TODO: Move this into pygoodle
             if self.upstream:
                 CONSOLE.stdout(Format.Git.upstream(self.upstream.name))
-                self.upstream.repo.print_remote_branches()
+                # self.upstream_remote.print_branches()
 
     @project_repo_exists
     def checkout(self, branch: str) -> None:
@@ -226,8 +226,8 @@ class ProjectRepo(ResolvedProject):
             self.upstream_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth)
 
     @configure_remotes
-    def herd_entrypoint(self, branch: Optional[str] = None, tag: Optional[str] = None,
-                        depth: Optional[int] = None, rebase: bool = False) -> None:
+    def herd(self, branch: Optional[str] = None, tag: Optional[str] = None,
+             depth: Optional[int] = None, rebase: bool = False) -> None:
         """Clone project or update latest from upstream
 
         :param Optional[str] branch: Branch to attempt to herd
@@ -236,12 +236,14 @@ class ProjectRepo(ResolvedProject):
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
+        depth = self.git_settings.depth if depth is None else depth
+
         CONSOLE.stdout(self.status())
         if not self.repo.exists:
             if self.full_path.exists() and fs.has_contents(self.full_path):
                 raise Exception('Non-empty directory already exists')
             fs.remove_dir(self.full_path, ignore_errors=True)
-            self.repo.clone(self.full_path, url=self.source.url, depth=self.git_settings.depth, ref=self.default_ref)
+            self.repo.clone(self.full_path, url=self.source.url, depth=depth, ref=self.default_ref)
 
         self.install_git_herd_alias()
 
@@ -257,7 +259,7 @@ class ProjectRepo(ResolvedProject):
             if self.repo.current_branch != self.default_branch.name:
                 self.default_branch.checkout()
             if self.default_branch.upstream_branch.exists:
-                self.default_branch.upstream_branch.pull()
+                self.default_branch.upstream_branch.pull(rebase=rebase)
             else:
                 self.default_branch.create_upstream()
         elif self.default_tag.is_tag is not None:
@@ -278,27 +280,12 @@ class ProjectRepo(ResolvedProject):
                 remote_tag.checkout()
 
         self._pull_lfs()
-        if self.upstream:
-            CONSOLE.stdout(Format.Git.upstream(self.upstream.name))
-            self.upstream.repo.herd_remote(self.upstream.url, self.upstream.remote, branch=branch)
 
-    # def herd_upstream(self) -> None:
-    #     """Herd upstream repo"""
-    #
-    #     if self.upstream is None:
-    #         return
-    #
-    #     self.upstream_remote.create(self.upstream.source.url)
-    #
-    #     if branch is None:
-    #         self.upstream_remote.fetch(remote, ref=self.default_ref)
-    #         return
-    #
-    #     try:
-    #         self.upstream_remote.fetch(remote, ref=GitRef(branch=branch))
-    #     except Exception as err:
-    #         LOG.debug('Failed fetch', err)
-    #         self.upstream_remote.fetch(remote, ref=self.default_ref)
+        if self.upstream is not None:
+            CONSOLE.stdout(Format.Git.upstream(self.upstream.name))
+            if not self.upstream_remote.exists:
+                self.upstream_remote.create(self.upstream.source.url)
+            self.upstream_remote.fetch(prune=True, tags=True)
 
     def install_git_herd_alias(self) -> None:
         """Install 'git herd' alias for project"""
@@ -396,7 +383,8 @@ class ProjectRepo(ResolvedProject):
         if self.upstream is None:
             self.repo.reset(depth=self.git_settings.depth)
         else:
-            CONSOLE.stdout(self.upstream.status())
+            # FIXME: Print correct status
+            # CONSOLE.stdout(self.upstream.status())
             CONSOLE.stdout(Format.Git.upstream(self.name))
             self.repo.reset()
 
@@ -513,11 +501,7 @@ class ProjectRepo(ResolvedProject):
             project_output = Format.green(project_output)
             return project_output
 
-        project_output = self.formatted_name
-        if padding:
-            project_output = project_output.ljust(padding)
-        project_output = self.colored_name(project_output)
-        return f'{project_output} {self.repo.formatted_ref}'
+        return f'{self.repo.formatted_name(padding=padding)} {self.repo.formatted_ref}'
         # FIxME: Also print upstream if it exists
         # if not existing_git_repo(self.path):
         #     return Format.green(self.path)

@@ -12,7 +12,7 @@ from pygoodle.console import CONSOLE
 
 from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
 from clowder.config import Config
-from clowder.data import ResolvedProject
+from clowder.git import ProjectRepo
 from clowder.git.clowder_repo import print_clowder_repo_status
 from clowder.util.error import CommandArgumentError
 
@@ -81,7 +81,7 @@ class PruneCommand(Subcommand):
         self._prune_projects(projects, branch, force=force, local=local, remote=remote)
 
     @staticmethod
-    def _prune_projects(projects: Tuple[ResolvedProject, ...], branch: str, force: bool = False,
+    def _prune_projects(projects: Tuple[ProjectRepo, ...], branch: str, force: bool = False,
                         local: bool = False, remote: bool = False) -> None:
         """Prune project branches
 
@@ -93,8 +93,8 @@ class PruneCommand(Subcommand):
         :raise CommandArgumentError:
         """
 
-        local_branch_exists = CLOWDER_CONTROLLER.project_has_branch(projects, branch, is_remote=False)
-        remote_branch_exists = CLOWDER_CONTROLLER.project_has_branch(projects, branch, is_remote=True)
+        local_branch_exists = CLOWDER_CONTROLLER.project_has_local_branch(projects, branch)
+        remote_branch_exists = CLOWDER_CONTROLLER.project_has_remote_branch(projects, branch)
 
         if local and remote:
             branch_exists = local_branch_exists or remote_branch_exists

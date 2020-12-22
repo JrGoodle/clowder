@@ -22,7 +22,7 @@ class YamlCommand(Subcommand):
     @valid_clowder_yaml_required
     def run(self, args) -> None:
         if args.resolved:
-            CLOWDER_CONTROLLER.validate_project_statuses(CLOWDER_CONTROLLER.projects, allow_missing_repo=False)
+            CLOWDER_CONTROLLER.validate_project_statuses(CLOWDER_CONTROLLER.projects, allow_missing=False)
             output = yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)).rstrip()
             CONSOLE.stdout(output)
         else:

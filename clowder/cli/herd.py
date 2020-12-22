@@ -48,7 +48,7 @@ class HerdCommand(Subcommand):
         branch = None if args.branch is None else args.branch[0]
         tag = None if args.tag is None else args.tag[0]
         depth = None if args.depth is None else args.depth[0]
-        protocol = None if args.protocol is None else GitProtocol(args.protocol[0])
+        protocol = None if args.protocol is None else Protocol(args.protocol[0])
         jobs = None if args.jobs is None else args.jobs[0]
         rebase = args.rebase
 

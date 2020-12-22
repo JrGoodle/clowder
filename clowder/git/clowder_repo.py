@@ -144,8 +144,7 @@ class ClowderRepo(Repo):
             CONSOLE.stdout(' - Fetch upstream changes for clowder repo')
             self.default_remote.fetch(prune=True, tags=True)
 
-        clowder_git_repo_output = self.colored_name(self.formatted_name)
-        CONSOLE.stdout(f"{clowder_git_repo_output} {self.formatted_ref}")
+        CONSOLE.stdout(f"{self.formatted_name()} {self.formatted_ref}")
         if symlink_output is not None:
             CONSOLE.stdout(symlink_output)
         CONSOLE.stdout()

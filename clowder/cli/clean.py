@@ -45,7 +45,8 @@ class CleanCommand(Subcommand):
         if args.all:
             for project in projects:
                 CONSOLE.stdout(project.status())
-                project.clean_all()
+                # FIXME: Make sure this behaves as expected
+                project.repo.groom()
             return
 
         clean_args = ''
