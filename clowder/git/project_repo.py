@@ -8,15 +8,12 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional
 
-# import pygoodle.filesystem as fs
-# import pygoodle.git as git
+import pygoodle.filesystem as fs
 from pygoodle.format import Format
 from pygoodle.git import (
     Branch,
-    Commit,
     LocalBranch,
     Protocol,
-    Ref,
     Remote,
     RemoteBranch,
     RemoteTag,
@@ -26,10 +23,9 @@ from pygoodle.git import (
 from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
 
-import clowder.util.formatting as fmt
-from clowder.log import LOG
+# import clowder.util.formatting as fmt
+# from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.util.error import UnknownTypeError
 from clowder.data import ResolvedProject
 from clowder.data.model import Defaults, Project, Section
 
@@ -109,7 +105,7 @@ class ProjectRepo(ResolvedProject):
         """
 
         super(ProjectRepo, self).__init__(project=project, defaults=defaults, section=section, protocol=protocol)
-        remote = Remote(self.full_path, self.remote)
+        remote = Remote(self.full_path, self.default_remote.name)
         self.repo: Repo = Repo(self.full_path, remote)
 
     @property
@@ -127,7 +123,7 @@ class ProjectRepo(ResolvedProject):
         """
 
         if not is_offline() and remote:
-            self.repo.default_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth, ref=self.ref)
+            self.repo.default_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth, ref=self.default_ref)
             if self.upstream_remote is not None:
                 self.upstream_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth)
 
@@ -222,12 +218,6 @@ class ProjectRepo(ResolvedProject):
 
         self.repo.status(verbose=True)
 
-    @property
-    def exists(self) -> bool:
-        """Check if project exists"""
-
-        return self.repo.exists
-
     @project_repo_exists
     def fetch_all(self) -> None:
         """Fetch upstream changes if project exists on disk"""
@@ -240,7 +230,7 @@ class ProjectRepo(ResolvedProject):
     def formatted_name(self) -> str:
         """Formatted project name"""
 
-        if not self.exists:
+        if not self.repo.exists:
             return str(self.path)
 
         if self.is_dirty:
@@ -271,244 +261,87 @@ class ProjectRepo(ResolvedProject):
         :param bool rebase: Whether to use rebase instead of pulling latest changes
         """
 
-        herd_depth = self.git_settings.depth if depth is None else depth
-
         CONSOLE.stdout(self.status())
-
-        if branch:
-            self.herd_branch(branch)
-        elif tag:
-            self.herd_tag(tag)
-        else:
-            self.herd()
-
+        self.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)
         self._pull_lfs()
-
         if self.upstream:
             CONSOLE.stdout(Format.Git.upstream(self.upstream.name))
             self.upstream.repo.herd_remote(self.upstream.url, self.upstream.remote, branch=branch)
 
-    def herd(self,  ref: Optional[Ref]) -> None:
+    def herd(self, branch: Optional[str], tag: Optional[str] = None,
+             depth: Optional[int] = None, rebase: bool = False) -> None:
         """Herd ref
 
-        :param Optional[Ref] ref: Ref to attempt to herd
+        :param Optional[str] branch: Git branch
+        :param Optional[str] tag: Git tag
+        :param Optional[int] depth: Git depth
+        :param bool rebase: Whether to pull with rebase
         """
 
-        is_initial = not self.exists
-        if is_initial:
-            self.clone(self.path, url, depth=self.depth, ref=ref)
+        if not self.repo.exists:
+            if self.full_path.exists() and fs.has_contents(self.full_path):
+                raise Exception('Non-empty directory already exists')
+            fs.remove_dir(self.full_path, ignore_errors=True)
+            self.repo.clone(self.full_path, url=self.source.url, depth=self.git_settings.depth, ref=self.default_ref)
+
         self.install_git_herd_alias()
-        if self.config is not None:
-            self.update_git_config(self.config)
-        if not is_initial:
-            if ref.ref_type == GitRefEnum.TAG:
-                self.fetch(remote, depth=depth, ref=ref)
-                self._checkout_tag(ref.short_ref)
-            elif ref.ref_type == GitRefEnum.COMMIT:
-                self.fetch(remote, depth=depth, ref=ref)
-                self._checkout_sha(ref.formatted_ref)
-            elif ref.ref_type == GitRefEnum.BRANCH:
-                branch = ref.short_ref
-                if not self.has_local_branch(branch):
-                    self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
-                    return
-                self._checkout_branch(branch)
 
-                if not self.has_remote_branch(branch, remote):
-                    return
+        if self.git_settings is not None and self.git_settings.config is not None:
+            self.repo.update_git_config(self.git_settings.config)
 
-                if not self._is_tracking_branch(branch):
-                    self._set_tracking_branch_commit(branch, remote, depth)
-                    return
+        if not self.default_remote.exists:
+            self.default_remote.create(self.source.url, fetch=True, tags=True)
 
-                if rebase:
-                    self._rebase_remote_branch(remote, branch)
-                    return
-
-                self._pull(remote, branch)
+        if self.default_branch is not None:
+            if not self.default_branch.local_branch.exists:
+                self.default_branch.local_branch.create()
+            if self.repo.current_branch != self.default_branch.name:
+                self.default_branch.checkout()
+            if self.default_branch.upstream_branch.exists:
+                self.default_branch.upstream_branch.pull()
             else:
-                raise UnknownTypeError('Unknown GitRefEnum type')
+                self.default_branch.create_upstream()
+        elif self.default_tag.is_tag is not None:
+            self.default_tag.checkout()
+        elif self.default_commit is not None:
+            self.default_commit.checkout()
 
-    def herd_branch(self, branch: str) -> None:
-        """Herd branch
+        if branch is not None:
+            tracking_branch = TrackingBranch(self.full_path, branch,
+                                             upstream_branch=branch, upstream_remote=self.default_remote.name)
+            if tracking_branch.local_branch.exists:
+                tracking_branch.local_branch.checkout()
+            if tracking_branch.upstream_branch.exists:
+                tracking_branch.upstream_branch.pull()
+        elif tag is not None:
+            remote_tag = RemoteTag(self.full_path, tag, self.default_remote.name)
+            if remote_tag.exists:
+                remote_tag.checkout()
 
-        :param str branch: Branch name
-        """
-
-        if not self.exists:
-            self._init_repo()
-            self._create_remote(self.remote, url, remove_dir=True)
-            self.fetch(self.remote, depth=depth, ref=GitRef(branch=branch))
-            if not self.has_remote_branch(branch, self.remote):
-                CONSOLE.stdout(f' - No existing remote branch {fmt.remote(self.remote)} {Format.Git.ref(branch)}')
-                self._init_repo()
-                self._create_remote(self.remote, url, remove_dir=True)
-                if self.default_ref.ref_type is GitRefEnum.BRANCH:
-                    self._checkout_new_repo_branch(self.default_ref.short_ref, depth)
-                elif self.default_ref.ref_type is GitRefEnum.TAG:
-                    self._checkout_new_repo_tag(self.default_ref.short_ref, self.remote, depth, remove_dir=True)
-                elif self.default_ref.ref_type is GitRefEnum.COMMIT:
-                    self._checkout_new_repo_commit(self.default_ref.short_ref, self.remote, depth)
-                else:
-                    raise UnknownTypeError('Unknown GitRefEnum type')
-                return
-            self._create_branch_local_tracking(branch, self.remote, depth=depth, fetch=False, remove_dir=True)
-            self.install_git_herd_alias()
-            if config is not None:
-                self.update_git_config(self.config)
-            return
-
-        if config is not None:
-            self.install_project_git_herd_alias()
-            self.update_git_config(self.config)
-
-        if self.has_local_branch(branch):
-            self._checkout_branch(branch)
-
-            branch_ref = GitRef(branch=branch)
-            self.fetch(self.remote, depth=depth, ref=branch_ref)
-            if self.has_remote_branch(branch, self.remote):
-                if not self._is_tracking_branch(branch):
-                    self._set_tracking_branch_commit(branch, remote, depth)
-                    return
-
-                if rebase:
-                    self._rebase_remote_branch(remote, branch)
-                    return
-
-                self._pull(remote, branch)
-                return
-
-            if upstream_remote:
-                self.fetch(upstream_remote, depth=depth, ref=branch_ref)
-                if self.has_remote_branch(branch, upstream_remote):
-                    if not self._is_tracking_branch(branch):
-                        self._set_tracking_branch_commit(branch, remote, depth)
-                        return
-
-                    if rebase:
-                        self._rebase_remote_branch(remote, branch)
-                        return
-
-                    self._pull(remote, branch)
-            return
-
-        branch_ref = Ref(branch=branch)
-        self.fetch(self.remote, depth=depth, ref=branch_ref, allow_failure=True)
-        if self.has_remote_branch(branch, self.remote):
-            if ref.ref_type == GitRefEnum.TAG:
-                self.fetch(remote, depth=depth, ref=ref)
-                self._checkout_tag(ref.short_ref)
-            elif ref.ref_type == GitRefEnum.COMMIT:
-                self.fetch(remote, depth=depth, ref=ref)
-                self._checkout_sha(ref.formatted_ref)
-            elif ref.ref_type == GitRefEnum.BRANCH:
-                branch = ref.short_ref
-                if not self.has_local_branch(branch):
-                    self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
-                    return
-                self._checkout_branch(branch)
-
-                if not self.has_remote_branch(branch, remote):
-                    return
-
-                if not self._is_tracking_branch(branch):
-                    self._set_tracking_branch_commit(branch, remote, depth)
-                    return
-
-                if rebase:
-                    self._rebase_remote_branch(remote, branch)
-                    return
-
-                self._pull(remote, branch)
-            else:
-                raise UnknownTypeError('Unknown GitRefEnum type')
-            return
-
-        CONSOLE.stdout(f' - No existing remote branch {fmt.remote(self.remote)} {Format.Git.ref(branch)}')
-        if upstream_remote:
-            self.fetch(upstream_remote, depth=depth, ref=branch_ref)
-            if self.has_remote_branch(branch, upstream_remote):
-                if ref.ref_type == GitRefEnum.TAG:
-                    self.fetch(remote, depth=depth, ref=ref)
-                    self._checkout_tag(ref.short_ref)
-                elif ref.ref_type == GitRefEnum.COMMIT:
-                    self.fetch(remote, depth=depth, ref=ref)
-                    self._checkout_sha(ref.formatted_ref)
-                elif ref.ref_type == GitRefEnum.BRANCH:
-                    branch = ref.short_ref
-                    if not self.has_local_branch(branch):
-                        self._create_branch_local_tracking(branch, remote, depth=depth, fetch=fetch)
-                        return
-                    self._checkout_branch(branch)
-
-                    if not self.has_remote_branch(branch, remote):
-                        return
-
-                    if not self._is_tracking_branch(branch):
-                        self._set_tracking_branch_commit(branch, remote, depth)
-                        return
-
-                    if rebase:
-                        self._rebase_remote_branch(remote, branch)
-                        return
-
-                    self._pull(remote, branch)
-                else:
-                    raise UnknownTypeError('Unknown GitRefEnum type')
-                return
-            CONSOLE.stdout(f' - No existing remote branch {fmt.remote(upstream_remote)} {Format.Git.ref(branch)}')
-
-        self.herd(url)
-
-    def herd_tag(self, tag: str) -> None:
-        """Herd tag
-
-        :param str tag: Tag name
-        """
-
-        if not self.exists:
-            self._init_repo()
-            self._create_remote(self.remote, url, remove_dir=True)
-            try:
-                self._checkout_new_repo_tag(tag, self.remote, depth)
-            except Exception as err:
-                LOG.debug('Failed checkout new repo tag', err)
-                self.herd(url, depth=depth, fetch=fetch, rebase=rebase)
-                return
-
-        self.install_project_git_herd_alias()
-        if config is not None:
-            self.update_git_config(config)
-        try:
-            self.fetch(self.remote, ref=GitRef(tag=tag), depth=depth)
-            self._checkout_tag(tag)
-        except Exception as err:
-            LOG.debug('Failed fetch and checkout tag', err)
-            self.herd(url)
-
-    def herd_upstream(self) -> None:
-        """Herd upstream repo"""
-
-        if self.upstream is None:
-            return
-
-        self.upstream_remote.create(self.upstream.source.url)
-
-        if branch is None:
-            self.upstream_remote.fetch(remote, ref=self.default_ref)
-            return
-
-        try:
-            self.upstream_remote.fetch(remote, ref=GitRef(branch=branch))
-        except Exception as err:
-            LOG.debug('Failed fetch', err)
-            self.upstream_remote.fetch(remote, ref=self.default_ref)
+    # def herd_upstream(self) -> None:
+    #     """Herd upstream repo"""
+    #
+    #     if self.upstream is None:
+    #         return
+    #
+    #     self.upstream_remote.create(self.upstream.source.url)
+    #
+    #     if branch is None:
+    #         self.upstream_remote.fetch(remote, ref=self.default_ref)
+    #         return
+    #
+    #     try:
+    #         self.upstream_remote.fetch(remote, ref=GitRef(branch=branch))
+    #     except Exception as err:
+    #         LOG.debug('Failed fetch', err)
+    #         self.upstream_remote.fetch(remote, ref=self.default_ref)
 
     def install_git_herd_alias(self) -> None:
         """Install 'git herd' alias for project"""
 
         from clowder.environment import ENVIRONMENT
+
+        # TODO: Check if already installed and exit early
 
         config = {
             'alias.herd': f'!clowder herd {self.path.relative_to(ENVIRONMENT.clowder_dir)}'
@@ -571,7 +404,7 @@ class ProjectRepo(ResolvedProject):
 
         local_branch = LocalBranch(self.full_path, branch)
         if self.repo.current_branch == local_branch.name:
-            self.ref.checkout()
+            self.default_ref.checkout()
         local_branch.delete(force=force)
 
     def prune_branch_remote(self, branch: str) -> None:
@@ -606,18 +439,18 @@ class ProjectRepo(ResolvedProject):
         self._pull_lfs()
 
         self.repo.default_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth, check=False)
-        if isinstance(self.ref, TrackingBranch):
-            tracking_branch: TrackingBranch = self.ref
-            if not tracking_branch.local_branch.exists:
-                tracking_branch.local_branch.create()
+        if self.default_branch is not None:
+            if not self.default_branch.local_branch.exists:
+                self.default_branch.local_branch.create()
                 return
-            tracking_branch.local_branch.checkout()
-            if not tracking_branch.upstream_branch.exists:
-                raise Exception(f'No existing upstream branch {Format.Git.remote(self.remote)} '
-                                f'{Format.Git.ref(tracking_branch.short_ref)}')
-            CONSOLE.stdout(f' - Reset branch {Format.Git.ref(tracking_branch.short_ref)} to '
-                           f'{Format.Git.remote(self.remote)} {Format.Git.ref(tracking_branch.short_ref)}')
-            self.repo.reset(self.ref, hard=True)
+            self.default_branch.local_branch.checkout()
+            if not self.default_branch.upstream_branch.exists:
+                raise Exception(f'No existing upstream branch {Format.Git.remote(self.default_remote.name)} '
+                                f'{Format.Git.ref(self.default_branch.short_ref)}')
+            CONSOLE.stdout(f' - Reset branch {Format.Git.ref(self.default_branch.short_ref)} to '
+                           f'{Format.Git.remote(self.default_branch.upstream_branch.remote.name)} '
+                           f'{Format.Git.ref(self.default_branch.short_ref)}')
+            self.repo.reset(self.default_ref, hard=True)
 
     def run(self, command: str, ignore_errors: bool) -> None:
         """Run commands or script in project directory
@@ -633,8 +466,8 @@ class ProjectRepo(ResolvedProject):
         forall_env = {'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
                       'PROJECT_PATH': self.full_path,
                       'PROJECT_NAME': self.name,
-                      'PROJECT_REMOTE': self.remote,
-                      'PROJECT_REF': self.ref.formatted_ref}
+                      'PROJECT_REMOTE': self.default_remote.name,
+                      'PROJECT_REF': self.default_ref.formatted_ref}
 
         # TODO: Add tests for presence of these variables in test scripts
         # if self.branch:
@@ -677,9 +510,7 @@ class ProjectRepo(ResolvedProject):
 
         tracking_branch = TrackingBranch(self.full_path, branch,
                                          upstream_branch=branch,
-                                         upstream_remote=self.remote,
-                                         push_branch=branch,
-                                         push_remote=self.remote)
+                                         upstream_remote=self.default_remote.name)
         if not is_offline():
             tracking_branch.upstream_branch.remote.fetch()
 

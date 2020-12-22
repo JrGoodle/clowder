@@ -221,4 +221,4 @@ class ClowderRepo(ProjectRepo):
         """
 
         CONSOLE.stdout(fmt.command(command))
-        run_command(command, self.repo_path)
+        cmd.run(command, self.repo_path)

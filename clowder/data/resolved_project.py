@@ -10,7 +10,7 @@ from typing import Any, Optional, Set
 
 import pygoodle.command as cmd
 from pygoodle.format import Format
-from pygoodle.git import Branch, Commit, ORIGIN, Protocol, Ref, Remote, RemoteBranch, RemoteTag, TrackingBranch
+from pygoodle.git import Commit, ORIGIN, Protocol, Ref, Remote, RemoteTag, TrackingBranch
 
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
@@ -59,10 +59,8 @@ class ResolvedProject:
         else:
             self.path: Path = self.path / Path(self.name).name
 
-        self.remote: str = self._get_property('remote', project, defaults, section, default=ORIGIN)
-        self.default_branch: Optional[str] = self._get_property('branch', project, defaults, section)
-        self.default_tag: Optional[str] = self._get_property('tag', project, defaults, section)
-        self.default_commit: Optional[str] = self._get_property('commit', project, defaults, section)
+        remote = self._get_property('remote', project, defaults, section, default=ORIGIN)
+        self.default_remote: Remote = Remote(self.full_path, remote)
         self.git_settings: ResolvedGitSettings = ResolvedGitSettings.combine_settings(project, section, defaults)
 
         source = self._get_property('source', project, defaults, section, default=GITHUB)
@@ -78,11 +76,11 @@ class ResolvedProject:
         if project.upstream is not None:
             self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.path, project.upstream,
                                                                          defaults, section, protocol)
-            if self.remote == self.upstream.remote:
+            if self.default_remote == self.upstream.remote:
                 message = f"{Format.path(ENVIRONMENT.clowder_yaml.name)} appears to be invalid\n" \
                           f"{Format.path(ENVIRONMENT.clowder_yaml)}\n" \
                           f"upstream '{self.upstream.name}' and project '{self.name}' " \
-                          f"have same remote name '{self.remote}'"
+                          f"have same remote name '{self.default_remote}'"
                 raise DuplicateRemoteError(message)
 
         self.groups: Set[str] = {'all', self.name, str(self.path)}
@@ -95,17 +93,34 @@ class ResolvedProject:
         if 'notdefault' in self.groups:
             self.groups.remove('all')
 
-        if self.default_branch is not None:
-            remote = Remote(self.full_path, self.remote)
-            remote_branch = RemoteBranch(self.remote, remote=remote)
-            self.ref: Ref = TrackingBranch(self.default_branch, upstream_branch=remote_branch)
-        elif self.default_tag is not None:
-            remote = Remote(self.full_path, self.remote)
-            self.ref: Ref = RemoteTag(self.default_tag, remote=remote)
+        default_branch: Optional[str] = self._get_property('branch', project, defaults, section)
+        default_tag: Optional[str] = self._get_property('tag', project, defaults, section)
+        default_commit: Optional[str] = self._get_property('commit', project, defaults, section)
+        self.default_branch: Optional[TrackingBranch] = None
+        self.default_tag: Optional[RemoteTag] = None
+        self.default_commit: Optional[Commit] = None
+        if default_branch is not None:
+            tracking_branch = TrackingBranch(self.full_path, default_branch,
+                                             upstream_branch=default_branch, upstream_remote=self.default_remote.name,
+                                             push_branch=default_branch, push_remote=self.default_remote.name)
+            self.default_branch: Optional[TrackingBranch] = tracking_branch
+        elif default_tag is not None:
+            self.default_tag: Optional[RemoteTag] = RemoteTag(self.full_path, default_tag, self.default_remote.name)
         elif self.default_commit is not None:
-            self.ref: Ref = Commit(self.full_path, self.default_commit)
+            self.default_commit: Optional[Commit] = Commit(self.full_path, default_commit)
         else:
             raise Exception('Failed to create default Ref')
+
+    @property
+    def default_ref(self) -> Ref:
+        if self.default_branch is not None:
+            return self.default_branch
+        elif self.default_tag is not None:
+            return self.default_tag
+        elif self.default_commit is not None:
+            return self.default_commit
+        else:
+            Exception('Failed to return default ref')
 
     @property
     def full_path(self) -> Path:
@@ -133,8 +148,10 @@ class ResolvedProject:
     def update_default_branch(self, branch: str) -> None:
         """Update ref with default branch if none set"""
 
-        if self.ref is None:
-            self.ref = Branch(self.full_path, branch)
+        if self.default_branch is None and self.default_tag is None and self.default_commit is None:
+            self.default_branch = TrackingBranch(self.full_path, branch,
+                                                 upstream_branch=branch, upstream_remote=self.default_remote.name,
+                                                 push_branch=branch, push_remote=self.default_remote.name)
 
     @property
     def url(self) -> str:
