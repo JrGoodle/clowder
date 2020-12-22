@@ -10,7 +10,7 @@ from typing import Any, Optional, Set
 
 import pygoodle.command as cmd
 from pygoodle.format import Format
-from pygoodle.git import Branch, Commit, Protocol, Ref, RemoteTag, TrackingBranch
+from pygoodle.git import Branch, Commit, ORIGIN, Protocol, Ref, Remote, RemoteBranch, RemoteTag, TrackingBranch
 
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
@@ -52,19 +52,17 @@ class ResolvedProject:
         has_path = project.path is not None
         has_section = section is not None
         has_group_path = has_section and section.path is not None
+        # TODO: Rename to relative_path and set self.path to full_path
         self.path: Path = section.path if has_group_path else Path()
         if has_path:
             self.path: Path = self.path / project.path
         else:
             self.path: Path = self.path / Path(self.name).name
 
-        self.remote: str = self._get_property('remote', project, defaults, section, default='origin')
+        self.remote: str = self._get_property('remote', project, defaults, section, default=ORIGIN)
         self.default_branch: Optional[str] = self._get_property('branch', project, defaults, section)
         self.default_tag: Optional[str] = self._get_property('tag', project, defaults, section)
         self.default_commit: Optional[str] = self._get_property('commit', project, defaults, section)
-        self.ref: Optional[Ref] = None
-        if self.default_branch is not None:
-            self.ref = TrackingBranch(self.full_path, )
         self.git_settings: ResolvedGitSettings = ResolvedGitSettings.combine_settings(project, section, defaults)
 
         source = self._get_property('source', project, defaults, section, default=GITHUB)
@@ -96,6 +94,18 @@ class ResolvedProject:
             self.groups.update(set(project.groups))
         if 'notdefault' in self.groups:
             self.groups.remove('all')
+
+        if self.default_branch is not None:
+            remote = Remote(self.full_path, self.remote)
+            remote_branch = RemoteBranch(self.remote, remote=remote)
+            self.ref: Ref = TrackingBranch(self.default_branch, upstream_branch=remote_branch)
+        elif self.default_tag is not None:
+            remote = Remote(self.full_path, self.remote)
+            self.ref: Ref = RemoteTag(self.default_tag, remote=remote)
+        elif self.default_commit is not None:
+            self.ref: Ref = Commit(self.full_path, self.default_commit)
+        else:
+            raise Exception('Failed to create default Ref')
 
     @property
     def full_path(self) -> Path:
