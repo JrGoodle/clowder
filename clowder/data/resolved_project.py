@@ -6,7 +6,7 @@
 
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import Any, Optional, Set
+from typing import Optional, Set, TypeVar
 
 import pygoodle.command as cmd
 from pygoodle.format import Format
@@ -20,6 +20,8 @@ from .resolved_git_settings import ResolvedGitSettings
 from .resolved_upstream import ResolvedUpstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
 from .model import Defaults, Project, Source, Section
+
+T = TypeVar('T')
 
 
 class ResolvedProject:
@@ -52,15 +54,16 @@ class ResolvedProject:
         has_path = project.path is not None
         has_section = section is not None
         has_group_path = has_section and section.path is not None
-        # TODO: Rename to relative_path and set self.path to full_path
-        self.path: Path = section.path if has_group_path else Path()
+        # TODO: Rename to relative_path and set self.relative_path to full_path
+        self.relative_path: Path = section.path if has_group_path else Path()
         if has_path:
-            self.path: Path = self.path / project.path
+            self.relative_path: Path = self.relative_path / project.path
         else:
-            self.path: Path = self.path / Path(self.name).name
+            self.relative_path: Path = self.relative_path / Path(self.name).name
+        self.path: Path = ENVIRONMENT.clowder_dir / self.relative_path
 
         remote = self._get_property('remote', project, defaults, section, default=ORIGIN)
-        self.default_remote: Remote = Remote(self.full_path, remote)
+        self.default_remote: Remote = Remote(self.path, remote)
         self.git_settings: ResolvedGitSettings = ResolvedGitSettings.combine_settings(project, section, defaults)
 
         source = self._get_property('source', project, defaults, section, default=GITHUB)
@@ -74,7 +77,7 @@ class ResolvedProject:
 
         self.upstream: Optional[ResolvedUpstream] = None
         if project.upstream is not None:
-            self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.path, project.upstream,
+            self.upstream: Optional[ResolvedUpstream] = ResolvedUpstream(self.relative_path, project.upstream,
                                                                          defaults, section, protocol)
             if self.default_remote == self.upstream.remote:
                 message = f"{Format.path(ENVIRONMENT.clowder_yaml.name)} appears to be invalid\n" \
@@ -83,7 +86,7 @@ class ResolvedProject:
                           f"have same remote name '{self.default_remote}'"
                 raise DuplicateRemoteError(message)
 
-        self.groups: Set[str] = {'all', self.name, str(self.path)}
+        self.groups: Set[str] = {'all', self.name, str(self.relative_path)}
         if has_section:
             self.groups.add(section.name)
             if section.groups is not None:
@@ -100,16 +103,24 @@ class ResolvedProject:
         self.default_tag: Optional[RemoteTag] = None
         self.default_commit: Optional[Commit] = None
         if default_branch is not None:
-            tracking_branch = TrackingBranch(self.full_path, default_branch,
+            tracking_branch = TrackingBranch(self.path, default_branch,
                                              upstream_branch=default_branch, upstream_remote=self.default_remote.name,
                                              push_branch=default_branch, push_remote=self.default_remote.name)
             self.default_branch: Optional[TrackingBranch] = tracking_branch
         elif default_tag is not None:
-            self.default_tag: Optional[RemoteTag] = RemoteTag(self.full_path, default_tag, self.default_remote.name)
+            self.default_tag: Optional[RemoteTag] = RemoteTag(self.path, default_tag, self.default_remote.name)
         elif self.default_commit is not None:
-            self.default_commit: Optional[Commit] = Commit(self.full_path, default_commit)
+            self.default_commit: Optional[Commit] = Commit(self.path, default_commit)
         else:
             raise Exception('Failed to create default Ref')
+
+    def __lt__(self, other: 'ResolvedProject') -> bool:
+        return self.name.lower() < self.name.lower()
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, ResolvedProject):
+            return False
+        return self.name == other.name and self.path == other.path
 
     @property
     def default_ref(self) -> Ref:
@@ -122,11 +133,11 @@ class ResolvedProject:
         else:
             Exception('Failed to return default ref')
 
-    @property
-    def full_path(self) -> Path:
-        """Full path to project"""
-
-        return ENVIRONMENT.clowder_dir / self.path
+    # @property
+    # def full_path(self) -> Path:
+    #     """Full path to project"""
+    #
+    #     return ENVIRONMENT.clowder_dir / self.relative_path
 
     # def formatted_project_output(self) -> str:
     #     """Return formatted project path/name
@@ -134,22 +145,16 @@ class ResolvedProject:
     #     :return: Formatted string of full file path if cloned, otherwise project name
     #     """
     #
-    #     if existing_git_repo(self.full_path):
-    #         return str(self.path)
+    #     if existing_git_repo(self.path):
+    #         return str(self.relative_path)
     #
     #     return self.name
-
-    # def print_existence_message(self) -> None:
-    #     """Print existence validation message for project"""
-    #
-    #     if not existing_git_repo(self.full_path):
-    #         CONSOLE.stdout(self.status())
 
     def update_default_branch(self, branch: str) -> None:
         """Update ref with default branch if none set"""
 
         if self.default_branch is None and self.default_tag is None and self.default_commit is None:
-            self.default_branch = TrackingBranch(self.full_path, branch,
+            self.default_branch = TrackingBranch(self.path, branch,
                                                  upstream_branch=branch, upstream_remote=self.default_remote.name)
 
     @property
@@ -176,7 +181,7 @@ class ResolvedProject:
         """
 
         try:
-            cmd.run(command, self.full_path, env=env, print_command=True)
+            cmd.run(command, self.path, env=env, print_command=True)
         except CalledProcessError as err:
             if check:
                 LOG.error(f'Command failed: {command}')
@@ -185,7 +190,7 @@ class ResolvedProject:
 
     @staticmethod
     def _get_property(name: str, project: Project, defaults: Optional[Defaults], section: Optional[Section],
-                      default: Optional[Any] = None) -> Optional[Any]:
+                      default: Optional[T] = None) -> Optional[T]:
         project_value = getattr(project, name)
         has_defaults = defaults is not None
         defaults_value = getattr(defaults, name) if has_defaults else None

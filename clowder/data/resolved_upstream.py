@@ -5,7 +5,7 @@
 """
 
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional, TypeVar
 
 from pygoodle.git import Protocol, Remote
 
@@ -13,6 +13,8 @@ from clowder.environment import ENVIRONMENT
 
 from .model import Defaults, Section, Source, Upstream
 from .source_controller import SOURCE_CONTROLLER, GITHUB
+
+T = TypeVar('T')
 
 
 class ResolvedUpstream:
@@ -30,17 +32,18 @@ class ResolvedUpstream:
                  section: Optional[Section], protocol: Optional[Protocol]):
         """Upstream __init__
 
-        :param Path path: Parent project path
+        :param Path path: Parent project relative path
         :param Upstream upstream: Upstream model instance
         :param Optional[Defaults] defaults: Defaults model instance
         :param Optional[Section] section: Section model instance
         :param Optional[Protocol] protocol: Git protocol
         """
 
-        self.path: Path = path
+        self.relative_path: Path = path
+        self.path: Path = ENVIRONMENT.clowder_dir / self.relative_path
         self.name: str = upstream.name
         remote = self._get_property('remote', upstream, defaults, section, default='upstream')
-        self.remote: Remote = Remote(self.full_path, remote)
+        self.remote: Remote = Remote(self.path, remote)
 
         source = self._get_property('source', upstream, defaults, section, default=GITHUB)
         self.source: Source = SOURCE_CONTROLLER.get_source(source)
@@ -51,11 +54,13 @@ class ResolvedUpstream:
         elif protocol is not None:
             self.default_protocol: Optional[Protocol] = protocol
 
-    @property
-    def full_path(self) -> Path:
-        """Full path to project"""
+    def __lt__(self, other: 'ResolvedUpstream') -> bool:
+        return self.name.lower() < self.name.lower()
 
-        return ENVIRONMENT.clowder_dir / self.path
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, ResolvedUpstream):
+            return False
+        return self.name == other.name and self.path == other.path
 
     @property
     def url(self) -> str:
@@ -74,7 +79,7 @@ class ResolvedUpstream:
 
     @staticmethod
     def _get_property(name: str, upstream: Upstream, defaults: Optional[Defaults], section: Optional[Section],
-                      default: Optional[Any] = None) -> Optional[Any]:
+                      default: Optional[T] = None) -> Optional[T]:
         upstream_value = getattr(upstream, name)
         has_defaults = defaults is not None
         has_upstream_defaults = has_defaults and defaults.upstream_defaults is not None

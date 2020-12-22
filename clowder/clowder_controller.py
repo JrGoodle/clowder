@@ -7,11 +7,12 @@
 import pkg_resources
 from functools import wraps
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Iterable, Optional, Tuple
 
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
 # from pygoodle.tasks import Task, TaskPool
+from pygoodle.util import sorted_tuple
 from pygoodle.yaml import load_yaml_file, validate_yaml_file, MissingYamlError
 
 import clowder.util.formatting as fmt
@@ -127,7 +128,7 @@ class ClowderController:
                 resolved_projects = [ProjectRepo(p, defaults=defaults, section=s, protocol=self._clowder.protocol)
                                      for s in sections for p in s.projects]
 
-            self.projects = tuple(sorted(resolved_projects, key=lambda p: p.name))
+            self.projects = sorted_tuple(resolved_projects)
             self._update_properties()
             self._populate_default_branches()
         except Exception as err:
@@ -136,19 +137,19 @@ class ClowderController:
             self._initialize_properties()
 
     @staticmethod
-    def filter_projects(projects: Tuple[ProjectRepo, ...],
-                        project_names: Tuple[str, ...]) -> Tuple[ProjectRepo, ...]:
+    def filter_projects(projects: Iterable[ProjectRepo],
+                        project_names: Iterable[str]) -> Tuple[ProjectRepo, ...]:
         """Filter projects based on given project or group names
 
-        :param Tuple[ProjectRepo, ...] projects: Projects to filter
-        :param Tuple[str, ...] project_names: Project names to match against
+        :param Iterable[ProjectRepo] projects: Projects to filter
+        :param Iterable[str] project_names: Project names to match against
         :return: Projects in groups matching given names
         """
 
         filtered_projects = []
         for name in project_names:
             filtered_projects += [p for p in projects if name in p.groups]
-        return tuple(sorted(set(filtered_projects), key=lambda project: project.name))
+        return sorted_tuple(filtered_projects, unique=True)
 
     def get_all_upstream_project_names(self) -> Tuple[str, ...]:
         """Returns all project names containing upstreams
@@ -156,17 +157,17 @@ class ClowderController:
         :return: All project names containing upstreams
         """
 
-        return tuple(sorted([p.name for p in self.projects if p.upstream is not None]))
+        return sorted_tuple([p.name for p in self.projects if p.upstream is not None])
 
     @staticmethod
-    def get_projects_output(projects: Tuple[ProjectRepo, ...]) -> Tuple[str, ...]:
+    def get_projects_output(projects: Iterable[ProjectRepo]) -> Tuple[str, ...]:
         """Returns all project paths/names output for specified projects
 
-        :param Tuple[ProjectRepo, ...] projects: Projects to get paths/names output of
+        :param Iterable[ProjectRepo] projects: Projects to get paths/names output of
         :return: All project paths
         """
 
-        return tuple(sorted([p.repo.formatted_name for p in projects]))
+        return sorted_tuple([p.repo.formatted_name() for p in projects])
 
     def get_timestamp(self, timestamp_project: str) -> str:
         """Return timestamp for project
@@ -195,7 +196,7 @@ class ClowderController:
 
         for project in self.projects:
             if project_id == id(project):
-                return project.sha(short=short)
+                return project.repo.current_commit(short=short).short_ref
 
         raise ProjectNotFoundError(f"Project with id {project_id} not found")
 
@@ -209,10 +210,10 @@ class ClowderController:
         return self._clowder.get_yaml(resolved=resolved)
 
     @staticmethod
-    def project_has_local_branch(projects: Tuple[ProjectRepo, ...], branch: str) -> bool:
+    def project_has_local_branch(projects: Iterable[ProjectRepo], branch: str) -> bool:
         """Checks if given branch exists in any project
 
-        :param Tuple[ProjectRepo, ...] projects: Projects to check
+        :param Iterable[ProjectRepo] projects: Projects to check
         :param str branch: Branch to check for
         :return: True, if at least one branch exists
         """
@@ -220,10 +221,10 @@ class ClowderController:
         return any([p.repo.has_local_branch(branch) for p in projects])
 
     @staticmethod
-    def project_has_remote_branch(projects: Tuple[ProjectRepo, ...], branch: str) -> bool:
+    def project_has_remote_branch(projects: Iterable[ProjectRepo], branch: str) -> bool:
         """Checks if given branch exists in any project
 
-        :param Tuple[ProjectRepo, ...] projects: Projects to check
+        :param Iterable[ProjectRepo] projects: Projects to check
         :param str branch: Branch to check for
         :return: True, if at least one branch exists
         """
@@ -231,28 +232,19 @@ class ClowderController:
         return any([p.repo.has_remote_branch(branch, p.default_remote.name) for p in projects])
 
     @staticmethod
-    def validate_project_statuses(projects: Tuple[ProjectRepo, ...], allow_missing: bool = True) -> None:
-        """Validate status of all projects
+    def validate_projects_state(projects: Iterable[ProjectRepo], allow_missing: bool = True) -> None:
+        """Validate state of all projects
 
-        :param Tuple[ProjectRepo, ...] projects: Projects to validate
+        :param Iterable[ProjectRepo] projects: Projects to validate
         :param bool allow_missing: Whether to allow validation to succeed with missing repo
         :raise ProjectStatusError:
         """
 
         for p in projects:
-            p.print_validation(allow_missing=allow_missing)
-        if not all([p.is_valid(allow_missing=allow_missing) for p in projects]):
+            p.repo.print_validation(allow_missing=allow_missing)
+        if not all([p.repo.is_valid(allow_missing=allow_missing) for p in projects]):
             CONSOLE.stdout()
             raise ProjectStatusError("Invalid project state")
-
-    @staticmethod
-    def validate_print_output(projects: Tuple[ProjectRepo, ...]) -> None:
-        """Validate projects/groups and print output
-
-        :param Tuple[ProjectRepo, ...] projects: Projects to validate/print
-        """
-
-        CLOWDER_CONTROLLER.validate_project_statuses(projects)
 
     def validate_projects_exist(self) -> None:
         """Validate all projects exist on disk
@@ -262,78 +254,13 @@ class ClowderController:
 
         projects_exist = True
         for project in self.projects:
-            # FIXME: Print correct message
-            # project.print_existence_message()
             if not project.repo.exists:
+                # TODO: Make sure this prints correct output
+                CONSOLE.stdout(project.status())
                 projects_exist = False
 
         if not projects_exist:
             raise ProjectStatusError(f"First run {Format.bold('clowder herd')} to clone missing projects")
-
-    def _get_upstream_names(self) -> Tuple[str, ...]:
-        """Returns all upstream names for current clowder yaml file
-
-        :return: All upstream names
-        """
-
-        upstream_names = [str(p.upstream.name) for p in self.projects if p.upstream is not None]
-        return tuple(sorted(set(upstream_names)))
-
-    @staticmethod
-    def _get_project_upstream_names(project_names, upstream_names) -> Tuple[str, ...]:
-        """Returns all project names for current clowder yaml file
-
-        :return: All project and upstream names
-        """
-
-        return tuple(sorted(set(project_names + upstream_names)))
-
-    def _get_project_names(self) -> Tuple[str, ...]:
-        """Returns all project names for current clowder yaml file
-
-        :return: All project names
-        """
-
-        project_names = [str(p.name) for p in self.projects]
-        return tuple(sorted(set(project_names)))
-
-    def _get_project_paths(self) -> Tuple[str, ...]:
-        """Returns all project paths for current clowder yaml file
-
-        :return: All project paths
-        """
-
-        paths = [str(p.path) for p in self.projects]
-        return tuple(sorted(set(paths)))
-
-    def _get_project_groups(self, project_upstream_names, project_paths) -> Tuple[str, ...]:
-        """Returns all project group names for current clowder yaml file
-
-        :return: All project paths
-        """
-
-        groups = [g for p in self.projects for g in p.groups]
-        groups = [g for g in groups if g not in project_upstream_names and g not in project_paths]
-        return tuple(sorted(set(groups)))
-
-    def _get_project_choices(self) -> Tuple[str, ...]:
-        """Returns all project choices current clowder yaml file
-
-        :return: All project paths
-        """
-
-        names = [g for p in self.projects for g in p.groups]
-        return tuple(sorted(set(names)))
-
-    def _get_project_choices_with_default(self) -> Tuple[str, ...]:
-        """Returns all project choices current clowder yaml file
-
-        :return: All project paths
-        """
-
-        names = [g for p in self.projects for g in p.groups]
-        names.append('default')
-        return tuple(sorted(set(names)))
 
     def _initialize_properties(self) -> None:
         """Initialize all properties"""
@@ -354,7 +281,7 @@ class ClowderController:
         :raise DuplicatePathError:
         """
 
-        paths = [str(p.path.resolve()) for p in self.projects]
+        paths = [str(p.relative_path.resolve()) for p in self.projects]
         duplicate = fmt.check_for_duplicates(paths)
         if duplicate is not None:
             self._initialize_properties()
@@ -368,15 +295,25 @@ class ClowderController:
 
         self.name: Optional[str] = self._clowder.name
 
-        self.project_names: Tuple[str, ...] = self._get_project_names()
-        self.upstream_names: Tuple[str, ...] = self._get_upstream_names()
-        self.project_upstream_names: Tuple[str, ...] = self._get_project_upstream_names(self.project_names,
-                                                                                        self.upstream_names)
-        self.project_paths: Tuple[str, ...] = self._get_project_paths()
-        self.project_groups: Tuple[str, ...] = self._get_project_groups(self.project_upstream_names,
-                                                                        self.project_paths)
-        self.project_choices: Tuple[str, ...] = self._get_project_choices()
-        self.project_choices_with_default: Tuple[str, ...] = self._get_project_choices_with_default()
+        project_names = [str(p.name) for p in self.projects]
+        self.project_names: Tuple[str, ...] = sorted_tuple(project_names, unique=True)
+
+        upstream_names = [str(p.upstream.name) for p in self.projects if p.upstream is not None]
+        self.upstream_names: Tuple[str, ...] = sorted_tuple(upstream_names, unique=True)
+
+        self.project_upstream_names: Tuple[str, ...] = sorted_tuple(project_names + upstream_names, unique=True)
+
+        paths = [str(p.relative_path) for p in self.projects]
+        self.project_paths: Tuple[str, ...] = sorted_tuple(paths, unique=True)
+
+        groups = [g for p in self.projects for g in p.groups]
+        groups = [g for g in groups if g not in self.project_upstream_names and g not in self.project_paths]
+        self.project_groups: Tuple[str, ...] = sorted_tuple(groups, unique=True)
+
+        choices = [g for p in self.projects for g in p.groups]
+        self.project_choices: Tuple[str, ...] = sorted_tuple(choices, unique=True)
+        choices.append('default')
+        self.project_choices_with_default: Tuple[str, ...] = sorted_tuple(choices, unique=True)
 
         # Now that all the data is loaded, check that no projects share paths
         self._validate_project_paths()

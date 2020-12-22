@@ -51,7 +51,7 @@ class StartCommand(Subcommand):
         projects = Config().process_projects_arg(args.projects)
         projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-        CLOWDER_CONTROLLER.validate_project_statuses(projects)
+        CLOWDER_CONTROLLER.validate_projects_state(projects)
         for project in projects:
             CONSOLE.stdout(project.status())
             project.start(args.branch[0], tracking)

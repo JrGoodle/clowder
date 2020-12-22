@@ -59,6 +59,6 @@ class ResetCommand(Subcommand):
             parallel.reset(projects, jobs, timestamp_project)
             return
 
-        CLOWDER_CONTROLLER.validate_project_statuses(projects)
+        CLOWDER_CONTROLLER.validate_projects_state(projects)
         for project in projects:
             project.reset(timestamp=timestamp)

@@ -29,7 +29,7 @@ class ResolvedGitSettings:
         self.submodules: bool = False
         self.recursive: bool = False
         self.lfs: bool = False
-        self.depth: int = 0
+        self.depth: Optional[int] = None
         self.config: Optional[GitConfig] = None
 
     @classmethod

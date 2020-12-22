@@ -77,7 +77,7 @@ class PruneCommand(Subcommand):
         projects = Config().process_projects_arg(project_names)
         projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-        CLOWDER_CONTROLLER.validate_project_statuses(projects)
+        CLOWDER_CONTROLLER.validate_projects_state(projects)
         self._prune_projects(projects, branch, force=force, local=local, remote=remote)
 
     @staticmethod

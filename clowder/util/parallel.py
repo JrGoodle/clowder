@@ -57,7 +57,7 @@ def herd(projects: Tuple[ResolvedProject, ...], jobs: int, branch: Optional[str]
     """
 
     CONSOLE.stdout(' - Herd projects in parallel\n')
-    CLOWDER_CONTROLLER.validate_print_output(projects)
+    CLOWDER_CONTROLLER.validate_projects_state(projects)
 
     tasks = [ForallTask(p, 'herd', branch=branch, tag=tag, depth=depth, rebase=rebase) for p in projects]
     pool = ProgressTaskPool(jobs=jobs, title='Projects')
@@ -73,7 +73,7 @@ def reset(projects: Tuple[ResolvedProject, ...], jobs: int, timestamp_project: O
     """
 
     CONSOLE.stdout(' - Reset projects in parallel\n')
-    CLOWDER_CONTROLLER.validate_print_output(projects)
+    CLOWDER_CONTROLLER.validate_projects_state(projects)
 
     timestamp = None
     if timestamp_project:

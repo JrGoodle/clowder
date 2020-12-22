@@ -73,6 +73,6 @@ class HerdCommand(Subcommand):
             parallel.herd(projects, jobs, branch, tag, depth, rebase)
             return
 
-        CLOWDER_CONTROLLER.validate_project_statuses(projects)
+        CLOWDER_CONTROLLER.validate_projects_state(projects)
         for project in projects:
             project.herd(branch=branch, tag=tag, depth=depth, rebase=rebase)

@@ -105,13 +105,13 @@ class ProjectRepo(ResolvedProject):
         """
 
         super(ProjectRepo, self).__init__(project=project, defaults=defaults, section=section, protocol=protocol)
-        self.repo: Repo = Repo(self.full_path, self.default_remote.name)
+        self.repo: Repo = Repo(self.path, self.default_remote.name)
 
     @property
     def upstream_remote(self) -> Optional[Remote]:
         if self.upstream is None:
             return None
-        return Remote(self.full_path, self.upstream.remote.name)
+        return Remote(self.path, self.upstream.remote.name)
 
     @project_repo_exists
     def branch(self, local: bool = False, remote: bool = False) -> None:
@@ -146,7 +146,7 @@ class ProjectRepo(ResolvedProject):
         :param str branch: Branch to check out
         """
 
-        branch = Branch(self.full_path, branch)
+        branch = Branch(self.path, branch)
         branch.checkout(check=False)
         self._pull_lfs()
 
@@ -240,10 +240,10 @@ class ProjectRepo(ResolvedProject):
 
         CONSOLE.stdout(self.status())
         if not self.repo.exists:
-            if self.full_path.exists() and fs.has_contents(self.full_path):
+            if self.path.exists() and fs.has_contents(self.path):
                 raise Exception('Non-empty directory already exists')
-            fs.remove_dir(self.full_path, ignore_errors=True)
-            self.repo.clone(self.full_path, url=self.source.url, depth=depth, ref=self.default_ref)
+            fs.remove_dir(self.path, ignore_errors=True)
+            self.repo.clone(self.path, url=self.source.url, depth=depth, ref=self.default_ref)
 
         self.install_git_herd_alias()
 
@@ -268,14 +268,14 @@ class ProjectRepo(ResolvedProject):
             self.default_commit.checkout()
 
         if branch is not None:
-            tracking_branch = TrackingBranch(self.full_path, branch,
+            tracking_branch = TrackingBranch(self.path, branch,
                                              upstream_branch=branch, upstream_remote=self.default_remote.name)
             if tracking_branch.local_branch.exists:
                 tracking_branch.local_branch.checkout()
             if tracking_branch.upstream_branch.exists:
                 tracking_branch.upstream_branch.pull()
         elif tag is not None:
-            remote_tag = RemoteTag(self.full_path, tag, self.default_remote.name)
+            remote_tag = RemoteTag(self.path, tag, self.default_remote.name)
             if remote_tag.exists:
                 remote_tag.checkout()
 
@@ -290,12 +290,9 @@ class ProjectRepo(ResolvedProject):
     def install_git_herd_alias(self) -> None:
         """Install 'git herd' alias for project"""
 
-        from clowder.environment import ENVIRONMENT
-
         # TODO: Check if already installed and exit early
-
         config = {
-            'alias.herd': f'!clowder herd {self.path.relative_to(ENVIRONMENT.clowder_dir)}'
+            'alias.herd': f'!clowder herd {self.relative_path}'
         }
         CONSOLE.stdout(" - Update git herd alias")
         self.repo.update_git_config(config)
@@ -312,12 +309,12 @@ class ProjectRepo(ResolvedProject):
         """
 
         if local:
-            local_branch = LocalBranch(self.full_path, branch)
+            local_branch = LocalBranch(self.path, branch)
             if local_branch.exists:
                 local_branch.delete(force=force)
 
         if remote:
-            remote_branch = RemoteBranch(self.full_path, branch, self.repo.default_remote.name)
+            remote_branch = RemoteBranch(self.path, branch, self.repo.default_remote.name)
             if remote_branch.exists:
                 remote_branch.delete()
 
@@ -328,7 +325,7 @@ class ProjectRepo(ResolvedProject):
         :param bool force: Force delete branch
         """
 
-        local_branch = LocalBranch(self.full_path, branch)
+        local_branch = LocalBranch(self.path, branch)
         if self.repo.current_branch == local_branch.name:
             self.default_ref.checkout()
         local_branch.delete(force=force)
@@ -339,7 +336,7 @@ class ProjectRepo(ResolvedProject):
         :param str branch: Branch name to delete
         """
 
-        remote_branch = RemoteBranch(self.full_path, branch, self.repo.default_remote.name)
+        remote_branch = RemoteBranch(self.path, branch, self.repo.default_remote.name)
         remote_branch.delete()
 
     @configure_remotes
@@ -392,7 +389,7 @@ class ProjectRepo(ResolvedProject):
 
         forall_env = {
             'CLOWDER_PATH': ENVIRONMENT.clowder_dir,
-            'PROJECT_PATH': self.full_path,
+            'PROJECT_PATH': self.path,
             'PROJECT_NAME': self.name,
             'PROJECT_REMOTE': self.default_remote.name,
             'PROJECT_REF': self.default_ref.formatted_ref
@@ -412,13 +409,13 @@ class ProjectRepo(ResolvedProject):
         :param bool tracking: Whether to create a remote branch with tracking relationship
         """
 
-        local_branch = LocalBranch(self.full_path, branch)
+        local_branch = LocalBranch(self.path, branch)
         self._start_local_branch(local_branch)
 
         if not tracking:
             return
 
-        tracking_branch = TrackingBranch(self.full_path, branch,
+        tracking_branch = TrackingBranch(self.path, branch,
                                          upstream_branch=branch,
                                          upstream_remote=self.default_remote.name)
         if not is_offline():
@@ -465,7 +462,7 @@ class ProjectRepo(ResolvedProject):
         # if not existing_git_repo(self.path):
         #     return Format.green(self.path)
         #
-        # repo = ProjectRepo(self.full_path, self.remote, self.ref)
+        # repo = ProjectRepo(self.path, self.remote, self.ref)
         # project_output = repo.format_project_string(self.path)
         # return f"{project_output} {repo.formatted_ref}"
 
