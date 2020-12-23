@@ -4,12 +4,13 @@
 
 """
 
+import pkg_resources
 from functools import wraps
 from pathlib import Path
 from typing import Optional
 
 from pygoodle.format import Format
-from pygoodle.git import offline
+from pygoodle.git.offline import GitOffline
 
 from clowder.util.error import (
     AmbiguousYamlError,
@@ -92,6 +93,7 @@ class ClowderEnvironment:
     def __init__(self):
         """ClowderEnvironment __init__"""
 
+        self.clowder_schema: str = pkg_resources.resource_string(__name__, 'clowder.schema.json')
         self._configure_directories()
         self._configure_clowder_yaml()
 
@@ -144,7 +146,7 @@ class ClowderEnvironment:
             clowder_yml_exists = clowder_yml.is_file() or clowder_yml.is_symlink()
             clowder_yaml_exists = clowder_yaml.is_file() or clowder_yaml.is_symlink()
             clowder_repo_file_exists = clowder_repo_dir.is_symlink() or clowder_repo_dir.is_file()
-            if offline.is_repo_cloned(clowder_repo_dir):
+            if GitOffline.is_repo_cloned(clowder_repo_dir):
                 self.clowder_dir: Optional[Path] = path
                 self.clowder_repo_dir: Optional[Path] = clowder_repo_dir.resolve()
                 self.clowder_git_repo_dir: Optional[Path] = clowder_repo_dir
