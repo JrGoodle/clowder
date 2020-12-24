@@ -44,8 +44,8 @@ class StatusCommand(Subcommand):
             if ENVIRONMENT.clowder_repo_dir is not None:
                 ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
 
-        projects_output = CLOWDER_CONTROLLER.get_projects_output(projects)
-        padding = len(max(projects_output, key=len))
+        project_names = CLOWDER_CONTROLLER.get_formatted_project_names(projects)
+        padding = len(max(project_names, key=len))
 
         for project in projects:
             CONSOLE.stdout(project.status(padding=padding))

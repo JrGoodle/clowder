@@ -114,7 +114,7 @@ class ResolvedProject:
             self.default_commit: Optional[Commit] = Commit(self.path, default_commit)
 
     def __lt__(self, other: 'ResolvedProject') -> bool:
-        return self.name.lower() < self.name.lower()
+        return self.name.lower() < other.name.lower()
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, ResolvedProject):
@@ -134,12 +134,6 @@ class ResolvedProject:
             return self.default_commit
         else:
             Exception('Failed to return default ref')
-
-    # @property
-    # def full_path(self) -> Path:
-    #     """Full path to project"""
-    #
-    #     return ENVIRONMENT.clowder_dir / self.relative_path
 
     # def formatted_project_output(self) -> str:
     #     """Return formatted project path/name

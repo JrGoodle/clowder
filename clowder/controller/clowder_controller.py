@@ -159,14 +159,17 @@ class ClowderController:
         return sorted_tuple([p.name for p in self.projects if p.upstream is not None])
 
     @staticmethod
-    def get_projects_output(projects: Iterable[ProjectRepo]) -> Tuple[str, ...]:
+    def get_formatted_project_names(projects: Iterable[ProjectRepo], padding: Optional[int] = None,
+                                    color: bool = False) -> Tuple[str, ...]:
         """Returns all project paths/names output for specified projects
 
         :param Iterable[ProjectRepo] projects: Projects to get paths/names output of
-        :return: All project paths
+        :param Optional[int] padding: Left adjust padding
+        :param bool color: Whether to color output
+        :return: All projects output
         """
 
-        return sorted_tuple([p.repo.formatted_name() for p in projects])
+        return sorted_tuple([p.formatted_name(padding=padding, color=color) for p in projects])
 
     def get_timestamp(self, timestamp_project: str) -> str:
         """Return timestamp for project

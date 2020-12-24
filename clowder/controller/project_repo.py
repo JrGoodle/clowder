@@ -421,6 +421,27 @@ class ProjectRepo(ResolvedProject):
             return
         local_branch.checkout()
 
+    def formatted_name(self, padding: Optional[int] = None, color: bool = False) -> str:
+        """Formatted project name"""
+
+        if not self.repo.exists:
+            output = str(self.relative_path)
+        else:
+            if self.repo.is_dirty:
+                output = f'{self.name}*'
+            else:
+                output = self.name
+
+        if padding is not None:
+            output = output.ljust(padding)
+
+        if not color:
+            return output
+
+        if '*' in output:
+            return Format.red(output)
+        return Format.green(output)
+
     def status(self, padding: Optional[int] = None) -> str:
         """Return formatted status for project
 
@@ -429,17 +450,11 @@ class ProjectRepo(ResolvedProject):
         """
 
         if not self.repo.exists:
-            project_output = self.name
-            if padding:
-                project_output = project_output.ljust(padding)
-                project_output = Format.green(project_output)
-                missing_output = Format.red('-')
-                return f'{project_output} {missing_output}'
-            project_output = Format.green(project_output)
-            return project_output
+            return f"{self.formatted_name(padding=padding, color=True)} {Format.red('-')}"
 
-        return f'{self.repo.formatted_name(padding=padding)} {self.repo.formatted_ref}'
-        # FIxME: Also print upstream if it exists
+        return f'{self.formatted_name(padding=padding, color=True)} {self.repo.formatted_ref}'
+
+        # FIXME: Also print upstream if it exists
         # if not existing_git_repo(self.path):
         #     return Format.green(self.path)
         #

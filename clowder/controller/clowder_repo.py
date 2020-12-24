@@ -142,6 +142,28 @@ class ClowderRepo(Repo):
     #     self._create_remote(self.remote, url, remove_dir=True)
     #     self._checkout_new_repo_branch(branch, depth)
 
+    def formatted_name(self, padding: Optional[int] = None, color: bool = False) -> str:
+        """Formatted project name"""
+
+        output = '.clowder'
+        if not self.exists:
+            if color:
+                return Format.green(output)
+            return output
+
+        if self.is_dirty:
+            output = f'{output}*'
+
+        if padding is not None:
+            output = output.ljust(padding)
+
+        if not color:
+            return output
+
+        if '*' in output:
+            return Format.red(output)
+        return Format.green(output)
+
     def print_status(self, fetch: bool = False) -> None:
         """Print clowder repo status
 
@@ -175,7 +197,7 @@ class ClowderRepo(Repo):
             CONSOLE.stdout(' - Fetch upstream changes for clowder repo')
             self.default_remote.fetch(prune=True, tags=True)
 
-        CONSOLE.stdout(f"{self.formatted_name()} {self.formatted_ref}")
+        CONSOLE.stdout(f"{self.formatted_name(color=True)} {self.formatted_ref}")
         if symlink_output is not None:
             CONSOLE.stdout(symlink_output)
         CONSOLE.stdout()
