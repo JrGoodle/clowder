@@ -231,7 +231,7 @@
         },
         "pygoodle": {
             "git": "ssh://git@github.com/JrGoodle/pygoodle",
-            "ref": "60a37ce924fa4dff7ad6d2a830942ed424d9ff77"
+            "ref": "7a2ecfb0fbe9147cc92d607bd220907b723648e1"
         },
         "pynacl": {
             "hashes": [
@@ -557,11 +557,11 @@
         },
         "importlib-resources": {
             "hashes": [
-                "sha256:0ed250dbd291947d1a298e89f39afcc477d5a6624770503034b72588601bcc05",
-                "sha256:42068585cc5e8c2bf0a17449817401102a5125cbfbb26bb0f43cde1568f6f2df"
+                "sha256:27402c31c21ae44522834f2c8e98865b4f9c6f282569ba294226aae7bb5435d1",
+                "sha256:28f02529d9ed1e66e9aad076d6022f0781d4ee90da13d133cba96e678a67af5c"
             ],
             "markers": "python_version < '3.7'",
-            "version": "==3.3.1"
+            "version": "==4.0.0"
         },
         "iniconfig": {
             "hashes": [
@@ -575,7 +575,7 @@
                 "sha256:dcab1d98b469a12a1a624ead220584391648790275560e1a43e54c5dceae65e7",
                 "sha256:dcaeec1b5f0eca77faea2a35ab790b4f3680ff75590bfcb7145986905aab2f58"
             ],
-            "markers": "python_version >= '3.6' and python_version < '4.0'",
+            "markers": "python_version >= '3.6' and python_version < '4'",
             "version": "==5.6.4"
         },
         "jinja2": {
@@ -1073,7 +1073,7 @@
                 "sha256:19188f96923873c92ccb987120ec4acaa12f0461fa9ce5d3d0772bc965a39e08",
                 "sha256:d8ff90d979214d7b4f8ce956e80f4028fc6860e4431f731ea4a8c08f23f99473"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.26.2"
         },
         "virtualenv": {
