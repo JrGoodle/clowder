@@ -47,6 +47,7 @@ class StatusCommand(Subcommand):
         project_names = CLOWDER_CONTROLLER.get_formatted_project_names(projects)
         padding = len(max(project_names, key=len))
 
+        # TODO: Get all output in parallel
         for project in projects:
             CONSOLE.stdout(project.status(padding=padding))
 

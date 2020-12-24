@@ -142,20 +142,13 @@ class ClowderRepo(Repo):
     #     self._create_remote(self.remote, url, remove_dir=True)
     #     self._checkout_new_repo_branch(branch, depth)
 
-    def formatted_name(self, padding: Optional[int] = None, color: bool = False) -> str:
+    def formatted_name(self, color: bool = False) -> str:
         """Formatted project name"""
 
         output = '.clowder'
-        if not self.exists:
-            if color:
-                return Format.green(output)
-            return output
 
         if self.is_dirty:
             output = f'{output}*'
-
-        if padding is not None:
-            output = output.ljust(padding)
 
         if not color:
             return output

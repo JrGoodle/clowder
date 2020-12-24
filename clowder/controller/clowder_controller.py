@@ -10,13 +10,13 @@ from typing import Iterable, Optional, Tuple
 
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
-# from pygoodle.tasks import Task, TaskPool
+from pygoodle.tasks import Task, TaskPool
 from pygoodle.util import sorted_tuple
 from pygoodle.yaml import load_yaml_file, validate_yaml_file, MissingYamlError
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
-from clowder.model import ClowderBase
+from clowder.model import ClowderBase, Project, Section
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import (
     DuplicatePathError,
@@ -128,40 +128,27 @@ class ClowderController:
             self._initialize_properties()
 
     def _get_project_repos(self) -> Tuple[ProjectRepo, ...]:
-        # TODO: Load projects asynchronously
-        projects = self._clowder.clowder.projects
-        sections = self._clowder.clowder.sections
         defaults = self._clowder.defaults
+        protocol = self._clowder.protocol
+
+        class ProjectRepoTask(Task):
+            def __init__(self, project: Project, section: Optional[Section] = None):
+                super().__init__(str(id(project)))
+                self._project: Project = project
+                self._section: Optional[Section] = section
+
+            def run(self) -> ProjectRepo:
+                return ProjectRepo(self._project, section=self._section, defaults=defaults, protocol=protocol)
+
+        sections = self._clowder.clowder.sections
         if sections is None:
-            projects = [ProjectRepo(p, defaults=defaults, protocol=self._clowder.protocol)
-                        for p in projects]
+            tasks = [ProjectRepoTask(p) for p in self._clowder.clowder.projects]
         else:
-            projects = [ProjectRepo(p, defaults=defaults, section=s, protocol=self._clowder.protocol)
-                        for s in sections for p in s.projects]
+            tasks = [ProjectRepoTask(p, s) for s in sections for p in s.projects]
+        pool = TaskPool(jobs=len(tasks))
+        project_repos = pool.run(tasks)
 
-        # class DefaultBranchTask(Task):
-        #     def __init__(self, project: ProjectRepo):
-        #         self._project: ProjectRepo = project
-        #         super().__init__(str(self._project.path))
-        #
-        #     def run(self) -> None:
-        #         if self._project.default_ref is None:
-        #             default_branch = get_default_project_branch(self._project.full_path,
-        #                                                         self._project.remote,
-        #                                                         self._project.url)
-        #             self._project.update_default_branch(default_branch)
-        #         if self._project.upstream is not None and self._project.upstream.ref is None:
-        #             upstream = self._project.upstream
-        #             default_branch = get_default_upstream_branch(upstream.full_path,
-        #                                                          upstream.remote,
-        #                                                          upstream.url)
-        #             upstream.update_default_branch(default_branch)
-        #
-        # pool = TaskPool(jobs=5)
-        # tasks = [DefaultBranchTask(project) for project in self.projects]
-        # pool.run(tasks)
-
-        return sorted_tuple(projects)
+        return sorted_tuple(project_repos)
 
     @staticmethod
     def filter_projects(projects: Iterable[ProjectRepo],
