@@ -62,6 +62,9 @@ class ResolvedUpstream:
             return False
         return self.name == other.name and self.path == other.path
 
+    def __hash__(self):
+        return hash(self.name) ^ hash(self.path)
+
     @property
     def url(self) -> str:
         """Return project url"""

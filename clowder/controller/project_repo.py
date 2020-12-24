@@ -106,8 +106,11 @@ class ProjectRepo(ResolvedProject):
         super(ProjectRepo, self).__init__(project=project, defaults=defaults, section=section, protocol=protocol)
         self.repo: Repo = Repo(self.path, self.default_remote.name)
 
+        path = Path('/Users/jrgoodle/projects/clowder-projects/cats/duffy')
+        if self.path == path:
+            print()
         if self.default_branch is None and self.default_tag is None and self.default_commit is None:
-            remote_branch = self.repo.default_remote.default_branch
+            remote_branch = self.repo.default_remote.default_branch(self.repo.git_dir, self.url)
             self.default_branch = TrackingBranch(self.path,
                                                  local_branch=remote_branch.name,
                                                  upstream_branch=remote_branch.name,

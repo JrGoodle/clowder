@@ -121,6 +121,9 @@ class ResolvedProject:
             return False
         return self.name == other.name and self.path == other.path
 
+    def __hash__(self):
+        return hash(self.name) ^ hash(self.path)
+
     @property
     def default_ref(self) -> Ref:
         if self.default_branch is not None:

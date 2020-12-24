@@ -129,7 +129,7 @@ class ClowderController:
 
             self.projects = sorted_tuple(resolved_projects)
             self._update_properties()
-            self._populate_default_branches()
+            # self._populate_default_branches()
         except Exception as err:
             LOG.debug('Failed to init clowder controller')
             self.error = err
@@ -317,31 +317,31 @@ class ClowderController:
         # Now that all the data is loaded, check that no projects share paths
         self._validate_project_paths()
 
-    def _populate_default_branches(self) -> None:
-        """Get default branch"""
-
-        raise NotImplementedError
-        # class DefaultBranchTask(Task):
-        #     def __init__(self, project: ProjectRepo):
-        #         self._project: ProjectRepo = project
-        #         super().__init__(str(self._project.path))
-        #
-        #     def run(self) -> None:
-        #         if self._project.default_ref is None:
-        #             default_branch = get_default_project_branch(self._project.full_path,
-        #                                                         self._project.remote,
-        #                                                         self._project.url)
-        #             self._project.update_default_branch(default_branch)
-        #         if self._project.upstream is not None and self._project.upstream.ref is None:
-        #             upstream = self._project.upstream
-        #             default_branch = get_default_upstream_branch(upstream.full_path,
-        #                                                          upstream.remote,
-        #                                                          upstream.url)
-        #             upstream.update_default_branch(default_branch)
-        #
-        # pool = TaskPool(jobs=5)
-        # tasks = [DefaultBranchTask(project) for project in self.projects]
-        # pool.run(tasks)
+    # def _populate_default_branches(self) -> None:
+    #     """Get default branch"""
+    #
+    #     raise NotImplementedError
+    #     # class DefaultBranchTask(Task):
+    #     #     def __init__(self, project: ProjectRepo):
+    #     #         self._project: ProjectRepo = project
+    #     #         super().__init__(str(self._project.path))
+    #     #
+    #     #     def run(self) -> None:
+    #     #         if self._project.default_ref is None:
+    #     #             default_branch = get_default_project_branch(self._project.full_path,
+    #     #                                                         self._project.remote,
+    #     #                                                         self._project.url)
+    #     #             self._project.update_default_branch(default_branch)
+    #     #         if self._project.upstream is not None and self._project.upstream.ref is None:
+    #     #             upstream = self._project.upstream
+    #     #             default_branch = get_default_upstream_branch(upstream.full_path,
+    #     #                                                          upstream.remote,
+    #     #                                                          upstream.url)
+    #     #             upstream.update_default_branch(default_branch)
+    #     #
+    #     # pool = TaskPool(jobs=5)
+    #     # tasks = [DefaultBranchTask(project) for project in self.projects]
+    #     # pool.run(tasks)
 
 
 CLOWDER_CONTROLLER: ClowderController = ClowderController()
