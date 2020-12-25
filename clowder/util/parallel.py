@@ -5,11 +5,11 @@
 """
 
 from functools import partial
-from typing import Callable, Iterable, Optional
+from typing import Callable, Iterable, List, Optional, Tuple
 
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
-from pygoodle.tasks import ProgressTask, ProgressTaskPool
+from pygoodle.tasks import ProgressTask, ProgressTaskPool, Task, TaskPool
 from clowder.controller import CLOWDER_CONTROLLER, ProjectRepo
 
 
@@ -35,7 +35,7 @@ def forall(projects: Iterable[ProjectRepo], jobs: int, command: str, ignore_erro
     CONSOLE.stdout(' - Run forall commands in parallel\n')
     for project in projects:
         CONSOLE.stdout(project.status())
-        if not project.full_path.is_dir():
+        if not project.path.is_dir():
             CONSOLE.stdout(Format.red(" - Project missing"))
 
     tasks = [ForallTask(p, 'run', command=command, ignore_errors=ignore_errors) for p in projects]
@@ -81,3 +81,26 @@ def reset(projects: Iterable[ProjectRepo], jobs: int, timestamp_project: Optiona
     tasks = [ForallTask(p, 'reset', timestamp=timestamp) for p in projects]
     pool = ProgressTaskPool(jobs=jobs, title='Projects')
     pool.run(tasks)
+
+
+def status(projects: Iterable[ProjectRepo], padding: int) -> List[str]:
+
+    class StatusTask(Task):
+        def __init__(self, project: ProjectRepo, index: int):
+            super().__init__(str(id(project)))
+            self._project: ProjectRepo = project
+            self._index: int = index
+
+        def run(self) -> Tuple[int, str]:
+            return self._index, self._project.status(padding=padding)
+
+    tasks = []
+    index = 0
+    for project in projects:
+        task = StatusTask(project, index)
+        tasks.append(task)
+        index += 1
+    pool = TaskPool(jobs=len(tasks))
+    statuses = pool.run(tasks)
+    statuses = sorted(statuses, key=lambda index, _: i)
+    return sorted(output)

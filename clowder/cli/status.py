@@ -19,6 +19,7 @@ from clowder.controller import (
 )
 from clowder.config import Config
 from clowder.environment import ENVIRONMENT
+import clowder.util.parallel as parallel
 
 from .util import ProjectsArgument
 
@@ -47,9 +48,9 @@ class StatusCommand(Subcommand):
         project_names = CLOWDER_CONTROLLER.get_formatted_project_names(projects)
         padding = len(max(project_names, key=len))
 
-        # TODO: Get all output in parallel
-        for project in projects:
-            CONSOLE.stdout(project.status(padding=padding))
+        status = parallel.status(projects, padding)
+        status = '\n'.join(status)
+        CONSOLE.stdout(status)
 
     @staticmethod
     @network_connection_required
