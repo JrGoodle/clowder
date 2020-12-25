@@ -83,7 +83,7 @@ def project_repo_exists(func):
         """Wrapper"""
 
         instance = args[0]
-        if not Path(instance.full_path / '.git').is_dir():
+        if not Path(instance.path / '.git').is_dir():
             CONSOLE.stdout(Format.red('- Project missing'))
             return
         return func(*args, **kwargs)
@@ -189,7 +189,7 @@ class ProjectRepo(ResolvedProject):
         self.repo.status(verbose=True)
 
     @project_repo_exists
-    def fetch_all(self) -> None:
+    def fetch(self) -> None:
         """Fetch upstream changes if project exists on disk"""
 
         self.repo.default_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth)

@@ -5,12 +5,12 @@
 """
 
 from functools import partial
-from typing import Callable, Iterable, List, Optional
+from typing import Callable, Iterable, List, Optional, Union
 
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
 from pygoodle.tasks import ProgressTask, ProgressTaskPool, Task, TaskPool
-from clowder.controller import CLOWDER_CONTROLLER, ProjectRepo
+from clowder.controller import CLOWDER_CONTROLLER, ClowderRepo, ProjectRepo
 
 
 class ForallTask(ProgressTask):
@@ -94,6 +94,21 @@ def status(projects: Iterable[ProjectRepo], padding: int) -> List[str]:
             return self._project.status(padding=padding)
 
     tasks = [StatusTask(p) for p in projects]
-    pool = TaskPool(jobs=len(tasks))
-    results = pool.run(tasks)
+    results = TaskPool().run(tasks)
     return results
+
+
+def fetch(projects: Iterable[ProjectRepo], clowder_repo: Optional[ClowderRepo]) -> None:
+
+    class FetchTask(Task):
+        def __init__(self, repo: Union[ProjectRepo, ClowderRepo]):
+            super().__init__(str(id(repo)))
+            self._repo: Union[ProjectRepo, ClowderRepo] = repo
+
+        def run(self) -> None:
+            self._repo.fetch()
+
+    tasks = [FetchTask(p) for p in projects]
+    if clowder_repo is not None:
+        tasks = [FetchTask(clowder_repo)] + tasks
+    results = TaskPool().run(tasks)

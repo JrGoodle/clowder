@@ -12,7 +12,7 @@ bleach==3.2.1
 certifi==2020.12.5
 cffi==1.14.4
 chardet==4.0.0
--e git+git@github.com:JrGoodle/clowder.git@17f426827286f914fa56575ce3f16ba6c4c4b354#egg=clowder_repo
+-e git+git@github.com:JrGoodle/clowder.git@ee7629fd2240c583e19d03cb7b46782ac68ead46#egg=clowder_repo
 colorama==0.4.4
 commonmark==0.9.1
 contextvars==2.4
@@ -56,7 +56,7 @@ pycodestyle==2.6.0
 pycparser==2.20
 pyflakes==2.2.0
 Pygments==2.7.3
-pygoodle @ git+ssh://git@github.com/JrGoodle/pygoodle@e47db6ceb9d6b2bffe83a65aab06fd59d54b5b4b
+pygoodle @ git+ssh://git@github.com/JrGoodle/pygoodle@77c82f93cc90bb764dfaddd145cfc018cb3e0664
 pylint==2.6.0
 PyNaCl==1.4.0
 pyparsing==2.4.7

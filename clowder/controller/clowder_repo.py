@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 import pygoodle.command as cmd
-from pygoodle.connectivity import is_offline
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
 from pygoodle.git import LocalBranch, Repo
@@ -30,7 +29,7 @@ def print_clowder_repo_status(func):
         """Wrapper"""
 
         if ENVIRONMENT.clowder_repo_dir.is_dir():
-            CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status())
+            CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status)
         return func(*args, **kwargs)
 
     return wrapper
@@ -44,13 +43,13 @@ def print_clowder_repo_status_fetch(func):
         """Wrapper"""
 
         if ENVIRONMENT.clowder_git_repo_dir:
-            CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).status(fetch=True))
+            CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).status)
         return func(*args, **kwargs)
 
     return wrapper
 
 
-class ClowderRepo(Repo):
+class ClowderRepo:
     """Class encapsulating git utilities for clowder repo
 
     :ivar str repo_path: Absolute path to repo
@@ -61,13 +60,14 @@ class ClowderRepo(Repo):
     def __init__(self, path: Path, remote: str = 'origin'):
         """ProjectRepo __init__"""
 
-        super().__init__(path, remote)
+        self.path: Path = path
+        self.repo: Repo = Repo(path, default_remote=remote)
 
     def branches(self) -> None:
         """Print current local branches"""
 
-        self.print_local_branches()
-        self.print_remote_branches()
+        self.repo.print_local_branches()
+        self.repo.print_remote_branches()
 
     @classmethod
     def saved_version_names(cls) -> Optional[Tuple[str, ...]]:
@@ -97,11 +97,11 @@ class ClowderRepo(Repo):
         :raise AmbiguousYamlError:
         """
 
-        if self.exists:
+        if self.repo.exists:
             raise Exception('Repo already exists')
 
         branch = LocalBranch(self.path, branch)
-        self.clone(self.path, url, ref=branch)
+        self.repo.clone(self.path, url, ref=branch)
         try:
             link_clowder_yaml_default(ENVIRONMENT.current_dir)
         except Exception:
@@ -147,7 +147,7 @@ class ClowderRepo(Repo):
 
         output = '.clowder'
 
-        if self.is_dirty:
+        if self.repo.is_dirty:
             output = f'{output}*'
 
         if not color:
@@ -157,11 +157,12 @@ class ClowderRepo(Repo):
             return Format.red(output)
         return Format.green(output)
 
-    def status(self, fetch: bool = False) -> List[str]:
-        """Print clowder repo status
+    def fetch(self) -> None:
+        self.repo.default_remote.fetch(prune=True, tags=True)
 
-        :param bool fetch: Fetch before printing status
-        """
+    @property
+    def status(self) -> List[str]:
+        """Print clowder repo status"""
 
         if ENVIRONMENT.clowder_repo_dir is None:
             return []
@@ -172,15 +173,11 @@ class ClowderRepo(Repo):
             LOG.error(message)
             LOG.error()
 
-        if fetch and not is_offline():
-            CONSOLE.stdout(' - Fetch upstream changes for clowder repo')
-            self.default_remote.fetch(prune=True, tags=True)
-
         output = []
         if ENVIRONMENT.clowder_git_repo_dir is None:
             output.append(Format.green(ENVIRONMENT.clowder_repo_dir.name))
         else:
-            output.append(f"{self.formatted_name(color=True)} {self.formatted_ref}")
+            output.append(f"{self.formatted_name(color=True)} {self.repo.formatted_ref}")
 
         if ENVIRONMENT.clowder_yaml is not None and ENVIRONMENT.clowder_yaml.is_symlink():
             target_path = Format.path(Path(ENVIRONMENT.clowder_yaml.name))

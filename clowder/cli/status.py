@@ -4,10 +4,10 @@
 
 """
 
-from typing import Tuple
+# from typing import Tuple
 
 from pygoodle.app import BoolArgument, Subcommand
-from pygoodle.connectivity import network_connection_required
+# from pygoodle.connectivity import network_connection_required
 from pygoodle.console import CONSOLE
 
 import clowder.util.formatting as fmt
@@ -15,7 +15,7 @@ import clowder.util.parallel as parallel
 from clowder.controller import (
     ClowderRepo,
     CLOWDER_CONTROLLER,
-    ProjectRepo,
+    # ProjectRepo,
     valid_clowder_yaml_required
 )
 from clowder.config import Config
@@ -38,34 +38,34 @@ class StatusCommand(Subcommand):
         projects = Config().process_projects_arg(args.projects)
         projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-        output = [fmt.clowder_name(CLOWDER_CONTROLLER.name)]
-        output += ['']
+        CONSOLE.enqueue_stdout(fmt.clowder_name(CLOWDER_CONTROLLER.name), newline=True)
         if args.fetch:
-            self._fetch_projects(projects)
-        else:
-            if ENVIRONMENT.clowder_repo_dir is not None:
-                output += ClowderRepo(ENVIRONMENT.clowder_repo_dir).status()
-                output += ['']
+            clowder_repo = None
+            if ENVIRONMENT.clowder_git_repo_dir is not None:
+                clowder_repo = ClowderRepo(ENVIRONMENT.clowder_git_repo_dir)
+            parallel.fetch(projects, clowder_repo)
+        if ENVIRONMENT.clowder_repo_dir is not None:
+            CONSOLE.enqueue_stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status, newline=True)
 
         project_names = CLOWDER_CONTROLLER.get_formatted_project_names(projects)
         padding = len(max(project_names, key=len))
 
-        output += parallel.status(projects, padding)
-        CONSOLE.stdout('\n'.join(output))
+        CONSOLE.enqueue_stdout(parallel.status(projects, padding))
+        CONSOLE.flush_stdout()
 
-    @staticmethod
-    @network_connection_required
-    def _fetch_projects(projects: Tuple[ProjectRepo, ...]) -> None:
-        """fetch all projects
-
-        :param Tuple[ProjectRepo, ...] projects: Projects to fetch
-        """
-
-        if ENVIRONMENT.clowder_repo_dir is not None:
-            CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status(fetch=True))
-
-        CONSOLE.stdout(' - Fetch upstream changes for projects\n')
-        for project in projects:
-            CONSOLE.stdout(project.status())
-            project.fetch_all()
-        CONSOLE.stdout()
+    # @staticmethod
+    # @network_connection_required
+    # def _fetch_projects(projects: Tuple[ProjectRepo, ...]) -> None:
+    #     """fetch all projects
+    #
+    #     :param Tuple[ProjectRepo, ...] projects: Projects to fetch
+    #     """
+    #
+    #     if ENVIRONMENT.clowder_repo_dir is not None:
+    #         CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status)
+    #
+    #     # CONSOLE.stdout(' - Fetch upstream changes for projects\n')
+    #     for project in projects:
+    #         CONSOLE.stdout(project.status())
+    #         project.fetch()
+    #     CONSOLE.stdout()
