@@ -100,7 +100,7 @@ def status(projects: Iterable[ProjectRepo], padding: int) -> List[str]:
 
 def fetch(projects: Iterable[ProjectRepo], clowder_repo: Optional[ClowderRepo]) -> None:
 
-    class FetchTask(Task):
+    class FetchTask(ProgressTask):
         def __init__(self, repo: Union[ProjectRepo, ClowderRepo]):
             super().__init__(str(id(repo)))
             self._repo: Union[ProjectRepo, ClowderRepo] = repo
@@ -111,4 +111,4 @@ def fetch(projects: Iterable[ProjectRepo], clowder_repo: Optional[ClowderRepo]) 
     tasks = [FetchTask(p) for p in projects]
     if clowder_repo is not None:
         tasks = [FetchTask(clowder_repo)] + tasks
-    results = TaskPool().run(tasks)
+    ProgressTaskPool(title='Fetch repos', print_subprogress=False, units='repos').run(tasks)

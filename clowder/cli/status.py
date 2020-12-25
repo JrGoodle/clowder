@@ -52,20 +52,3 @@ class StatusCommand(Subcommand):
 
         CONSOLE.enqueue_stdout(parallel.status(projects, padding))
         CONSOLE.flush_stdout()
-
-    # @staticmethod
-    # @network_connection_required
-    # def _fetch_projects(projects: Tuple[ProjectRepo, ...]) -> None:
-    #     """fetch all projects
-    #
-    #     :param Tuple[ProjectRepo, ...] projects: Projects to fetch
-    #     """
-    #
-    #     if ENVIRONMENT.clowder_repo_dir is not None:
-    #         CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status)
-    #
-    #     # CONSOLE.stdout(' - Fetch upstream changes for projects\n')
-    #     for project in projects:
-    #         CONSOLE.stdout(project.status())
-    #         project.fetch()
-    #     CONSOLE.stdout()
