@@ -5,7 +5,7 @@
 """
 
 from functools import partial
-from typing import Callable, Iterable, List, Optional, Tuple
+from typing import Callable, Iterable, List, Optional
 
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
@@ -86,21 +86,14 @@ def reset(projects: Iterable[ProjectRepo], jobs: int, timestamp_project: Optiona
 def status(projects: Iterable[ProjectRepo], padding: int) -> List[str]:
 
     class StatusTask(Task):
-        def __init__(self, project: ProjectRepo, index: int):
+        def __init__(self, project: ProjectRepo):
             super().__init__(str(id(project)))
             self._project: ProjectRepo = project
-            self._index: int = index
 
-        def run(self) -> Tuple[int, str]:
-            return self._index, self._project.status(padding=padding)
+        def run(self) -> str:
+            return self._project.status(padding=padding)
 
-    tasks = []
-    index = 0
-    for project in projects:
-        task = StatusTask(project, index)
-        tasks.append(task)
-        index += 1
+    tasks = [StatusTask(p) for p in projects]
     pool = TaskPool(jobs=len(tasks))
-    statuses = pool.run(tasks)
-    statuses = sorted(statuses, key=lambda index, _: i)
-    return sorted(output)
+    results = pool.run(tasks)
+    return results
