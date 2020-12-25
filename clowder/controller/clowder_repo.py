@@ -7,7 +7,7 @@
 import os
 from functools import wraps
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 import pygoodle.command as cmd
 from pygoodle.connectivity import is_offline
@@ -30,7 +30,7 @@ def print_clowder_repo_status(func):
         """Wrapper"""
 
         if ENVIRONMENT.clowder_repo_dir.is_dir():
-            ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
+            CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status())
         return func(*args, **kwargs)
 
     return wrapper
@@ -44,7 +44,7 @@ def print_clowder_repo_status_fetch(func):
         """Wrapper"""
 
         if ENVIRONMENT.clowder_git_repo_dir:
-            ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).print_status(fetch=True)
+            CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).status(fetch=True))
         return func(*args, **kwargs)
 
     return wrapper
@@ -70,7 +70,7 @@ class ClowderRepo(Repo):
         self.print_remote_branches()
 
     @classmethod
-    def get_saved_version_names(cls) -> Optional[Tuple[str, ...]]:
+    def saved_version_names(cls) -> Optional[Tuple[str, ...]]:
         """Return list of all saved versions
 
         :return: All saved version names
@@ -157,14 +157,14 @@ class ClowderRepo(Repo):
             return Format.red(output)
         return Format.green(output)
 
-    def print_status(self, fetch: bool = False) -> None:
+    def status(self, fetch: bool = False) -> List[str]:
         """Print clowder repo status
 
         :param bool fetch: Fetch before printing status
         """
 
         if ENVIRONMENT.clowder_repo_dir is None:
-            return
+            return []
 
         if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
             message = f"Found a {Format.path(ENVIRONMENT.clowder_yaml.name)} file but it is not a symlink " \
@@ -172,28 +172,23 @@ class ClowderRepo(Repo):
             LOG.error(message)
             LOG.error()
 
-        symlink_output: Optional[str] = None
-        if ENVIRONMENT.clowder_yaml is not None and ENVIRONMENT.clowder_yaml.is_symlink():
-            target_path = Format.path(Path(ENVIRONMENT.clowder_yaml.name))
-            # FIXME: This can cause an error if symlink is pointing to existing file not relative to clowder dir
-            source_path = Format.path(ENVIRONMENT.clowder_yaml.resolve().relative_to(ENVIRONMENT.clowder_dir))
-            symlink_output = f"{target_path} -> {source_path}"
-
-        if ENVIRONMENT.clowder_git_repo_dir is None:
-            CONSOLE.stdout(Format.green(ENVIRONMENT.clowder_repo_dir.name))
-            if symlink_output is not None:
-                CONSOLE.stdout(symlink_output)
-            CONSOLE.stdout()
-            return
-
         if fetch and not is_offline():
             CONSOLE.stdout(' - Fetch upstream changes for clowder repo')
             self.default_remote.fetch(prune=True, tags=True)
 
-        CONSOLE.stdout(f"{self.formatted_name(color=True)} {self.formatted_ref}")
-        if symlink_output is not None:
-            CONSOLE.stdout(symlink_output)
-        CONSOLE.stdout()
+        output = []
+        if ENVIRONMENT.clowder_git_repo_dir is None:
+            output.append(Format.green(ENVIRONMENT.clowder_repo_dir.name))
+        else:
+            output.append(f"{self.formatted_name(color=True)} {self.formatted_ref}")
+
+        if ENVIRONMENT.clowder_yaml is not None and ENVIRONMENT.clowder_yaml.is_symlink():
+            target_path = Format.path(Path(ENVIRONMENT.clowder_yaml.name))
+            # FIXME: This can cause an error if symlink is pointing to existing file not relative to clowder dir
+            source_path = Format.path(ENVIRONMENT.clowder_yaml.resolve().relative_to(ENVIRONMENT.clowder_dir))
+            output.append(f"{target_path} -> {source_path}")
+
+        return output
 
     def run(self, command: str, check: bool = True) -> None:
         """Run command in clowder repo

@@ -18,7 +18,7 @@ class LinkCommand(Subcommand):
     class Meta:
         name = 'link'
         help = 'Symlink clowder yaml version'
-        versions = ClowderRepo.get_saved_version_names()
+        versions = ClowderRepo.saved_version_names()
         args = [
             Argument('version', choices=versions, nargs='?', default=None,
                      help=fmt.version_options_help_message('version to symlink', versions))
