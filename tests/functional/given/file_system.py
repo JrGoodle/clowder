@@ -12,7 +12,7 @@ import tests.functional.util as util
 @given("I'm in an empty directory")
 @given(parsers.parse("test directory is empty"))
 def given_test_dir_empty(tmp_path: Path) -> None:
-    assert fs.is_directory_empty(tmp_path)
+    assert fs.is_empty_dir(tmp_path)
 
 
 @given(parsers.parse("{version} clowder version is linked"))

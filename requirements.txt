@@ -12,7 +12,7 @@ bleach==3.2.1
 certifi==2020.12.5
 cffi==1.14.4
 chardet==4.0.0
--e git+git@github.com:JrGoodle/clowder.git@e70cb954b30b41060ce5589556643e30849d6369#egg=clowder_repo
+-e git+git@github.com:JrGoodle/clowder.git@d1b79499b1a7caffb593131b37b926d8f0eea75b#egg=clowder_repo
 colorama==0.4.4
 commonmark==0.9.1
 contextvars==2.4

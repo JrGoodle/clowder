@@ -31,10 +31,11 @@ class CleanCommand(Subcommand):
                 title='clean options',
                 args=[
                     BoolArgument('--all', '-a', help='clean all the things'),
-                    BoolArgument('-d', help='remove untracked directories'),
-                    BoolArgument('-f', help='remove directories with .git subdirectory or file'),
-                    BoolArgument('-X', help='remove only files ignored by git'),
-                    BoolArgument('-x', help='remove all untracked files')
+                    BoolArgument('--untracked-directories', '-d', help='remove untracked directories'),
+                    BoolArgument('--force', '-f', help='remove directories with .git subdirectory or file'),
+                    BoolArgument('--ignored', '-X', help='remove only files ignored by git'),
+                    BoolArgument('--untracked-files', '-x', help='remove all untracked files'),
+                    BoolArgument('--submodules', '-s', help='clean submodules')
                 ]
             )
         ]
@@ -53,16 +54,10 @@ class CleanCommand(Subcommand):
                 project.repo.groom()
             return
 
-        clean_args = ''
-        if args.d:
-            clean_args += 'd'
-        if args.f:
-            clean_args += 'f'
-        if args.X:
-            clean_args += 'X'
-        if args.x:
-            clean_args += 'x'
-
         for project in projects:
             CONSOLE.stdout(project.status())
-            project.clean(args=clean_args, submodules=args.recursive)
+            project.clean(untracked_directories=args.untracked_directories,
+                          force=args.force,
+                          ignored=args.ignored,
+                          untracked_files=args.untracked_files,
+                          submodules=args.submodules)
