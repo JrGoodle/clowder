@@ -214,7 +214,7 @@ class ProjectRepo(ResolvedProject):
             if self.path.exists() and fs.has_contents(self.path):
                 raise Exception('Non-empty directory already exists')
             fs.remove_dir(self.path, ignore_errors=True)
-            self.repo.clone(self.path, url=self.source.url, depth=depth, ref=self.default_ref)
+            self.repo.clone(self.path, url=self.url, depth=depth, ref=self.default_ref)
 
         self.install_git_herd_alias()
 
