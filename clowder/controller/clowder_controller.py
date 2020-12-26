@@ -152,17 +152,20 @@ class ClowderController:
 
     @staticmethod
     def filter_projects(projects: Iterable[ProjectRepo],
-                        project_names: Iterable[str]) -> Tuple[ProjectRepo, ...]:
+                        project_names: Iterable[str],
+                        exclude: Optional[Iterable[str]] = None) -> Tuple[ProjectRepo, ...]:
         """Filter projects based on given project or group names
 
         :param Iterable[ProjectRepo] projects: Projects to filter
         :param Iterable[str] project_names: Project names to match against
+        :param Iterable[str] exclude: Project names to exclude
         :return: Projects in groups matching given names
         """
 
+        exclude = [] if exclude is None else exclude
         filtered_projects = []
         for name in project_names:
-            filtered_projects += [p for p in projects if name in p.groups]
+            filtered_projects += [p for p in projects if p.name not in exclude and name in p.groups]
         return sorted_tuple(filtered_projects, unique=True)
 
     def get_all_upstream_project_names(self) -> Tuple[str, ...]:

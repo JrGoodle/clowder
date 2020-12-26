@@ -38,9 +38,9 @@ def configure_remotes(func):
 
         # TODO: Actually configure project and upstream remotes
         # remote_name = self.remote
-        # remote_url = self.source.url
+        # remote_url = self.url
         # upstream_remote_name = self.upstream.source.name
-        # upstream_remote_url = self.upstream.source.url
+        # upstream_remote_url = self.upstream.url
         #
         # if not self.exists:
         #     return
@@ -222,7 +222,7 @@ class ProjectRepo(ResolvedProject):
             self.repo.update_git_config(self.git_settings.config)
 
         if not self.default_remote.exists:
-            self.default_remote.create(self.source.url, fetch=True, tags=True)
+            self.default_remote.create(self.url, fetch=True, tags=True)
 
         if self.default_branch is not None:
             if not self.default_branch.local_branch.exists:
@@ -259,7 +259,7 @@ class ProjectRepo(ResolvedProject):
         if self.upstream is not None:
             CONSOLE.stdout(Format.Git.upstream(self.upstream.name))
             if not self.upstream_remote.exists:
-                self.upstream_remote.create(self.upstream.source.url)
+                self.upstream_remote.create(self.upstream.url)
             self.upstream_remote.fetch(prune=True, tags=True)
 
     def install_git_herd_alias(self) -> None:

@@ -6,7 +6,7 @@
 
 import os
 
-from pygoodle.app import BoolArgument, MutuallyExclusiveArgumentGroup, SingleArgument, Subcommand
+from pygoodle.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, SingleArgument, Subcommand
 from pygoodle.connectivity import network_connection_required
 from pygoodle.git import Protocol
 
@@ -33,7 +33,8 @@ class HerdCommand(Subcommand):
             BoolArgument('--rebase', '-r', help='use rebase instead of pull'),
             CountArgument('--depth', '-d', help='depth to herd'),
             SingleArgument('--protocol', '-p', default=None, choices=('ssh', 'https'),
-                           help='git protocol to use for cloning')
+                           help='git protocol to use for cloning'),
+            Argument('--exclude', nargs='+', help='Projects to exclude')
         ]
         mutually_exclusive_args = [
             MutuallyExclusiveArgumentGroup(
@@ -54,6 +55,7 @@ class HerdCommand(Subcommand):
         depth = None if args.depth is None else args.depth[0]
         protocol = None if args.protocol is None else Protocol(args.protocol[0])
         jobs = None if args.jobs is None else args.jobs[0]
+        exclude = None if args.exclude is None else args.exclude
         rebase = args.rebase
 
         config = Config()
@@ -69,7 +71,7 @@ class HerdCommand(Subcommand):
         jobs = jobs_config if jobs_config is not None else jobs
 
         projects = config.process_projects_arg(args.projects)
-        projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
+        projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects, exclude=exclude)
 
         if jobs is not None and jobs != 1 and os.name == "posix":
             if jobs <= 0:
