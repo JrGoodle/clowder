@@ -90,7 +90,7 @@ def is_submodule_initialized(path: Path) -> bool:
 
 
 def is_submodule_placeholder(path: Path) -> bool:
-    return path.is_dir() and fs.is_directory_empty(path)
+    return path.is_dir() and fs.is_empty_dir(path)
 
 
 def has_submodule(repo_path: Path, submodule_path: Path) -> bool:
