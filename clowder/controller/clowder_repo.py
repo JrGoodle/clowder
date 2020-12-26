@@ -7,7 +7,7 @@
 import os
 from functools import wraps
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 import pygoodle.command as cmd
 from pygoodle.console import CONSOLE
@@ -161,11 +161,11 @@ class ClowderRepo:
         self.repo.default_remote.fetch(prune=True, tags=True)
 
     @property
-    def status(self) -> List[str]:
+    def status(self) -> Optional[str]:
         """Print clowder repo status"""
 
         if ENVIRONMENT.clowder_repo_dir is None:
-            return []
+            return None
 
         if ENVIRONMENT.clowder_yaml is not None and not ENVIRONMENT.clowder_yaml.is_symlink():
             message = f"Found a {Format.path(ENVIRONMENT.clowder_yaml.name)} file but it is not a symlink " \
@@ -173,19 +173,18 @@ class ClowderRepo:
             LOG.error(message)
             LOG.error()
 
-        output = []
         if ENVIRONMENT.clowder_git_repo_dir is None:
-            output.append(Format.green(ENVIRONMENT.clowder_repo_dir.name))
+            output = Format.green(ENVIRONMENT.clowder_repo_dir.name)
         else:
-            output.append(f"{self.formatted_name(color=True)} {self.repo.formatted_ref}")
+            output = f"{self.formatted_name(color=True)} {self.repo.formatted_ref}"
 
         if ENVIRONMENT.clowder_yaml is not None and ENVIRONMENT.clowder_yaml.is_symlink():
             target_path = Format.path(Path(ENVIRONMENT.clowder_yaml.name))
             # FIXME: This can cause an error if symlink is pointing to existing file not relative to clowder dir
             source_path = Format.path(ENVIRONMENT.clowder_yaml.resolve().relative_to(ENVIRONMENT.clowder_dir))
-            output.append(f"{target_path} -> {source_path}")
+            output += f"\n{target_path} -> {source_path}"
 
-        return output
+        return f'{output}\n'
 
     def run(self, command: str, check: bool = True) -> None:
         """Run command in clowder repo

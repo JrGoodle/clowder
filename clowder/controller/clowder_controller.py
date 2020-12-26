@@ -260,7 +260,6 @@ class ClowderController:
         for p in projects:
             p.repo.print_validation(allow_missing=allow_missing)
         if not all([p.repo.is_valid(allow_missing=allow_missing) for p in projects]):
-            CONSOLE.stdout()
             raise ProjectStatusError("Invalid project state")
 
     def validate_projects_exist(self) -> None:

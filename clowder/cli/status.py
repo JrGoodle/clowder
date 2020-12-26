@@ -45,7 +45,7 @@ class StatusCommand(Subcommand):
                 clowder_repo = ClowderRepo(ENVIRONMENT.clowder_git_repo_dir)
             parallel.fetch(projects, clowder_repo)
         if ENVIRONMENT.clowder_repo_dir is not None:
-            CONSOLE.enqueue_stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status, newline=True)
+            CONSOLE.enqueue_stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status)
 
         project_names = CLOWDER_CONTROLLER.get_formatted_project_names(projects)
         padding = len(max(project_names, key=len))
