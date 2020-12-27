@@ -334,17 +334,13 @@ class ProjectRepo(ResolvedProject):
         #     self._pull_lfs(repo)
         #     return
 
-        if self.upstream is None:
-            self.repo.reset(hard=True)
-        else:
-            # FIXME: Print correct status
-            # CONSOLE.stdout(self.upstream.status())
-            CONSOLE.stdout(Format.Git.upstream(self.name))
-            self.repo.reset(hard=True)
-
-        if self.git_settings.lfs:
-            self.repo.install_lfs_hooks()
-            self.repo.pull_lfs()
+        # if self.upstream is None:
+        #     self.repo.reset(hard=True)
+        # else:
+        #     # FIXME: Print correct status
+        #     # CONSOLE.stdout(self.upstream.status())
+        #     CONSOLE.stdout(Format.Git.upstream(self.name))
+        #     self.repo.reset(hard=True)
 
         self.repo.default_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth, check=False)
         if self.default_branch is not None:
@@ -359,6 +355,10 @@ class ProjectRepo(ResolvedProject):
                            f'{Format.Git.remote(self.default_branch.upstream_branch.remote.name)} '
                            f'{Format.Git.ref(self.default_branch.short_ref)}')
             self.repo.reset(self.default_ref, hard=True)
+
+        if self.git_settings.lfs:
+            self.repo.install_lfs_hooks()
+            self.repo.pull_lfs()
 
     def run(self, command: str, ignore_errors: bool) -> None:
         """Run commands or script in project directory
