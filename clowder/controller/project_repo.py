@@ -332,12 +332,12 @@ class ProjectRepo(ResolvedProject):
         #     return
 
         if self.upstream is None:
-            self.repo.reset(depth=self.git_settings.depth)
+            self.repo.reset(hard=True)
         else:
             # FIXME: Print correct status
             # CONSOLE.stdout(self.upstream.status())
             CONSOLE.stdout(Format.Git.upstream(self.name))
-            self.repo.reset()
+            self.repo.reset(hard=True)
 
         if self.git_settings.lfs:
             self.repo.install_lfs_hooks()
