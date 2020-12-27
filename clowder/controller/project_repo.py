@@ -177,8 +177,7 @@ class ProjectRepo(ResolvedProject):
                         ignored=ignored,
                         untracked_files=untracked_files)
         # TODO: Move this to 'groom' command
-        if self.repo.is_dirty:
-            self.repo.reset(hard=True)
+        self.repo.reset(hard=True)
         if self.repo.is_rebase_in_progress:
             self.repo.abort_rebase()
         if submodules:
