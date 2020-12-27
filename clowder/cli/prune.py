@@ -4,7 +4,7 @@
 
 """
 
-from typing import List, Tuple
+from typing import List
 
 from pygoodle.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, Subcommand
 from pygoodle.connectivity import network_connection_required
@@ -14,7 +14,6 @@ from clowder.controller import (
     CLOWDER_CONTROLLER,
     print_clowder_name,
     print_clowder_repo_status,
-    ProjectRepo,
     valid_clowder_yaml_required
 )
 from clowder.config import Config
@@ -67,7 +66,8 @@ class PruneCommand(Subcommand):
 
         self._prune_impl(args.projects, args.branch, remote=True)
 
-    def _prune_impl(self, project_names: List[str], branch: str, force: bool = False,
+    @staticmethod
+    def _prune_impl(project_names: List[str], branch: str, force: bool = False,
                     local: bool = False, remote: bool = False) -> None:
         """Prune branches
 
@@ -82,20 +82,6 @@ class PruneCommand(Subcommand):
         projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
         CLOWDER_CONTROLLER.validate_projects_state(projects)
-        self._prune_projects(projects, branch, force=force, local=local, remote=remote)
-
-    @staticmethod
-    def _prune_projects(projects: Tuple[ProjectRepo, ...], branch: str, force: bool = False,
-                        local: bool = False, remote: bool = False) -> None:
-        """Prune project branches
-
-        :param Tuple[Project, ...] projects: Projects to prune
-        :param str branch: Branch to prune
-        :param bool force: Force delete branch
-        :param bool local: Delete local branch
-        :param bool remote: Delete remote branch
-        :raise CommandArgumentError:
-        """
 
         local_branch_exists = CLOWDER_CONTROLLER.project_has_local_branch(projects, branch)
         remote_branch_exists = CLOWDER_CONTROLLER.project_has_remote_branch(projects, branch)

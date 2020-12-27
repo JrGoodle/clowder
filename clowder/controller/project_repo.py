@@ -287,6 +287,9 @@ class ProjectRepo(ResolvedProject):
         :param bool remote: Delete remote branch
         """
 
+        if self.repo.current_branch == branch and local:
+            self.checkout(self.default_ref.formatted_ref)
+
         if local:
             local_branch = LocalBranch(self.path, branch)
             if local_branch.exists:
