@@ -30,7 +30,7 @@ class StashCommand(Subcommand):
     @print_clowder_name
     @print_clowder_repo_status
     def run(self, args) -> None:
-        if not any([p.is_dirty for p in CLOWDER_CONTROLLER.projects]):
+        if not any([p.repo.is_dirty for p in CLOWDER_CONTROLLER.projects]):
             CONSOLE.stdout(' - No changes to stash')
             return
 
