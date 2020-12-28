@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from pygoodle.git import LocalBranch, RemoteBranch, TrackingBranch
 from pytest_bdd import given, parsers
 
 import tests.functional.util as util
@@ -69,6 +70,7 @@ def given_cats_remote_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_b
     scenario_info.example = "cats"
     for name, repo in CATS_REPOS_DEFAULT.items():
         path = tmp_path / repo["path"]
+        remote_branch = Rem
         if util.remote_branch_exists(path, test_branch):
             util.delete_remote_branch(path, test_branch)
         util.create_remote_branch(path, test_branch)
@@ -81,9 +83,10 @@ def given_cats_tracking_branch(tmp_path: Path, scenario_info: ScenarioInfo, test
     scenario_info.example = "cats"
     for name, repo in CATS_REPOS_DEFAULT.items():
         path = tmp_path / repo["path"]
-        util.delete_remote_branch(path, test_branch)
-        util.create_tracking_branch(path, test_branch)
-        assert util.tracking_branch_exists(path, test_branch)
+        tracking_branch = TrackingBranch(path, local_branch=test_branch)
+        tracking_branch.upstream_branch.delete()
+        tracking_branch.create()
+        assert tracking_branch.exists
 
 
 @given(parsers.parse("cats example projects have local branch {test_branch}"))
@@ -92,8 +95,9 @@ def given_cats_local_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_br
     scenario_info.example = "cats"
     for name, repo in CATS_REPOS_DEFAULT.items():
         path = tmp_path / repo["path"]
-        util.create_local_branch(path, test_branch)
-        assert util.local_branch_exists(path, test_branch)
+        local_branch = LocalBranch(path, test_branch)
+        local_branch.create()
+        assert local_branch.exists
 
 
 @given(parsers.parse("cats example projects have no local branch {test_branch}"))
@@ -102,5 +106,6 @@ def given_cats_no_local_branch(tmp_path: Path, scenario_info: ScenarioInfo, test
     scenario_info.example = "cats"
     for name, repo in CATS_REPOS_DEFAULT.items():
         path = tmp_path / repo["path"]
-        util.delete_local_branch(path, test_branch)
-        assert not util.local_branch_exists(path, test_branch)
+        local_branch = LocalBranch(path, test_branch)
+        local_branch.create()
+        assert local_branch.exists

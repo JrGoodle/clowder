@@ -25,23 +25,23 @@ def create_number_commits(path: Path, count: int, filename: str, contents: str) 
 
 def create_commit(path: Path, filename: str, contents: str) -> List[CompletedProcess]:
     repo = Repo(path)
-    previous_commit = repo.current_commit().sha
+    previous_commit = repo.current_commit()
     fs.create_file(path / filename, contents)
     results = []
     result = run_command(f"git add {filename}", path)
     results.append(result)
     result = run_command(f"git commit -m 'Add {filename}'", path)
     results.append(result)
-    new_commit = current_head_commit_sha(path)
+    new_commit = repo.current_commit()
     assert previous_commit != new_commit
     assert all([r.returncode == 0 for r in results])
     return results
 
 
-def create_detached_head(path: Path, branch: str) -> None:
-    repo = Repo(path)
-    repo.checkout(f"{branch}~1")
-    assert repo.is_detached
+# def create_detached_head(path: Path, branch: str) -> None:
+#     repo = Repo(path)
+#     repo.checkout(f"{branch}~1")
+#     assert repo.is_detached
 
 
 def set_up_behind_ahead_no_confilct(path: Path, local: str, remote: str, number_behind: int, number_ahead: int,
@@ -61,14 +61,15 @@ def set_up_behind_ahead_no_confilct(path: Path, local: str, remote: str, number_
 
 
 def set_up_behind_ahead_conflict(path: Path, branch: str, number_behind: int, number_ahead: int) -> None:
-    beginning_remote_sha = GitOffline.get_branch_commit_sha(path, branch, "origin")
-    beginning_sha = GitOffline.current_head_commit_sha(path)
+    beginning_remote_sha = GitOffline.get_branch_commit_sha(path, branch, 'origin')
+    repo = Repo(path)
+    beginning_sha = repo.current_commit()
     create_number_commits(path, number_behind, "something", "something")
-    GitOffline.push_to_remote_branch(path, branch)
+    repo.push(branch=branch)
     GitOffline.reset_back_by_number_of_commits(path, number_behind)
     create_number_commits(path, number_ahead, "something", "something else")
     end_remote_sha = GitOffline.get_branch_commit_sha(path, branch, "origin")
-    end_sha = GitOffline.current_head_commit_sha(path)
+    end_sha = repo.current_commit()
     assert beginning_sha != end_sha
     assert beginning_remote_sha != end_remote_sha
 
