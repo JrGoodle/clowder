@@ -37,7 +37,7 @@ class SaveCommand(Subcommand):
             raise DefaultVersionError(f"Version name '{args.version}' is not allowed")
 
         if ENVIRONMENT.clowder_repo_dir is not None:
-            ClowderRepo(ENVIRONMENT.clowder_repo_dir).print_status()
+            CONSOLE.stdout(ClowderRepo(ENVIRONMENT.clowder_repo_dir).status)
         CLOWDER_CONTROLLER.validate_projects_exist()
         CLOWDER_CONTROLLER.validate_projects_state(CLOWDER_CONTROLLER.projects)
 
