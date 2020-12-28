@@ -231,7 +231,7 @@
         },
         "pygoodle": {
             "git": "ssh://git@github.com/JrGoodle/pygoodle",
-            "ref": "f9871d09bd2bd9a65405e0b86788c65ff7021ead"
+            "ref": "9c94c011c01a0f7449f4d2b31c3f2e94d3b5313d"
         },
         "pynacl": {
             "hashes": [
@@ -557,11 +557,11 @@
         },
         "importlib-resources": {
             "hashes": [
-                "sha256:01fe9f1f2000677b2cdc7838473143341401d010eee276d2fcb64c219f624a25",
-                "sha256:1de368454cabd37265215f584eaefa92f7ea5dffd1c22c8de48d565431ecd9f1"
+                "sha256:0a948d0c8c3f9344de62997e3f73444dbba233b1eaf24352933c2d264b9e4182",
+                "sha256:6b45007a479c4ec21165ae3ffbe37faf35404e2041fac6ae1da684f38530ca73"
             ],
             "markers": "python_version < '3.7'",
-            "version": "==4.1.0"
+            "version": "==4.1.1"
         },
         "iniconfig": {
             "hashes": [

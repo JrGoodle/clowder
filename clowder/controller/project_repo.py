@@ -214,7 +214,9 @@ class ProjectRepo(ResolvedProject):
         depth = self.git_settings.depth if depth is None else depth
 
         CONSOLE.stdout(self.status())
+        is_initial_clone = False
         if not self.repo.exists:
+            is_initial_clone = True
             if self.path.exists() and fs.has_contents(self.path):
                 raise Exception('Non-empty directory already exists')
             fs.remove_dir(self.path, ignore_errors=True)
@@ -229,14 +231,7 @@ class ProjectRepo(ResolvedProject):
             self.default_remote.create(self.url, fetch=True, tags=True)
 
         if self.default_branch is not None:
-            if not self.default_branch.local_branch.exists:
-                self.default_branch.local_branch.create()
-            if self.repo.current_branch != self.default_branch.name:
-                self.default_branch.checkout()
-            if self.default_branch.upstream_branch.exists:
-                self.default_branch.upstream_branch.pull(rebase=rebase)
-            else:
-                self.default_branch.create_upstream()
+            self.herd_branch(self.default_branch, check=True, create=True, rebase=rebase)
         elif self.default_tag is not None:
             self.default_tag.checkout()
         elif self.default_commit is not None:
@@ -247,10 +242,7 @@ class ProjectRepo(ResolvedProject):
                                              local_branch=branch,
                                              upstream_branch=branch,
                                              upstream_remote=self.default_remote.name)
-            if tracking_branch.local_branch.exists:
-                tracking_branch.local_branch.checkout()
-            if tracking_branch.upstream_branch.exists:
-                tracking_branch.upstream_branch.pull()
+            self.herd_branch(tracking_branch, check=False, create=False, rebase=rebase)
         elif tag is not None:
             remote_tag = RemoteTag(self.path, tag, self.default_remote.name)
             if remote_tag.exists:
@@ -265,6 +257,26 @@ class ProjectRepo(ResolvedProject):
             if not self.upstream_remote.exists:
                 self.upstream_remote.create(self.upstream.url)
             self.upstream_remote.fetch(prune=True, tags=True)
+
+    @staticmethod
+    def herd_branch(branch: TrackingBranch, check: bool = True, create: bool = True,
+                    rebase: bool = False) -> None:
+        if not branch.local_branch.exists:
+            if branch.upstream_branch.exists:
+                branch.upstream_branch.checkout(check=check, track=True)
+            elif create:
+                branch.local_branch.create()
+            return
+
+        # local branch exists
+        if not branch.upstream_branch.exists:
+            branch.local_branch.checkout(check=check)
+            return
+
+        # local and remote branches exist
+        if not branch.is_tracking_branch:
+            branch.set_upstream()
+        branch.upstream_branch.pull(rebase=rebase)
 
     def install_git_herd_alias(self) -> None:
         """Install 'git herd' alias for project"""
@@ -453,10 +465,14 @@ class ProjectRepo(ResolvedProject):
         :return: Formatting project name and status
         """
 
+        output = self.formatted_name(padding=padding, color=True)
         if not self.repo.exists:
-            return f"{self.formatted_name(padding=padding, color=True)} {Format.red('-')}"
+            if padding is None:
+                return output
+            else:
+                return f"{output} {Format.red('-')}"
 
-        return f'{self.formatted_name(padding=padding, color=True)} {self.repo.formatted_ref}'
+        return f'{output} {self.repo.formatted_ref}'
 
         # FIXME: Also print upstream if it exists
         # if not existing_git_repo(self.path):
