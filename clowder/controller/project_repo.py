@@ -237,7 +237,7 @@ class ProjectRepo(ResolvedProject):
                 self.default_branch.upstream_branch.pull(rebase=rebase)
             else:
                 self.default_branch.create_upstream()
-        elif self.default_tag.is_tag is not None:
+        elif self.default_tag is not None:
             self.default_tag.checkout()
         elif self.default_commit is not None:
             self.default_commit.checkout()

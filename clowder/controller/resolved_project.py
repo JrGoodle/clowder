@@ -110,7 +110,7 @@ class ResolvedProject:
             self.default_branch: Optional[TrackingBranch] = tracking_branch
         elif default_tag is not None:
             self.default_tag: Optional[RemoteTag] = RemoteTag(self.path, default_tag, self.default_remote.name)
-        elif self.default_commit is not None:
+        elif default_commit is not None:
             self.default_commit: Optional[Commit] = Commit(self.path, default_commit)
 
     def __lt__(self, other: 'ResolvedProject') -> bool:
