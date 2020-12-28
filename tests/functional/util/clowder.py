@@ -5,10 +5,9 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import pygoodle.filesystem as fs
-from git import Repo
+from pygoodle.git import Repo
 
 from .command import run_command
-from .git import has_git_directory, is_dirty, is_on_active_branch
 
 
 TestRepoInfo = Dict[str, Dict[str, str]]
@@ -74,9 +73,8 @@ def get_url(example: str, protocol: str = "https") -> str:
 
 
 def validate_clowder_repo_with_symlink(clowder_repo: Path) -> None:
-    assert clowder_repo.exists()
-    assert clowder_repo.is_dir()
-    assert has_git_directory(clowder_repo)
+    repo = Repo(clowder_repo)
+    assert repo.exists
     assert valid_clowder_symlink(clowder_repo.parent) is not None
 
 
@@ -88,7 +86,7 @@ def create_non_symlink_clowder_yml(path: Path, example: str, protocol: str = "ht
     symlink.unlink()
     shutil.copy(file, path)
     clowder_repo = path / ".clowder"
-    shutil.rmtree(clowder_repo)
+    fs.remove_dir(clowder_repo)
     assert not clowder_repo.exists()
     return path
 
@@ -137,25 +135,16 @@ def init_herd_clowder(path: Path, example: str, protocol: str = "https",
     for repo in repos:
         repo_path = path / repo["path"]
         branch = repo["branch"]
-        assert repo_path.exists()
-        assert repo_path.is_dir()
-        assert has_git_directory(repo_path)
-        assert is_on_active_branch(repo_path, branch)
-        assert not is_dirty(repo_path)
+        git_repo = Repo(repo_path)
+        assert git_repo.exists
+        assert git_repo.current_branch == branch
+        assert not git_repo.is_dirty
         ssh_version = True if version is not None and "ssh" in version else False
         if protocol == "ssh" or ssh_version:
-            git_repo = Repo(repo_path)
-            origin = git_repo.remotes.origin
-            refs = origin.refs
-            for r in refs:
-                head: str = r.remote_head.strip()
-                if head.startswith("pytest"):
-                    try:
-                        origin.push(refspec=f':{head}', force=True)
-                    except Exception as err:
-                        print(err)
-                        pass
-
+            remote_branches = git_repo.remote_branches
+            remote_branches = [b for b in remote_branches if b.name.startswith('pytest')]
+            for remote_branch in remote_branches:
+                remote_branch.delete()
     return path
 
 
