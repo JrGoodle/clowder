@@ -360,11 +360,11 @@ class ProjectRepo(ResolvedProject):
             self.repo.install_lfs_hooks()
             self.repo.pull_lfs()
 
-    def run(self, command: str, ignore_errors: bool) -> None:
+    def run(self, command: str, check: bool) -> None:
         """Run commands or script in project directory
 
         :param str command: Commands to run
-        :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
+        :param bool check: Whether to exit if command returns a non-zero exit code
         """
 
         if not self.repo.exists:
@@ -380,10 +380,10 @@ class ProjectRepo(ResolvedProject):
         }
 
         if self.upstream:
-            forall_env['UPSTREAM_REMOTE'] = self.upstream.remote
+            forall_env['UPSTREAM_REMOTE'] = self.upstream.remote.name
             forall_env['UPSTREAM_NAME'] = self.upstream.name
 
-        self._run_forall_command(command, forall_env, ignore_errors)
+        self._run_forall_command(command, forall_env, check=check)
 
     @project_repo_exists
     def start(self, branch: str, tracking: bool) -> None:

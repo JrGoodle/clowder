@@ -46,10 +46,10 @@ if [ "$UPSTREAM_NAME" != 'external/gyp' ]; then
     exit 1
 fi
 
-echo "UPSTREAM_REF = $UPSTREAM_REF"
-if [ -z "$UPSTREAM_REF" ]; then
-    exit 1
-fi
-if [ "$UPSTREAM_REF" != 'refs/heads/master' ]; then
-    exit 1
-fi
+#echo "UPSTREAM_REF = $UPSTREAM_REF"
+#if [ -z "$UPSTREAM_REF" ]; then
+#    exit 1
+#fi
+#if [ "$UPSTREAM_REF" != 'refs/heads/master' ]; then
+#    exit 1
+#fi

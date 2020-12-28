@@ -23,13 +23,13 @@ class ForallTask(ProgressTask):
         self._func()
 
 
-def forall(projects: Iterable[ProjectRepo], jobs: int, command: str, ignore_errors: bool) -> None:
+def forall(projects: Iterable[ProjectRepo], jobs: int, command: str, check: bool) -> None:
     """Runs command or script for projects in parallel
 
     :param Iterable[ProjectRepo] projects: Projects to run command for
     :param int jobs: Number of jobs to use running parallel commands
     :param str command: Command to run
-    :param bool ignore_errors: Whether to exit if command returns a non-zero exit code
+    :param bool check: Whether to exit if command returns a non-zero exit code
     """
 
     CONSOLE.stdout(' - Run forall commands in parallel\n')
@@ -38,7 +38,7 @@ def forall(projects: Iterable[ProjectRepo], jobs: int, command: str, ignore_erro
         if not project.path.is_dir():
             CONSOLE.stdout(Format.red(" - Project missing"))
 
-    tasks = [ForallTask(p, 'run', command=command, ignore_errors=ignore_errors) for p in projects]
+    tasks = [ForallTask(p, 'run', command=command, check=check) for p in projects]
     pool = ProgressTaskPool(jobs=jobs, title='Projects')
     pool.run(tasks)
 

@@ -50,14 +50,14 @@ class ForallCommand(Subcommand):
         projects = Config().process_projects_arg(args.projects)
         projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-        ignore_errors = args.ignore_errors
+        check = not args.ignore_errors
 
         if jobs is not None and jobs != 1 and os.name == "posix":
             if jobs <= 0:
                 jobs = 4
-            parallel.forall(projects, jobs, command, ignore_errors)
+            parallel.forall(projects, jobs, command, check)
             return
 
         for project in projects:
             CONSOLE.stdout(project.status())
-            project.run(command, ignore_errors=ignore_errors)
+            project.run(command, check=check)
