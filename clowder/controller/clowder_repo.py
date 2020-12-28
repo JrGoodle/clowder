@@ -12,7 +12,7 @@ from typing import Optional, Tuple
 import pygoodle.command as cmd
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
-from pygoodle.git import LocalBranch, Repo
+from pygoodle.git import Repo
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
@@ -89,7 +89,7 @@ class ClowderRepo:
 
         return tuple(sorted(versions))
 
-    def init(self, url: str, branch: str) -> None:
+    def init(self, url: str, branch: Optional[str] = None) -> None:
         """Clone clowder repo from url
 
         :param str url: URL of repo to clone
@@ -100,8 +100,7 @@ class ClowderRepo:
         if self.repo.exists:
             raise Exception('Repo already exists')
 
-        branch = LocalBranch(self.path, branch)
-        self.repo.clone(self.path, url, ref=branch)
+        self.repo.clone(self.path, url, branch=branch)
         try:
             link_clowder_yaml_default(ENVIRONMENT.current_dir)
         except Exception:

@@ -34,10 +34,7 @@ class InitCommand(Subcommand):
                 raise
 
         CONSOLE.stdout(f"Create clowder repo from {Format.green(args.url)}\n")
-        if args.branch is None:
-            branch = 'master'
-        else:
-            branch = str(args.branch[0])
+        branch = None if args.branch is None else str(args.branch[0])
         clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
         repo = ClowderRepo(clowder_repo_dir)
-        repo.init(args.url, branch)
+        repo.init(args.url, branch=branch)
