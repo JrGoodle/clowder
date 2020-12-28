@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from pygoodle.git import HEAD, Repo
 from pytest_bdd import then, parsers
 
 import tests.functional.util as util
@@ -13,34 +14,34 @@ from tests.functional.util import ScenarioInfo
 @then(parsers.parse("directory at {directory} is a git repository"))
 def then_project_dir_is_git_repo(tmp_path: Path, directory: str):
     path = tmp_path / directory
-    assert path.exists()
-    assert path.is_dir()
-    assert util.has_git_directory(path)
+    repo = Repo(path)
+    assert repo.exists
 
 
 @then("<test_directory> is a git repository")
 def then_test_dir_is_git_repo(tmp_path: Path, test_directory: str) -> None:
     path = tmp_path / test_directory
-    assert path.exists()
-    assert path.is_dir()
-    assert util.has_git_directory(path)
+    repo = Repo(path)
+    assert repo.exists
 
 
 @then("project at <directory> is not a git repository")
 @then(parsers.parse("directory at {directory} is not a git repository"))
 def then_project_dir_is_not_git_repo(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
+    repo = Repo(path)
+    assert not repo.exists
     assert path.exists()
     assert path.is_dir()
-    assert not util.has_git_directory(path)
 
 
 @then("<test_directory> is not a git repository")
 def then_test_dir_is_not_git_repo(tmp_path: Path, test_directory: str) -> None:
     path = tmp_path / test_directory
+    repo = Repo(path)
+    assert not repo.exists
     assert path.exists()
     assert path.is_dir()
-    assert not util.has_git_directory(path)
 
 
 @then("project at <directory> is on <end_branch>")
@@ -186,7 +187,8 @@ def then_directory_has_remote_branch(tmp_path: Path, directory: str, branch: str
 @then("project at <directory> is clean")
 def then_directory_clean(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
-    assert not util.is_dirty(path)
+    repo = Repo(path)
+    assert not repo.is_dirty
 
 
 @then(parsers.parse("repo at {directory} is dirty"))
@@ -194,7 +196,8 @@ def then_directory_clean(tmp_path: Path, directory: str) -> None:
 @then("project at <directory> is dirty")
 def then_directory_dirty(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
-    assert util.is_dirty(path)
+    repo = Repo(path)
+    assert repo.is_dirty
 
 
 @then(parsers.parse("repo at {directory} has untracked file {filename}"))
@@ -202,7 +205,8 @@ def then_directory_dirty(tmp_path: Path, directory: str) -> None:
 @then("project at <directory> has untracked file <filename>")
 def then_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> None:
     path = tmp_path / directory
-    assert util.has_untracked_file(path, filename)
+    repo = Repo(path)
+    assert Path(filename) in repo.untracked_files
 
 
 @then(parsers.parse("repo at {directory} has submodule at {submodule_path}"))
@@ -210,7 +214,8 @@ def then_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> No
 @then("project at <directory> has submodule at <submodule_path>")
 def then_has_submodule(tmp_path: Path, directory: str, submodule_path: str) -> None:
     repo_path = tmp_path / directory
-    assert util.has_submodule(repo_path, Path(submodule_path))
+    repo = Repo(repo_path)
+    assert repo.has_submodule(Path(submodule_path))
 
 
 @then(parsers.parse("repo at {directory} has no submodule at {submodule_path}"))
@@ -218,13 +223,16 @@ def then_has_submodule(tmp_path: Path, directory: str, submodule_path: str) -> N
 @then("project at <directory> has no submodule at <submodule_path>")
 def then_has_no_submodule(tmp_path: Path, directory: str, submodule_path: str) -> None:
     repo_path = tmp_path / directory
-    assert not util.has_submodule(repo_path, Path(submodule_path))
+    repo = Repo(repo_path)
+    assert not repo.has_submodule(Path(submodule_path))
 
 
 @then(parsers.parse("submodule in {directory} at {submodule_path} hasn't been initialized"))
 @then("submodule in <directory> at <submodule_path> hasn't been initialized")
 def then_submodule_not_initialized(tmp_path: Path,  directory: str, submodule_path: str) -> None:
     path = tmp_path / directory / submodule_path
+    repo = Repo(repo_path)
+    assert repo.has_submodule(Path(submodule_path))
     assert util.is_submodule_placeholder(path)
     assert not util.is_submodule_initialized(path)
 
@@ -242,13 +250,13 @@ def then_submodule_initialized(tmp_path: Path, directory: str, submodule_path: s
 @then("project at <directory> is in sync with upstream <start_branch>")
 def then_directory_in_sync_with_upstream_start_branch(tmp_path: Path, directory: str, start_branch: str) -> None:
     path = tmp_path / directory
-    assert util.has_no_commits_between_refs(path, "HEAD", f"origin/{start_branch}")
+    assert util.has_no_commits_between_refs(path, HEAD, f"origin/{start_branch}")
 
 
 @then("project at <directory> is in sync with upstream <test_branch>")
 def then_directory_in_sync_with_upstream_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    assert util.has_no_commits_between_refs(path, "HEAD", f"origin/{test_branch}")
+    assert util.has_no_commits_between_refs(path, HEAD, f"origin/{test_branch}")
 
 
 @then(parsers.parse("repo at {directory} has remote {remote} with url {url}"))

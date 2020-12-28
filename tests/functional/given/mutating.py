@@ -4,7 +4,7 @@ import os
 import shutil
 from pathlib import Path
 
-from pygoodle.git import GitOffline, LocalBranch, RemoteBranch, Repo
+from pygoodle.git import GitOffline, HEAD, LocalBranch, RemoteBranch, Repo
 from pytest_bdd import given, parsers
 
 import pygoodle.filesystem as fs
@@ -197,7 +197,7 @@ def given_directory_behind_upstream_num_commits_start_branch(tmp_path: Path, dir
                                                              start_branch: str, number_commits: str) -> None:
     number_commits = int(number_commits)
     path = tmp_path / directory
-    local = "HEAD"
+    local = HEAD
     remote = f"origin/{start_branch}"
     assert GitOffline.has_no_commits_between_refs(path, local, remote)
     util.set_up_behind(path, local, remote, number_commits)
@@ -208,7 +208,7 @@ def given_directory_behind_upstream_num_commits_test_branch(tmp_path: Path, dire
                                                             test_branch: str, number_commits: str) -> None:
     number_commits = int(number_commits)
     path = tmp_path / directory
-    local = "HEAD"
+    local = HEAD
     remote = f"origin/{test_branch}"
     assert GitOffline.has_no_commits_between_refs(path, local, remote)
     util.set_up_behind(path, local, remote, number_commits)
@@ -219,7 +219,7 @@ def given_directory_ahead_upstream_num_commits_start_branch(tmp_path: Path, dire
                                                             start_branch: str, number_commits: str) -> None:
     number_commits = int(number_commits)
     path = tmp_path / directory
-    local = "HEAD"
+    local = HEAD
     remote = f"origin/{start_branch}"
     assert GitOffline.has_no_commits_between_refs(path, local, remote)
     util.set_up_ahead(path, local, remote, number_commits)
@@ -230,7 +230,7 @@ def given_directory_ahead_upstream_num_commits_test_branch(tmp_path: Path, direc
                                                            test_branch: str, number_commits: str) -> None:
     number_commits = int(number_commits)
     path = tmp_path / directory
-    local = "HEAD"
+    local = HEAD
     remote = f"origin/{test_branch}"
     assert GitOffline.has_no_commits_between_refs(path, local, remote)
     util.set_up_ahead(path, local, remote, number_commits)
@@ -243,7 +243,7 @@ def given_directory_behind_ahead_upstream_num_commits_start_branch(tmp_path: Pat
     number_behind = int(number_behind)
     number_ahead = int(number_ahead)
     path = tmp_path / directory
-    local = "HEAD"
+    local = HEAD
     remote = f"origin/{start_branch}"
     util.set_up_behind_ahead_no_confilct(path, local, remote, number_behind, number_ahead, scenario_info)
 
@@ -255,7 +255,7 @@ def given_directory_behind_ahead_upstream_num_commits_branch(tmp_path: Path, dir
     number_behind = int(number_behind)
     number_ahead = int(number_ahead)
     path = tmp_path / directory
-    local = "HEAD"
+    local = HEAD
     remote = f"origin/{branch}"
     util.set_up_behind_ahead_no_confilct(path, local, remote, number_behind, number_ahead, scenario_info)
 
@@ -267,7 +267,7 @@ def given_directory_behind_ahead_upstream_num_commits_test_branch(tmp_path: Path
     number_behind = int(number_behind)
     number_ahead = int(number_ahead)
     path = tmp_path / directory
-    local = "HEAD"
+    local = HEAD
     remote = f"origin/{test_branch}"
     util.set_up_behind_ahead_no_confilct(path, local, remote, number_behind, number_ahead, scenario_info)
 

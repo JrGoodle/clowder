@@ -6,7 +6,7 @@ from subprocess import CompletedProcess
 from typing import List
 
 import pygoodle.filesystem as fs
-from pygoodle.git import GitOffline, Repo
+from pygoodle.git import GitOffline, ORIGIN, Repo
 
 from .command import run_command
 from .scenario_info import ScenarioInfo
@@ -61,14 +61,14 @@ def set_up_behind_ahead_no_confilct(path: Path, local: str, remote: str, number_
 
 
 def set_up_behind_ahead_conflict(path: Path, branch: str, number_behind: int, number_ahead: int) -> None:
-    beginning_remote_sha = GitOffline.get_branch_commit_sha(path, branch, 'origin')
+    beginning_remote_sha = GitOffline.get_branch_commit_sha(path, branch, ORIGIN)
     repo = Repo(path)
     beginning_sha = repo.current_commit()
     create_number_commits(path, number_behind, "something", "something")
     repo.push(branch=branch)
     GitOffline.reset_back_by_number_of_commits(path, number_behind)
     create_number_commits(path, number_ahead, "something", "something else")
-    end_remote_sha = GitOffline.get_branch_commit_sha(path, branch, "origin")
+    end_remote_sha = GitOffline.get_branch_commit_sha(path, branch, ORIGIN)
     end_sha = repo.current_commit()
     assert beginning_sha != end_sha
     assert beginning_remote_sha != end_remote_sha

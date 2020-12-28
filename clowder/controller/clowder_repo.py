@@ -12,7 +12,7 @@ from typing import Optional, Tuple
 import pygoodle.command as cmd
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
-from pygoodle.git import Repo
+from pygoodle.git import ORIGIN, Repo
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
@@ -57,9 +57,10 @@ class ClowderRepo:
     :ivar Repo Optional[repo]: Repo instance
     """
 
-    def __init__(self, path: Path, remote: str = 'origin'):
+    def __init__(self, path: Path, remote: Optional[str] = None):
         """ProjectRepo __init__"""
 
+        remote = ORIGIN if remote is None else remote
         self.path: Path = path
         self.repo: Repo = Repo(path, default_remote=remote)
 
