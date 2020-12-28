@@ -5,7 +5,6 @@ from pathlib import Path
 from pygoodle.git import LocalBranch, RemoteBranch, TrackingBranch
 from pytest_bdd import given, parsers
 
-import tests.functional.util as util
 from tests.functional.util import ScenarioInfo, CATS_REPOS_DEFAULT
 
 
@@ -60,8 +59,9 @@ def given_cats_no_remote_branch(tmp_path: Path, scenario_info: ScenarioInfo, tes
     scenario_info.example = "cats"
     for name, repo in CATS_REPOS_DEFAULT.items():
         path = tmp_path / repo["path"]
-        util.delete_remote_branch(path, test_branch)
-        assert not util.remote_branch_exists(path, test_branch)
+        remote_branch = RemoteBranch(path, test_branch)
+        remote_branch.delete()
+        assert not remote_branch.exists
 
 
 @given(parsers.parse("cats example projects have remote branch {test_branch}"))
@@ -70,11 +70,11 @@ def given_cats_remote_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_b
     scenario_info.example = "cats"
     for name, repo in CATS_REPOS_DEFAULT.items():
         path = tmp_path / repo["path"]
-        remote_branch = Rem
-        if util.remote_branch_exists(path, test_branch):
-            util.delete_remote_branch(path, test_branch)
-        util.create_remote_branch(path, test_branch)
-        assert util.remote_branch_exists(path, test_branch)
+        remote_branch = RemoteBranch(path, test_branch)
+        if remote_branch.exists:
+            remote_branch.delete()
+        remote_branch.create()
+        assert remote_branch.exists
 
 
 @given(parsers.parse("cats example projects have tracking branch {test_branch}"))
@@ -83,7 +83,7 @@ def given_cats_tracking_branch(tmp_path: Path, scenario_info: ScenarioInfo, test
     scenario_info.example = "cats"
     for name, repo in CATS_REPOS_DEFAULT.items():
         path = tmp_path / repo["path"]
-        tracking_branch = TrackingBranch(path, local_branch=test_branch)
+        tracking_branch = TrackingBranch(path, test_branch)
         tracking_branch.upstream_branch.delete()
         tracking_branch.create()
         assert tracking_branch.exists
