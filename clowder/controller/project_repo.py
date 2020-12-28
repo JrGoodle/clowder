@@ -220,33 +220,44 @@ class ProjectRepo(ResolvedProject):
             if self.path.exists() and fs.has_contents(self.path):
                 raise Exception('Non-empty directory already exists')
             fs.remove_dir(self.path, ignore_errors=True)
-            self.repo.clone(self.path, url=self.url, depth=depth, ref=self.default_ref)
+            clone_commit = None
+            clone_tag = None
+            clone_branch = None
+            if self.default_commit is not None:
+                clone_commit = self.default_commit.short_ref
+            if self.default_tag is not None:
+                clone_tag = self.default_tag.short_ref if tag is None else tag
+            if self.default_branch is not None:
+                clone_branch = self.default_branch.short_ref if branch is None else branch
+            self.repo.clone(self.path, url=self.url, depth=depth, branch=clone_branch,
+                            tag=clone_tag, commit=clone_commit)
 
         self.install_git_herd_alias()
 
         if self.git_settings is not None and self.git_settings.config is not None:
             self.repo.update_git_config(self.git_settings.config)
 
-        if not self.default_remote.exists:
-            self.default_remote.create(self.url, fetch=True, tags=True)
+        if not is_initial_clone:
+            if not self.default_remote.exists:
+                self.default_remote.create(self.url, fetch=True, tags=True)
 
-        if self.default_branch is not None:
-            self.herd_branch(self.default_branch, check=True, create=True, rebase=rebase)
-        elif self.default_tag is not None:
-            self.default_tag.checkout()
-        elif self.default_commit is not None:
-            self.default_commit.checkout()
+            if self.default_branch is not None:
+                self.herd_branch(self.default_branch, check=True, create=True, rebase=rebase)
+            elif self.default_tag is not None:
+                self.default_tag.checkout()
+            elif self.default_commit is not None:
+                self.default_commit.checkout()
 
-        if branch is not None:
-            tracking_branch = TrackingBranch(self.path,
-                                             local_branch=branch,
-                                             upstream_branch=branch,
-                                             upstream_remote=self.default_remote.name)
-            self.herd_branch(tracking_branch, check=False, create=False, rebase=rebase)
-        elif tag is not None:
-            remote_tag = RemoteTag(self.path, tag, self.default_remote.name)
-            if remote_tag.exists:
-                remote_tag.checkout()
+            if branch is not None:
+                tracking_branch = TrackingBranch(self.path,
+                                                 local_branch=branch,
+                                                 upstream_branch=branch,
+                                                 upstream_remote=self.default_remote.name)
+                self.herd_branch(tracking_branch, check=False, create=False, rebase=rebase)
+            elif tag is not None:
+                remote_tag = RemoteTag(self.path, tag, self.default_remote.name)
+                if remote_tag.exists:
+                    remote_tag.checkout()
 
         if self.git_settings.lfs:
             self.repo.install_lfs_hooks()
