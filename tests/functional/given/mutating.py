@@ -50,7 +50,7 @@ def given_created_symlinks(tmp_path: Path, name_1: str, name_2: str, target: str
 def given_did_stage_file(tmp_path: Path, directory: str, filename: str) -> None:
     path = tmp_path / directory
     repo = Repo(path)
-    repo.add_files([filename])
+    repo.add(filename)
 
 
 @given(parsers.parse("repo at {directory} created local branch {test_branch}"))
