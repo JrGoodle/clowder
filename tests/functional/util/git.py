@@ -38,12 +38,6 @@ def create_commit(path: Path, filename: str, contents: str) -> List[CompletedPro
     return results
 
 
-# def create_detached_head(path: Path, branch: str) -> None:
-#     repo = Repo(path)
-#     repo.checkout(f"{branch}~1")
-#     assert repo.is_detached
-
-
 def set_up_behind_ahead_no_confilct(path: Path, local: str, remote: str, number_behind: int, number_ahead: int,
                                     scenario_info: ScenarioInfo) -> None:
     assert GitOffline.has_no_commits_between_refs(path, local, remote)

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from pygoodle.git import GitOffline, RemoteTag, Repo, TrackingBranch
+from pygoodle.git import GitOffline, RemoteTag, Repo
 from pytest_bdd import given, parsers
 
 
@@ -73,8 +73,7 @@ def given_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
 def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
     path = tmp_path / directory
     repo = Repo(path)
-    remote_tag = RemoteTag(path, tag)
-    assert repo.current_commit() == remote_tag.sha
+    assert repo.current_commit() == repo.get_local_tag(tag).sha
 
 
 @given(parsers.parse("repo at {directory} is on commit {commit}"))
@@ -101,8 +100,7 @@ def given_directory_detached_head(tmp_path: Path, directory: str) -> None:
 def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
     path = tmp_path / directory
     repo = Repo(path)
-    remote_tag = RemoteTag(path, tag)
-    assert repo.current_commit() == remote_tag.sha
+    assert repo.current_commit() == repo.get_remote_tag(tag).sha
 
 
 @given(parsers.parse("repo at {directory} is clean"))
@@ -137,8 +135,8 @@ def given_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> N
 @given("project at <directory> has tracking <test_branch>")
 def given_directory_has_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    tracking_branch = TrackingBranch(path, test_branch)
-    assert tracking_branch.exists
+    repo = Repo(path)
+    assert repo.has_tracking_branch(test_branch)
 
 
 @given(parsers.parse("repo at {directory} has no tracking branch {test_branch}"))
@@ -146,8 +144,8 @@ def given_directory_has_tracking_branch(tmp_path: Path, directory: str, test_bra
 @given("project at <directory> has no tracking <test_branch>")
 def given_directory_has_no_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
-    tracking_branch = TrackingBranch(path, test_branch)
-    assert not tracking_branch.exists
+    repo = Repo(path)
+    assert not repo.has_tracking_branch(test_branch)
 
 
 @given(parsers.parse("GitHub {repo} has remote tag {tag}"))
@@ -155,8 +153,8 @@ def given_directory_has_no_tracking_branch(tmp_path: Path, directory: str, test_
 def given_github_repo_has_remote_tag(tmp_path: Path, repo: str, tag: str) -> None:
     path = tmp_path
     url = f"https://github.com/{repo}"
-    remote_tag = RemoteTag(path, tag)
-    assert remote_tag.exists_at_url(url)
+    repo = Repo(path)
+    assert not repo.has_remote_tag(tag, url=url)
 
 
 @given(parsers.parse("GitHub {repo} has no remote tag {tag}"))
