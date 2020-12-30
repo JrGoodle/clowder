@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from pygoodle.git import LocalBranch, RemoteBranch, TrackingBranch
+from pygoodle.git import LocalBranch, RemoteBranch, Repo, TrackingBranch
 from pytest_bdd import given, parsers
 
 from tests.functional.util import ScenarioInfo, CATS_REPOS_DEFAULT
@@ -57,11 +57,14 @@ def given_cats_clowder_repo_symlink(tmp_path: Path, cats_clowder_repo_symlink,
 @given("cats example projects have no remote branch <test_branch>")
 def given_cats_no_remote_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_branch: str) -> None:
     scenario_info.example = "cats"
-    for name, repo in CATS_REPOS_DEFAULT.items():
-        path = tmp_path / repo["path"]
-
-        remote_branch = RemoteBranch(path, test_branch)
+    for name, info in CATS_REPOS_DEFAULT.items():
+        repo = Repo(tmp_path / info["path"])
+        repo.fetch(prune=True, fetch_all=True)
+        remote_branch = repo.get_remote_branch(test_branch, online=True)
+        if remote_branch is None:
+            return
         remote_branch.delete()
+        repo.fetch(prune=True, fetch_all=True)
         assert not remote_branch.exists
 
 
@@ -69,24 +72,37 @@ def given_cats_no_remote_branch(tmp_path: Path, scenario_info: ScenarioInfo, tes
 @given("cats example projects have remote branch <test_branch>")
 def given_cats_remote_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_branch: str) -> None:
     scenario_info.example = "cats"
-    for name, repo in CATS_REPOS_DEFAULT.items():
-        path = tmp_path / repo["path"]
-        remote_branch = RemoteBranch(path, test_branch)
+    for name, info in CATS_REPOS_DEFAULT.items():
+        repo_path = tmp_path / info["path"]
+        repo = Repo(repo_path)
+        repo.fetch(prune=True, fetch_all=True)
+        remote_branch = RemoteBranch(repo_path, test_branch)
         if remote_branch.exists:
             remote_branch.delete()
+            repo.fetch(prune=True, fetch_all=True)
+            assert not remote_branch.exists
+            assert not remote_branch.exists_online()
         remote_branch.create()
+        repo.fetch(prune=True, fetch_all=True)
         assert remote_branch.exists
+        assert remote_branch.exists_online()
 
 
 @given(parsers.parse("cats example projects have tracking branch {test_branch}"))
 @given("cats example projects have tracking branch <test_branch>")
 def given_cats_tracking_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_branch: str) -> None:
     scenario_info.example = "cats"
-    for name, repo in CATS_REPOS_DEFAULT.items():
-        path = tmp_path / repo["path"]
-        tracking_branch = TrackingBranch(path, test_branch)
-        tracking_branch.upstream_branch.delete()
+    for name, info in CATS_REPOS_DEFAULT.items():
+        repo_path = tmp_path / info["path"]
+        repo = Repo(repo_path)
+        repo.fetch(prune=True, fetch_all=True)
+        tracking_branch = TrackingBranch(repo_path, test_branch)
+        # TODO: Should this delete remote branch too?
+        if tracking_branch.local_branch.exists:
+            tracking_branch.local_branch.delete()
+            assert not tracking_branch.exists
         tracking_branch.create()
+        repo.fetch(prune=True, fetch_all=True)
         assert tracking_branch.exists
 
 
@@ -94,10 +110,13 @@ def given_cats_tracking_branch(tmp_path: Path, scenario_info: ScenarioInfo, test
 @given("cats example projects have local branch <test_branch>")
 def given_cats_local_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_branch: str) -> None:
     scenario_info.example = "cats"
-    for name, repo in CATS_REPOS_DEFAULT.items():
-        path = tmp_path / repo["path"]
-        local_branch = LocalBranch(path, test_branch)
-        local_branch.create()
+    for name, info in CATS_REPOS_DEFAULT.items():
+        repo_path = tmp_path / info["path"]
+        repo = Repo(repo_path)
+        repo.fetch(prune=True, fetch_all=True)
+        local_branch = LocalBranch(repo_path, test_branch)
+        if not local_branch.exists:
+            local_branch.create()
         assert local_branch.exists
 
 
@@ -105,8 +124,11 @@ def given_cats_local_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_br
 @given("cats example projects have no local branch <test_branch>")
 def given_cats_no_local_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_branch: str) -> None:
     scenario_info.example = "cats"
-    for name, repo in CATS_REPOS_DEFAULT.items():
-        path = tmp_path / repo["path"]
-        local_branch = LocalBranch(path, test_branch)
-        local_branch.create()
-        assert local_branch.exists
+    for name, info in CATS_REPOS_DEFAULT.items():
+        repo = Repo(tmp_path / info["path"])
+        repo.fetch(prune=True, fetch_all=True)
+        local_branch = repo.get_local_branch(test_branch)
+        if local_branch is None:
+            return
+        local_branch.delete()
+        assert not local_branch.exists
