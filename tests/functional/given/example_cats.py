@@ -59,6 +59,7 @@ def given_cats_no_remote_branch(tmp_path: Path, scenario_info: ScenarioInfo, tes
     scenario_info.example = "cats"
     for name, repo in CATS_REPOS_DEFAULT.items():
         path = tmp_path / repo["path"]
+
         remote_branch = RemoteBranch(path, test_branch)
         remote_branch.delete()
         assert not remote_branch.exists

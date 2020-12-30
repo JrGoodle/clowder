@@ -93,9 +93,9 @@ class ClowderController:
         try:
             if ENVIRONMENT.clowder_yaml is None:
                 raise MissingYamlError(f"{Path('clowder.yml')} appears to be missing")
-            yaml_file = Yaml(ENVIRONMENT.clowder_yaml, schema=ENVIRONMENT.clowder_schema)
-            yaml = yaml_file.validate(relative_to=ENVIRONMENT.clowder_dir)
-            self._clowder = ClowderBase(yaml)
+            yaml = Yaml(ENVIRONMENT.clowder_yaml, schema=ENVIRONMENT.clowder_schema)
+            yaml_file = yaml.validate(relative_to=ENVIRONMENT.clowder_dir)
+            self._clowder = ClowderBase(yaml_file)
 
             # Register all sources as we come across them
             defaults = self._clowder.defaults

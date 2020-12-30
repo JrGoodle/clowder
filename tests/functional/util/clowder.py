@@ -131,20 +131,19 @@ def init_herd_clowder(path: Path, example: str, protocol: str = "https",
 
     validate_clowder_repo_with_symlink(path / ".clowder")
 
-    repos = example_repo_projects(example)
-    for repo in repos:
-        repo_path = path / repo["path"]
-        branch = repo["branch"]
-        git_repo = Repo(repo_path)
-        assert git_repo.exists
-        assert git_repo.current_branch == branch
-        assert not git_repo.is_dirty
-        ssh_version = True if version is not None and "ssh" in version else False
-        if protocol == "ssh" or ssh_version:
-            remote_branches = git_repo.remote_branches
+    projects = example_repo_projects(example)
+    for project in projects:
+        repo = Repo(path / project['path'])
+        assert repo.exists
+        assert repo.current_branch == project["branch"]
+        assert not repo.is_dirty
+        is_ssh_version = version is not None and "ssh" in version
+        if protocol == "ssh" or is_ssh_version:
+            remote_branches = repo.get_remote_branches(online=True)
             remote_branches = [b for b in remote_branches if b.name.startswith('pytest')]
             for remote_branch in remote_branches:
                 remote_branch.delete()
+            repo.fetch(prune=True, fetch_all=True)
     return path
 
 

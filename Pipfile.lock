@@ -231,7 +231,7 @@
         },
         "pygoodle": {
             "git": "ssh://git@github.com/JrGoodle/pygoodle",
-            "ref": "6e53023e9b37747f4f4b966fcd29924132e5882f"
+            "ref": "a79121d541c172e408b3eb73507ec985a585b7f5"
         },
         "pynacl": {
             "hashes": [
@@ -292,11 +292,11 @@
         },
         "rich": {
             "hashes": [
-                "sha256:0f4359df97670c1981599690458c4c9ede02c56f59ae3a648b7154cdba21b0cc",
-                "sha256:8b937e2d2c4ff9dcfda8a5910a8cd384bd30f50ec92346d616f62065c662df5f"
+                "sha256:85d9d67f25ab2d676666c9895bdbfa064f9e68791977637f03b49b290cf4e3ac",
+                "sha256:ae7f5f24fc90c76ccb54883f4bd633cbd146e0bbe3e070275ca97038ce53cf2f"
             ],
             "markers": "python_version >= '3.6' and python_version < '4.0'",
-            "version": "==9.5.1"
+            "version": "==9.6.0"
         },
         "six": {
             "hashes": [
