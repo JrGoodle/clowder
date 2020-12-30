@@ -128,7 +128,8 @@ class ProjectRepo(ResolvedProject):
         """
 
         if not is_offline() and remote:
-            self.repo.default_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth, ref=self.default_ref)
+            self.repo.default_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth,
+                                           branch=self.default_ref.short_ref)
             if self.upstream_remote is not None:
                 self.upstream_remote.fetch(prune=True, tags=True, depth=self.git_settings.depth)
 
@@ -224,7 +225,7 @@ class ProjectRepo(ResolvedProject):
             clone_branch = None if self.default_branch is None else self.default_branch.short_ref
             if branch is not None:
                 remote_branch = RemoteBranch(self.path, name=branch, remote=self.default_remote.name)
-                if remote_branch.exists_at_url(self.url):
+                if remote_branch.exists_online(self.url):
                     clone_branch = branch
 
             self.repo.clone(self.path, url=self.url, depth=depth, branch=clone_branch)

@@ -12,8 +12,7 @@ from tests.functional.util import ScenarioInfo
 @then(parsers.parse("project at {directory} is a git repository"))
 @then(parsers.parse("directory at {directory} is a git repository"))
 def then_project_dir_is_git_repo(tmp_path: Path, directory: str):
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.exists
 
 
@@ -45,22 +44,19 @@ def then_test_dir_is_not_git_repo(tmp_path: Path, test_directory: str) -> None:
 
 @then("project at <directory> is on <end_branch>")
 def then_check_directory_end_branch(tmp_path: Path, directory: str, end_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.get_local_branch(end_branch).is_checked_out
 
 
 @then("project at <directory> is on <test_branch>")
 def then_check_directory_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.get_local_branch(test_branch).is_checked_out
 
 
 @then("project at <directory> is on <start_branch>")
 def then_check_directory_start_branch(tmp_path: Path, directory: str, start_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.get_local_branch(start_branch).is_checked_out
 
 
@@ -68,8 +64,7 @@ def then_check_directory_start_branch(tmp_path: Path, directory: str, start_bran
 @then(parsers.parse("project at {directory} is on branch {branch}"))
 @then("project at <directory> is on <branch>")
 def then_directory_on_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.get_local_branch(branch).is_checked_out
 
 
@@ -77,8 +72,7 @@ def then_directory_on_branch(tmp_path: Path, directory: str, branch: str) -> Non
 @then(parsers.parse("project at {directory} is on tag {tag}"))
 @then("project at <directory> is on <tag>")
 def then_directory_on_tag(tmp_path: Path, directory: str, tag: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.get_local_tag(tag).is_checked_out
 
 
@@ -86,8 +80,7 @@ def then_directory_on_tag(tmp_path: Path, directory: str, tag: str) -> None:
 @then(parsers.parse("project at {directory} is on commit {commit}"))
 @then("project at <directory> is on <commit>")
 def then_directory_on_commit(tmp_path: Path, directory: str, commit: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.current_commit() == commit
 
 
@@ -95,8 +88,7 @@ def then_directory_on_commit(tmp_path: Path, directory: str, commit: str) -> Non
 @then(parsers.parse("project at {directory} is not on commit {commit}"))
 @then("project at <directory> is not on <commit>")
 def then_directory_not_on_commit(tmp_path: Path, directory: str, commit: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.current_commit() != commit
 
 
@@ -104,15 +96,13 @@ def then_directory_not_on_commit(tmp_path: Path, directory: str, commit: str) ->
 @then(parsers.parse("project at {directory} has tracking branch {test_branch}"))
 @then("project at <directory> has tracking <test_branch>")
 def then_directory_has_tracking_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_tracking_branch(test_branch)
 
 
 @then("project at <directory> has tracking <branch>")
 def then_directory_has_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_tracking_branch(branch)
 
 
@@ -120,15 +110,13 @@ def then_directory_has_tracking_branch(tmp_path: Path, directory: str, branch: s
 @then(parsers.parse("project at {directory} has no tracking branch {test_branch}"))
 @then("project at <directory> has no tracking <test_branch>")
 def then_directory_has_no_tracking_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.has_tracking_branch(test_branch)
 
 
 @then("project at <directory> has no tracking branch <branch>")
 def then_directory_has_no_tracking_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.has_tracking_branch(branch)
 
 
@@ -136,8 +124,7 @@ def then_directory_has_no_tracking_branch(tmp_path: Path, directory: str, branch
 @then(parsers.parse("project at {directory} has detached HEAD"))
 @then("project at <directory> has detached HEAD")
 def then_directory_detached_head(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.is_detached
 
 
@@ -145,15 +132,13 @@ def then_directory_detached_head(tmp_path: Path, directory: str) -> None:
 @then(parsers.parse("project at {directory} has no local branch {test_branch}"))
 @then("project at <directory> has no local <test_branch>")
 def then_directory_has_no_local_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.has_local_branch(test_branch)
 
 
 @then("project at <directory> has no local <branch>")
 def then_directory_has_no_local_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.has_local_branch(branch)
 
 
@@ -161,15 +146,13 @@ def then_directory_has_no_local_branch(tmp_path: Path, directory: str, branch: s
 @then(parsers.parse("project at {directory} has local branch {test_branch}"))
 @then("project at <directory> has local <test_branch>")
 def then_directory_has_local_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_local_branch(test_branch)
 
 
 @then("project at <directory> has local <branch>")
 def then_directory_has_local_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_local_branch(branch)
 
 
@@ -177,15 +160,13 @@ def then_directory_has_local_branch(tmp_path: Path, directory: str, branch: str)
 @then(parsers.parse("project at {directory} has no remote branch {test_branch}"))
 @then("project at <directory> has no remote <test_branch>")
 def then_directory_has_no_remote_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.has_remote_branch(test_branch)
 
 
 @then("project at <directory> has no remote <branch>")
 def then_directory_has_no_remote_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.has_remote_branch(branch)
 
 
@@ -193,15 +174,13 @@ def then_directory_has_no_remote_branch(tmp_path: Path, directory: str, branch: 
 @then(parsers.parse("project at {directory} has remote branch {test_branch}"))
 @then("project at <directory> has remote <test_branch>")
 def then_directory_has_remote_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_remote_branch(test_branch)
 
 
 @then("project at <directory> has remote <branch>")
 def then_directory_has_remote_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_remote_branch(branch)
 
 
@@ -209,8 +188,7 @@ def then_directory_has_remote_branch(tmp_path: Path, directory: str, branch: str
 @then(parsers.parse("project at {directory} is clean"))
 @then("project at <directory> is clean")
 def then_directory_clean(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.is_dirty
 
 
@@ -218,8 +196,7 @@ def then_directory_clean(tmp_path: Path, directory: str) -> None:
 @then(parsers.parse("project at {directory} is dirty"))
 @then("project at <directory> is dirty")
 def then_directory_dirty(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.is_dirty
 
 
@@ -227,8 +204,7 @@ def then_directory_dirty(tmp_path: Path, directory: str) -> None:
 @then(parsers.parse("project at {directory} has untracked file {filename}"))
 @then("project at <directory> has untracked file <filename>")
 def then_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert Path(filename) in repo.untracked_files
 
 
@@ -264,8 +240,7 @@ def then_submodule_not_initialized(tmp_path: Path,  directory: str, submodule_pa
 @then(parsers.parse("submodule in {directory} at {submodule_path} has been initialized"))
 @then("submodule in <directory> at <submodule_path> has been initialized")
 def then_submodule_initialized(tmp_path: Path, directory: str, submodule_path: str) -> None:
-    path = tmp_path / directory / submodule_path
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory / submodule_path)
     assert repo.get_submodule(Path(submodule_path)).is_initialized
 
 
@@ -287,8 +262,7 @@ def then_directory_in_sync_with_upstream_test_branch(tmp_path: Path, directory: 
 @then(parsers.parse("project at {directory} has remote {remote} with url {url}"))
 @then("project at <directory> has <remote> with <url>")
 def then_directory_has_remote_with_url(tmp_path: Path, directory: str, remote: str, url: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_remote(remote=remote, fetch_url=url, push_url=url)
 
 
@@ -296,8 +270,7 @@ def then_directory_has_remote_with_url(tmp_path: Path, directory: str, remote: s
 @then(parsers.parse("project at {directory} has rebase in progress"))
 @then("project at <directory> has rebase in progress")
 def then_directory_has_rebase_in_progress(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.is_rebase_in_progress
 
 
@@ -305,8 +278,7 @@ def then_directory_has_rebase_in_progress(tmp_path: Path, directory: str) -> Non
 @then(parsers.parse("project at {directory} has no rebase in progress"))
 @then("project at <directory> has no rebase in progress")
 def then_directory_has_no_rebase_in_progress(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.is_rebase_in_progress
 
 
@@ -335,8 +307,7 @@ def then_check_directory_rebased_commit_messages_correct_order(tmp_path: Path, d
 
 @then("project at <directory> has staged <filename>")
 def then_has_stage_file(tmp_path: Path, directory: str, filename: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.is_dirty
 #     TODO: Add check for specific staged file
 
@@ -374,14 +345,12 @@ def then_has_no_lfs_installed(tmp_path: Path, directory: str) -> None:
 @then(parsers.parse("project at {directory} is a shallow clone"))
 @then("project at <directory> is a shallow clone")
 def then_is_shallow_clone(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.is_shallow
 
 
 @then(parsers.parse("project at {directory} is not a shallow clone"))
 @then("project at <directory> is not a shallow clone")
 def then_is_not_shallow_clone(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.is_shallow

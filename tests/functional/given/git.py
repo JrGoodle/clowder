@@ -10,15 +10,13 @@ from pytest_bdd import given, parsers
 @given(parsers.parse("project at {directory} is on {start_branch}"))
 @given("project at <directory> is on <start_branch>")
 def given_directory_on_start_branch(tmp_path: Path, directory: str, start_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.current_branch == start_branch
 
 
 @given("project at <directory> is on <test_branch>")
 def given_directory_on_test_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.current_branch == test_branch
 
 
@@ -26,8 +24,7 @@ def given_directory_on_test_branch(tmp_path: Path, directory: str, test_branch: 
 @given(parsers.parse("project at {directory} has local branch {test_branch}"))
 @given("project at <directory> has local <test_branch>")
 def given_directory_has_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_local_branch(test_branch)
 
 
@@ -35,8 +32,7 @@ def given_directory_has_local_branch(tmp_path: Path, directory: str, test_branch
 @given(parsers.parse("project at {directory} has no local branch {test_branch}"))
 @given("project at <directory> has no local <test_branch>")
 def given_directory_has_no_local_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.has_local_branch(test_branch)
 
 
@@ -44,8 +40,7 @@ def given_directory_has_no_local_branch(tmp_path: Path, directory: str, test_bra
 @given(parsers.parse("project at {directory} has no remote branch {test_branch}"))
 @given("project at <directory> has no remote <test_branch>")
 def given_directory_has_no_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.has_remote_branch(test_branch)
 
 
@@ -53,8 +48,7 @@ def given_directory_has_no_remote_branch(tmp_path: Path, directory: str, test_br
 @given(parsers.parse("project at {directory} has remote branch {test_branch}"))
 @given("project at <directory> has remote <test_branch>")
 def given_directory_has_remote_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_remote_branch(test_branch)
 
 
@@ -62,8 +56,7 @@ def given_directory_has_remote_branch(tmp_path: Path, directory: str, test_branc
 @given(parsers.parse("project at {directory} is on branch {branch}"))
 @given("project at <directory> is on <branch>")
 def given_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.current_branch == branch
 
 
@@ -71,8 +64,7 @@ def given_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
 @given(parsers.parse("project at {directory} is on tag {tag}"))
 @given("project at <directory> is on <tag>")
 def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.current_commit() == repo.get_local_tag(tag).sha
 
 
@@ -80,8 +72,7 @@ def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
 @given(parsers.parse("project at {directory} is on commit {commit}"))
 @given("project at <directory> is on <commit>")
 def given_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.current_commit() == commit
 
 
@@ -89,8 +80,7 @@ def given_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
 @given(parsers.parse("project at {directory} has detached HEAD"))
 @given("project at <directory> has detached HEAD")
 def given_directory_detached_head(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.is_detached
 
 
@@ -98,8 +88,7 @@ def given_directory_detached_head(tmp_path: Path, directory: str) -> None:
 @given(parsers.parse("project at {directory} has remote tag {tag}"))
 @given("project at <directory> has remote <tag>")
 def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.current_commit() == repo.get_remote_tag(tag).sha
 
 
@@ -107,8 +96,7 @@ def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
 @given(parsers.parse("project at {directory} is clean"))
 @given("project at <directory> is clean")
 def given_directory_clean(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.is_dirty
 
 
@@ -116,8 +104,7 @@ def given_directory_clean(tmp_path: Path, directory: str) -> None:
 @given(parsers.parse("project at {directory} is dirty"))
 @given("project at <directory> is dirty")
 def given_directory_dirty(tmp_path: Path, directory: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.is_dirty
 
 
@@ -125,8 +112,7 @@ def given_directory_dirty(tmp_path: Path, directory: str) -> None:
 @given(parsers.parse("project at {directory} has untracked file {filename}"))
 @given("project at <directory> has untracked file <filename>")
 def given_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert Path(filename) in repo.untracked_files
 
 
@@ -134,8 +120,7 @@ def given_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> N
 @given(parsers.parse("project at {directory} has tracking branch {test_branch}"))
 @given("project at <directory> has tracking <test_branch>")
 def given_directory_has_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert repo.has_tracking_branch(test_branch)
 
 
@@ -143,33 +128,29 @@ def given_directory_has_tracking_branch(tmp_path: Path, directory: str, test_bra
 @given(parsers.parse("project at {directory} has no tracking branch {test_branch}"))
 @given("project at <directory> has no tracking <test_branch>")
 def given_directory_has_no_tracking_branch(tmp_path: Path, directory: str, test_branch: str) -> None:
-    path = tmp_path / directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / directory)
     assert not repo.has_tracking_branch(test_branch)
 
 
 @given(parsers.parse("GitHub {repo} has remote tag {tag}"))
 @given("GitHub <repo> has remote <tag>")
 def given_github_repo_has_remote_tag(tmp_path: Path, repo: str, tag: str) -> None:
-    path = tmp_path
     url = f"https://github.com/{repo}"
-    repo = Repo(path)
+    repo = Repo(tmp_path)
     assert repo.has_remote_tag(tag, url=url)
 
 
 @given(parsers.parse("GitHub {repo} has no remote tag {tag}"))
 @given("GitHub <repo> has no remote <tag>")
 def given_github_repo_has_no_remote_tag(tmp_path: Path, repo: str, tag: str) -> None:
-    path = tmp_path
     url = f"https://github.com/{repo}"
-    repo = Repo(path)
+    repo = Repo(tmp_path)
     assert not repo.has_remote_tag(tag, url=url)
 
 
 @given("<test_directory> is a git repository")
 def given_test_dir_is_git_repo(tmp_path: Path, test_directory: str) -> None:
-    path = tmp_path / test_directory
-    repo = Repo(path)
+    repo = Repo(tmp_path / test_directory)
     assert repo.exists
 
 
