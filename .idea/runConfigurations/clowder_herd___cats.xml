@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="clowder debug" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true">
+  <configuration default="false" name="clowder herd - cats" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true">
     <module name="clowder" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />

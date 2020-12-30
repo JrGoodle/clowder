@@ -8,7 +8,7 @@ import pygoodle.filesystem as fs
 from pygoodle.app import Argument, Subcommand
 from pygoodle.console import CONSOLE
 from pygoodle.format import Format
-from pygoodle.yaml import save_yaml_file
+from pygoodle.yaml import Yaml
 
 import clowder.util.formatting as fmt
 from clowder.controller import (
@@ -57,4 +57,5 @@ class SaveCommand(Subcommand):
             raise ExistingVersionError(f"{Format.path(yaml_file)}\n{version_exists_message}")
 
         CONSOLE.stdout(f" - Save version '{fmt.version(version_name)}'\n{Format.path(yml_file)}")
-        save_yaml_file(CLOWDER_CONTROLLER.get_yaml(resolved=True), yml_file)
+        yaml = Yaml(yml_file)
+        yaml.save(CLOWDER_CONTROLLER.get_yaml(resolved=True))

@@ -18,7 +18,7 @@ import clowder.util.formatting as fmt
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import DuplicateVersionsError
-from clowder.util.yaml import link_clowder_yaml_default
+from clowder.util.yaml import link_clowder_yaml
 
 
 def print_clowder_repo_status(func):
@@ -103,7 +103,7 @@ class ClowderRepo:
 
         self.repo.clone(self.path, url, branch=branch)
         try:
-            link_clowder_yaml_default(ENVIRONMENT.current_dir)
+            link_clowder_yaml(ENVIRONMENT.current_dir)
         except Exception:
             LOG.error('Failed to link yaml file after clowder repo init')
             raise

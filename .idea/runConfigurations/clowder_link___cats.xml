@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="clowder debug - cats" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true">
+  <configuration default="false" name="clowder link - cats" type="PythonConfigurationType" factoryName="Python" editBeforeRun="true">
     <module name="clowder" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -13,7 +13,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="/usr/local/bin/clowder" />
-    <option name="PARAMETERS" value="link" />
+    <option name="PARAMETERS" value="link tags" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="true" />
     <option name="MODULE_MODE" value="false" />

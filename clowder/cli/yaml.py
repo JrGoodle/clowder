@@ -7,7 +7,7 @@
 from pygoodle.app import BoolArgument, Subcommand
 from pygoodle.console import CONSOLE
 
-from pygoodle.yaml import yaml_string
+from pygoodle.yaml import Yaml
 
 from clowder.controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
 
@@ -24,8 +24,5 @@ class YamlCommand(Subcommand):
     def run(self, args) -> None:
         if args.resolved:
             CLOWDER_CONTROLLER.validate_projects_state(CLOWDER_CONTROLLER.projects, allow_missing=False)
-            output = yaml_string(CLOWDER_CONTROLLER.get_yaml(resolved=True)).rstrip()
-            CONSOLE.stdout(output)
-        else:
-            output = yaml_string(CLOWDER_CONTROLLER.get_yaml()).rstrip()
-            CONSOLE.stdout(output)
+        output = Yaml.get_string(CLOWDER_CONTROLLER.get_yaml(resolved=args.resolved))
+        CONSOLE.stdout(output)

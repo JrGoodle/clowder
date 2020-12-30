@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from pygoodle.git import GitOffline, RemoteTag, Repo
+from pygoodle.git import GitOffline, Repo
 from pytest_bdd import given, parsers
 
 
@@ -154,7 +154,7 @@ def given_github_repo_has_remote_tag(tmp_path: Path, repo: str, tag: str) -> Non
     path = tmp_path
     url = f"https://github.com/{repo}"
     repo = Repo(path)
-    assert not repo.has_remote_tag(tag, url=url)
+    assert repo.has_remote_tag(tag, url=url)
 
 
 @given(parsers.parse("GitHub {repo} has no remote tag {tag}"))
@@ -162,8 +162,8 @@ def given_github_repo_has_remote_tag(tmp_path: Path, repo: str, tag: str) -> Non
 def given_github_repo_has_no_remote_tag(tmp_path: Path, repo: str, tag: str) -> None:
     path = tmp_path
     url = f"https://github.com/{repo}"
-    remote_tag = RemoteTag(path, tag)
-    assert not remote_tag.exists_at_url(url)
+    repo = Repo(path)
+    assert not repo.has_remote_tag(tag, url=url)
 
 
 @given("<test_directory> is a git repository")

@@ -12,7 +12,7 @@ from pygoodle.console import CONSOLE
 from pygoodle.format import Format
 from pygoodle.tasks import Task, TaskPool
 from pygoodle.util import sorted_tuple
-from pygoodle.yaml import load_yaml_file, validate_yaml_file, MissingYamlError
+from pygoodle.yaml import MissingYamlError, Yaml
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG
@@ -93,9 +93,8 @@ class ClowderController:
         try:
             if ENVIRONMENT.clowder_yaml is None:
                 raise MissingYamlError(f"{Path('clowder.yml')} appears to be missing")
-            yaml = load_yaml_file(ENVIRONMENT.clowder_yaml, ENVIRONMENT.clowder_dir)
-            validate_yaml_file(yaml, ENVIRONMENT.clowder_schema)
-
+            yaml_file = Yaml(ENVIRONMENT.clowder_yaml, schema=ENVIRONMENT.clowder_schema)
+            yaml = yaml_file.validate(relative_to=ENVIRONMENT.clowder_dir)
             self._clowder = ClowderBase(yaml)
 
             # Register all sources as we come across them
