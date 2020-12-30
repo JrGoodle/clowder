@@ -216,7 +216,7 @@ class ClowderController:
 
         for project in self.projects:
             if project_id == id(project):
-                return project.repo.current_commit(short=short).short_ref
+                return project.repo.current_commit(short=short)
 
         raise ProjectNotFoundError(f"Project with id {project_id} not found")
 
@@ -279,7 +279,8 @@ class ClowderController:
                 projects_exist = False
 
         if not projects_exist:
-            raise ProjectStatusError(f"First run {Format.bold('clowder herd')} to clone missing projects")
+            command = Format.bold('clowder herd')
+            raise ProjectStatusError(f"First run {command} to clone missing projects")
 
     def _initialize_properties(self) -> None:
         """Initialize all properties"""

@@ -292,7 +292,7 @@ class ProjectRepo(ResolvedProject):
         # local and remote branches exist
         if not branch.is_tracking_branch:
             branch.set_upstream()
-        branch.upstream_branch.pull(rebase=rebase)
+        branch.upstream_branch.pull(rebase=rebase, no_edit=True)
 
     def install_git_herd_alias(self) -> None:
         """Install 'git herd' alias for project"""
@@ -439,7 +439,7 @@ class ProjectRepo(ResolvedProject):
             raise NotImplementedError
 
         if not is_offline():
-            tracking_branch.create_upstream()
+            tracking_branch.upstream_branch.create()
 
     @staticmethod
     def _start_local_branch(local_branch: LocalBranch) -> None:

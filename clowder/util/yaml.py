@@ -40,7 +40,8 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
 
     target_file = clowder_dir / relative_source_file.name
 
-    CONSOLE.stdout(f" - Symlink {Format.path(Path(target_file.name))} -> {Format.path(relative_source_file)}")
+    symlink_output = Format.symlink(target_file, relative_to=ENVIRONMENT.clowder_dir, source=relative_source_file)
+    CONSOLE.stdout(f" - Symlink {symlink_output}")
 
     symlink_clowder_yaml(relative_source_file, target_file)
 
@@ -55,11 +56,12 @@ def link_clowder_yaml_default(clowder_dir: Path) -> None:
             existing_file = file
 
     if existing_file is not None and existing_file.is_symlink():
-        CONSOLE.stdout(f" - Remove previously existing file {Format.path(existing_file)}")
+        output_path = Format.path(existing_file, relative_to=ENVIRONMENT.clowder_dir)
+        CONSOLE.stdout(f" - Remove previously existing file {output_path}")
         try:
             fs.remove_file(existing_file)
         except OSError:
-            LOG.error(f"Failed to remove file {Format.path(existing_file)}")
+            LOG.error(f"Failed to remove file {output_path}")
             raise
 
 
