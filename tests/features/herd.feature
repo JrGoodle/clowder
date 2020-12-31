@@ -1154,7 +1154,7 @@ Feature: clowder herd
         | black-cats/sasha  | master | herd-missing-branch |
 
 #   TODO: Add actual check for same commit
-    @cats @write @ssh @debug
+    @cats @write @ssh
     Scenario Outline: herd branch - local exists, remote exists, no tracking, same commit
         Given cats example is initialized and herded with ssh
         And linked test-branch-ssh clowder version
@@ -1199,7 +1199,7 @@ Feature: clowder herd
 #        | black-cats/june   | master | pytest              |
 #        | black-cats/sasha  | master | pytest              |
 
-    @cats @internet @debug
+    @cats @internet
     Scenario Outline: herd tag - no repo, existing tag
         Given cats example is initialized
         And GitHub <repo> has remote <tag>
@@ -1210,7 +1210,7 @@ Feature: clowder herd
         And project at <directory> is a git repository
         And project at <directory> is on <tag>
         And project at <directory> has detached HEAD
-        And project at <directory> has no local <branch>
+        And project at <directory> has local <branch>
 
         Examples:
         | directory         | branch | tag        | repo            |
