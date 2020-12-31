@@ -286,7 +286,7 @@ class ProjectRepo(ResolvedProject):
             return
 
         # local branch exists
-        if not branch.upstream_branch.exists:
+        if not branch.upstream_branch.exists or not branch.is_checked_out:
             branch.local_branch.checkout(check=check)
             return
 

@@ -70,7 +70,7 @@ Feature: clowder herd
         | black-cats/sasha  | sub         | master     |
         | black-cats/june   | sub         | master     |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd commits
         Given cats example is initialized
         And <directory> doesn't exist
@@ -91,7 +91,7 @@ Feature: clowder herd
         | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd tags
         Given cats example is initialized
         And <directory> doesn't exist
@@ -184,7 +184,7 @@ Feature: clowder herd
 
 #    TODO: Probably should come up with a better test for this (i.e. save a new version and its commit hashes
 #    and then herd and check them in the Then section
-    @cats @debug
+    @cats
     Scenario Outline: herd previously saved version
         Given cats example is initialized
         And <directory> doesn't exist
@@ -953,7 +953,7 @@ Feature: clowder herd
         | mu        | knead  | something |
 
 #   TODO: Check that 'git herd' only herds a single repo
-    @cats @debug
+    @cats
     Scenario Outline: herd with git herd alias
         Given cats example is initialized and herded
         And project at <directory> is on <branch>
@@ -1044,7 +1044,7 @@ Feature: clowder herd
         | black-cats/june   | master |
         | black-cats/sasha  | master |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd branch - no repo, existing remote branch
         Given cats example is initialized
         And <directory> doesn't exist
@@ -1066,7 +1066,7 @@ Feature: clowder herd
         | black-cats/june   | master | herd-branch |
         | black-cats/sasha  | master | herd-branch |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd branch - no repo, no existing remote branch
         Given cats example is initialized
         And <directory> doesn't exist
@@ -1088,7 +1088,7 @@ Feature: clowder herd
         | black-cats/june   | master | herd-missing-branch |
         | black-cats/sasha  | master | herd-missing-branch |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd branch - no local branch, existing remote branch
         Given cats example is initialized and herded
         And project at <directory> is on <branch>
@@ -1109,7 +1109,7 @@ Feature: clowder herd
         | black-cats/june   | master | herd-branch |
         | black-cats/sasha  | master | herd-branch |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd branch - no local branch, no remote branch
         Given cats example is initialized and herded
         And project at <directory> is on <branch>
@@ -1131,7 +1131,7 @@ Feature: clowder herd
         | black-cats/june   | master | herd-missing-branch |
         | black-cats/sasha  | master | herd-missing-branch |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd branch - existing local branch, no remote branch
         Given cats example is initialized and herded
         And project at <directory> created local <test_branch>
@@ -1221,7 +1221,7 @@ Feature: clowder herd
         | black-cats/june   | master | pytest-tag | JrGoodle/june   |
         | black-cats/sasha  | master | pytest-tag | JrGoodle/sasha  |
 
-    @cats @internet @debug
+    @cats @internet
     Scenario Outline: herd tag - no repo, no tag
         Given cats example is initialized
         And GitHub <repo> has no remote <tag>
@@ -1241,7 +1241,7 @@ Feature: clowder herd
         | black-cats/june   | master | pytest-tag-missing | JrGoodle/june   |
         | black-cats/sasha  | master | pytest-tag-missing | JrGoodle/sasha  |
 
-    @cats @internet @debug
+    @cats @internet
     Scenario Outline: herd tag - existing repo, existing tag
         Given cats example is initialized and herded
         And GitHub <repo> has remote <tag>
@@ -1260,7 +1260,7 @@ Feature: clowder herd
         | black-cats/june   | master | pytest-tag | JrGoodle/june   |
         | black-cats/sasha  | master | pytest-tag | JrGoodle/sasha  |
 
-    @cats @internet @debug
+    @cats @internet
     Scenario Outline: herd tag - existing repo, no existing tag
         Given cats example is initialized and herded
         And GitHub <repo> has no remote <tag>
