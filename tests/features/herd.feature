@@ -206,7 +206,7 @@ Feature: clowder herd
         | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @submodules @cats @debug
+    @submodules @cats
     Scenario Outline: herd submodules recursive enabled directories
         Given cats example is initialized
         And <directory> doesn't exist
@@ -838,7 +838,7 @@ Feature: clowder herd
 #        | black-cats/june   | master       | pytest       |
 #        | black-cats/sasha  | master       | pytest       |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd after clean herd
         Given cats example is initialized and herded
         And project at <directory> is on <branch>
@@ -877,7 +877,7 @@ Feature: clowder herd
         | black-cats/sasha  | master | 2             | 1            |
         | black-cats/june   | master | 1             | 2            |
 
-    @cats @lfs @debug
+    @cats @lfs
     Scenario Outline: herd lfs initial
         Given cats example is initialized
         And linked lfs clowder version
@@ -976,7 +976,7 @@ Feature: clowder herd
         | black-cats/june   | master | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | master | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd with git herd alias only applies to one repo - included - mu
         Given cats example is initialized and herded
         And project at <directory> is on <branch>

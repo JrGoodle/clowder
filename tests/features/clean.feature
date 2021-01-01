@@ -157,7 +157,6 @@ Feature: clowder clean
         | black-cats/sasha  | master | something.txt |
         | black-cats/june   | master | something.txt |
 
-    @debug
     Scenario Outline: clean ignores untracked directory
         Given cats example is initialized and herded
         And created <test_directory>
@@ -204,7 +203,6 @@ Feature: clowder clean
         | black-cats/sasha  | master | something.txt | black-cats/sasha/something  |
         | black-cats/june   | master | something.txt | black-cats/june/something   |
 
-    @debug
     Scenario Outline: clean ignores untracked git directory
         Given cats example is initialized and herded
         And cloned cats repo in <directory>
@@ -254,7 +252,6 @@ Feature: clowder clean
         | black-cats/sasha  | master | black-cats/sasha/cats  |
         | black-cats/june   | master | black-cats/june/cats   |
 
-    @debug
     Scenario Outline: clean -X only files ignored by git
         Given cats example is initialized and herded
         And created <filename> in <directory>
@@ -298,7 +295,6 @@ Feature: clowder clean
         | black-cats/sasha  | master | not_ignored |
         | black-cats/june   | master | not_ignored |
 
-    @debug
     Scenario Outline: clean ignores files ignored by git
         Given cats example is initialized and herded
         And created <filename> in <directory>
@@ -452,7 +448,6 @@ Feature: clowder clean
         | black-cats/sasha  | master | something.txt |
         | black-cats/june   | master | something.txt |
 
-    @debug
     Scenario Outline: clean -a files ignored by git
         Given cats example is initialized and herded
         And created <filename> in <directory>
