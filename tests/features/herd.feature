@@ -137,6 +137,7 @@ Feature: clowder herd
         Given cats example is initialized and herded
         And created <filename> in <directory>
         And project at <directory> staged <filename>
+        And project at <directory> is dirty
         And project at <directory> is on <branch>
         When I run 'clowder herd'
         Then the command fails
@@ -205,7 +206,7 @@ Feature: clowder herd
         | black-cats/june   | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @submodules @cats
+    @submodules @cats @debug
     Scenario Outline: herd submodules recursive enabled directories
         Given cats example is initialized
         And <directory> doesn't exist
@@ -837,7 +838,7 @@ Feature: clowder herd
 #        | black-cats/june   | master       | pytest       |
 #        | black-cats/sasha  | master       | pytest       |
 
-    @cats
+    @cats @debug
     Scenario Outline: herd after clean herd
         Given cats example is initialized and herded
         And project at <directory> is on <branch>
@@ -876,7 +877,7 @@ Feature: clowder herd
         | black-cats/sasha  | master | 2             | 1            |
         | black-cats/june   | master | 1             | 2            |
 
-    @cats @lfs
+    @cats @lfs @debug
     Scenario Outline: herd lfs initial
         Given cats example is initialized
         And linked lfs clowder version
@@ -933,7 +934,7 @@ Feature: clowder herd
         | directory | branch     | filename     |
         | mu        | lfs        | jrgoodle.png |
 
-    @cats
+    @cats @debug
     Scenario Outline: herd install custom git config alias
         Given cats example is initialized and herded
         And linked git-config clowder version
@@ -945,7 +946,8 @@ Feature: clowder herd
         And I run 'git something'
         Then the commands succeed
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         And <filename> exists in <directory>
 
         Examples:
@@ -974,7 +976,7 @@ Feature: clowder herd
         | black-cats/june   | master | b6e1316cc62cb2ba18fa982fc3d67ef4408c8bfd |
         | black-cats/sasha  | master | 775979e0b1a7f753131bf16a4794c851c67108d8 |
 
-    @cats
+    @cats @debug
     Scenario Outline: herd with git herd alias only applies to one repo - included - mu
         Given cats example is initialized and herded
         And project at <directory> is on <branch>

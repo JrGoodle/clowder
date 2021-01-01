@@ -208,6 +208,22 @@ def then_has_untracked_file(tmp_path: Path, directory: str, filename: str) -> No
     assert Path(filename) in repo.untracked_files
 
 
+@then(parsers.parse("repo at {directory} has untracked files"))
+@then(parsers.parse("project at {directory} has untracked files"))
+@then("project at <directory> has untracked files")
+def then_directory_has_untracked_files(tmp_path: Path, directory: str) -> None:
+    repo = Repo(tmp_path / directory)
+    assert repo.has_untracked_files
+
+
+@then(parsers.parse("repo at {directory} has no untracked files"))
+@then(parsers.parse("project at {directory} has no untracked files"))
+@then("project at <directory> has no untracked files")
+def then_directory_has_no_untracked_files(tmp_path: Path, directory: str) -> None:
+    repo = Repo(tmp_path / directory)
+    assert not repo.has_untracked_files
+
+
 @then(parsers.parse("repo at {directory} has submodule at {submodule_path}"))
 @then(parsers.parse("project at {directory} has submodule at {submodule_path}"))
 @then("project at <directory> has submodule at <submodule_path>")

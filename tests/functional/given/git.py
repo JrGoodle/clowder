@@ -108,6 +108,38 @@ def given_directory_dirty(tmp_path: Path, directory: str) -> None:
     assert repo.is_dirty
 
 
+@given(parsers.parse("repo at {directory} has untracked files"))
+@given(parsers.parse("project at {directory} has untracked files"))
+@given("project at <directory> has untracked files")
+def given_directory_has_untracked_files(tmp_path: Path, directory: str) -> None:
+    repo = Repo(tmp_path / directory)
+    assert repo.has_untracked_files
+
+
+@given(parsers.parse("repo at {directory} has no untracked files"))
+@given(parsers.parse("project at {directory} has no untracked files"))
+@given("project at <directory> has no untracked files")
+def given_directory_has_no_untracked_files(tmp_path: Path, directory: str) -> None:
+    repo = Repo(tmp_path / directory)
+    assert not repo.has_untracked_files
+
+
+@given(parsers.parse("repo at {directory} has rebase in progress"))
+@given(parsers.parse("project at {directory} has rebase in progress"))
+@given("project at <directory> has rebase in progress")
+def given_directory_has_rebase_in_progress(tmp_path: Path, directory: str) -> None:
+    repo = Repo(tmp_path / directory)
+    assert repo.is_rebase_in_progress
+
+
+@given(parsers.parse("repo at {directory} has no rebase in progress"))
+@given(parsers.parse("project at {directory} has no rebase in progress"))
+@given("project at <directory> has no rebase in progress")
+def given_directory_has_no_rebase_in_progress(tmp_path: Path, directory: str) -> None:
+    repo = Repo(tmp_path / directory)
+    assert not repo.is_rebase_in_progress
+
+
 @given(parsers.parse("repo at {directory} has untracked file {filename}"))
 @given(parsers.parse("project at {directory} has untracked file {filename}"))
 @given("project at <directory> has untracked file <filename>")

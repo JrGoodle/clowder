@@ -266,7 +266,7 @@ class ProjectRepo(ResolvedProject):
                     remote_tag.checkout()
 
         if self.git_settings.lfs:
-            self.repo.install_lfs_hooks()
+            self.repo.install_lfs_hooks(local=True)
             self.repo.pull_lfs()
 
         if self.upstream is not None:
@@ -274,6 +274,9 @@ class ProjectRepo(ResolvedProject):
             if not self.upstream_remote.exists:
                 self.upstream_remote.create(self.upstream.url)
             self.upstream_remote.fetch(prune=True, tags=True)
+
+        if self.git_settings.recursive:
+            self.repo.submodule_update(init=True, depth=self.git_settings.depth, recursive=True, checkout=True)
 
     @staticmethod
     def herd_branch(branch: TrackingBranch, check: bool = True, create: bool = True,
@@ -302,7 +305,7 @@ class ProjectRepo(ResolvedProject):
         config = {
             'alias.herd': f'!clowder herd {self.relative_path}'
         }
-        CONSOLE.stdout(" - Update git herd alias")
+        CONSOLE.stdout(f" - Update {Format.bold('git herd')} alias")
         self.repo.update_git_config(config)
 
     @project_repo_exists

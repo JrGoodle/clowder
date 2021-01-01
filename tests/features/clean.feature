@@ -110,6 +110,7 @@ Feature: clowder clean
         And created <filename> in <directory>
         And project at <directory> staged <filename>
         And project at <directory> is on <branch>
+        And project at <directory> is dirty
         When I run 'clowder clean black-cats'
         Then the command succeeds
         And <filename> exists in <directory>
@@ -142,6 +143,7 @@ Feature: clowder clean
         And created <filename> in <directory>
         And project at <directory> staged <filename>
         And project at <directory> is on <branch>
+        And project at <directory> is dirty
         When I run 'clowder clean mu duke'
         Then the command succeeds
         And <filename> exists in <directory>
@@ -155,16 +157,19 @@ Feature: clowder clean
         | black-cats/sasha  | master | something.txt |
         | black-cats/june   | master | something.txt |
 
+    @debug
     Scenario Outline: clean ignores untracked directory
         Given cats example is initialized and herded
         And created <test_directory>
         And created <filename> in <test_directory>
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean'
         Then the command succeeds
         And <filename> exists in <test_directory>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         And project at <directory> is on <branch>
 
         Examples:
@@ -181,11 +186,13 @@ Feature: clowder clean
         And created <test_directory>
         And created <filename> in <test_directory>
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean -d'
         Then the command succeeds
         And <test_directory> doesn't exist
         And project at <directory> is clean
+        And project at <directory> has no untracked files
         And project at <directory> is on <branch>
 
         Examples:
@@ -197,19 +204,22 @@ Feature: clowder clean
         | black-cats/sasha  | master | something.txt | black-cats/sasha/something  |
         | black-cats/june   | master | something.txt | black-cats/june/something   |
 
+    @debug
     Scenario Outline: clean ignores untracked git directory
         Given cats example is initialized and herded
         And cloned cats repo in <directory>
         And <test_directory> exists
         And <test_directory> is a git repository
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean'
         Then the command succeeds
         And <test_directory> exists
         And <test_directory> is a git repository
-        And project at <directory> is dirty
+        And project at <directory> is clean
         And project at <directory> is on <branch>
+        And project at <directory> has untracked files
 
         Examples:
         | directory         | branch | test_directory         |
@@ -226,12 +236,14 @@ Feature: clowder clean
         And <test_directory> exists
         And <test_directory> is a git repository
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean -fd'
         Then the command succeeds
         And <test_directory> doesn't exist
         And project at <directory> is clean
         And project at <directory> is on <branch>
+        And project at <directory> has no untracked files
 
         Examples:
         | directory         | branch | test_directory         |
@@ -242,6 +254,7 @@ Feature: clowder clean
         | black-cats/sasha  | master | black-cats/sasha/cats  |
         | black-cats/june   | master | black-cats/june/cats   |
 
+    @debug
     Scenario Outline: clean -X only files ignored by git
         Given cats example is initialized and herded
         And created <filename> in <directory>
@@ -267,11 +280,13 @@ Feature: clowder clean
         Given cats example is initialized and herded
         And created <filename> in <directory>
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean -X'
         Then the command succeeds
         And <filename> exists in <directory>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         And project at <directory> is on <branch>
 
         Examples:
@@ -283,6 +298,7 @@ Feature: clowder clean
         | black-cats/sasha  | master | not_ignored |
         | black-cats/june   | master | not_ignored |
 
+    @debug
     Scenario Outline: clean ignores files ignored by git
         Given cats example is initialized and herded
         And created <filename> in <directory>
@@ -308,11 +324,13 @@ Feature: clowder clean
         Given cats example is initialized and herded
         And created <filename> in <directory>
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean'
         Then the command succeeds
         And <filename> doesn't exist in <directory>
         And project at <directory> is clean
+        And project at <directory> has no untracked files
         And project at <directory> is on <branch>
 
         Examples:
@@ -349,11 +367,13 @@ Feature: clowder clean
         Given cats example is initialized and herded
         And created <filename> in <directory>
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean -x'
         Then the command succeeds
         And <filename> doesn't exist in <directory>
         And project at <directory> is clean
+        And project at <directory> has no untracked files
         And project at <directory> is on <branch>
 
         Examples:
@@ -371,11 +391,13 @@ Feature: clowder clean
         And <test_directory> exists
         And <test_directory> is a git repository
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean -a'
         Then the command succeeds
         And <test_directory> doesn't exist
         And project at <directory> is clean
+        And project at <directory> has no untracked files
         And project at <directory> is on <branch>
 
         Examples:
@@ -391,11 +413,13 @@ Feature: clowder clean
         Given cats example is initialized and herded
         And created <filename> in <directory>
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean -a'
         Then the command succeeds
         And <filename> doesn't exist in <directory>
         And project at <directory> is clean
+        And project at <directory> has no untracked files
         And project at <directory> is on <branch>
 
         Examples:
@@ -428,6 +452,7 @@ Feature: clowder clean
         | black-cats/sasha  | master | something.txt |
         | black-cats/june   | master | something.txt |
 
+    @debug
     Scenario Outline: clean -a files ignored by git
         Given cats example is initialized and herded
         And created <filename> in <directory>
@@ -454,11 +479,13 @@ Feature: clowder clean
         And created <test_directory>
         And created <filename> in <test_directory>
         And project at <directory> is on <branch>
-        And project at <directory> is dirty
+        And project at <directory> is clean
+        And project at <directory> has untracked files
         When I run 'clowder clean -a'
         Then the command succeeds
         And <test_directory> doesn't exist
         And project at <directory> is clean
+        And project at <directory> has no untracked files
         And project at <directory> is on <branch>
 
         Examples:
@@ -475,8 +502,8 @@ Feature: clowder clean
         Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
         And project at <directory> checked out <test_branch>
-        And project at <directory> on <test_branch> has rebase in progress
-        And project at <directory> is dirty
+        And project at <directory> on <test_branch> failed to complete rebase
+        And project at <directory> has rebase in progress
         When I run 'clowder clean'
         Then the command succeeds
         And project at <directory> has no rebase in progress

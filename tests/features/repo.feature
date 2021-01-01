@@ -34,20 +34,23 @@ Feature: clowder repo command
         Given cats example is initialized
         And .clowder/my-file file doesn't exist
         And repo at .clowder is clean
+        And repo at .clowder has no untracked files
         When I run 'clowder repo run "touch my-file"'
         Then the command succeeds
         And .clowder/my-file file exists
-        And repo at .clowder is dirty
+        And repo at .clowder is clean
+        And repo at .clowder has untracked files
 
     Scenario: repo run delete file
         Given cats example is initialized
         And created file my-file in directory .clowder
         And repo at .clowder has untracked file my-file
-        And repo at .clowder is dirty
+        And repo at .clowder is clean
         When I run 'clowder repo run "rm my-file"'
         Then the command succeeds
         And my-file file doesn't exist in directory .clowder
         And repo at .clowder is clean
+        And project at .clowder has no untracked files
 
     Scenario: repo checkout
         Given cats example is initialized

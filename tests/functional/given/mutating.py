@@ -349,10 +349,10 @@ def given_directory_deleted_local_branch(tmp_path: Path, directory: str, branch:
 #     assert all([r.returncode == 0 for r in results])
 
 
-@given(parsers.parse("repo at {directory} on branch {test_branch} has rebase in progress"))
-@given(parsers.parse("project at {directory} on branch {test_branch} has rebase in progress"))
-@given("project at <directory> on <test_branch> has rebase in progress")
-def given_directory_has_rebase_in_progress(tmp_path: Path, directory: str, test_branch: str) -> None:
+@given(parsers.parse("repo at {directory} on branch {test_branch} failed to complete rebase"))
+@given(parsers.parse("project at {directory} on branch {test_branch} failed to complete rebase"))
+@given("project at <directory> on <test_branch> failed to complete rebase")
+def given_directory_failed_to_complete_rebase(tmp_path: Path, directory: str, test_branch: str) -> None:
     path = tmp_path / directory
     util.set_up_behind_ahead_conflict(path, test_branch, 1, 3)
     repo = Repo(path)
