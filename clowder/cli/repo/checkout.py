@@ -26,4 +26,4 @@ class RepoCheckoutCommand(Subcommand):
     @clowder_git_repo_required
     @print_clowder_repo_status_fetch
     def run(self, args) -> None:
-        ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).checkout(args.ref[0])
+        ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).repo.checkout(args.ref[0], track=True)

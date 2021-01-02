@@ -23,4 +23,4 @@ class RepoCleanCommand(Subcommand):
     @clowder_git_repo_required
     @print_clowder_repo_status
     def run(self, args) -> None:
-        ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).clean()
+        ClowderRepo(ENVIRONMENT.clowder_git_repo_dir).repo.clean()

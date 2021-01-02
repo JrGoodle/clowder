@@ -272,8 +272,7 @@ Feature: clowder herd
         Then the command succeeds
         And project at <directory> exists
         And project at <directory> is clean
-#       TODO: Better recursize submodule check
-        And project at <directory> has no submodule at <submodule_path>
+        And project at <directory> has submodule at <submodule_path>
         And submodule in <directory> at <submodule_path> has been initialized
 #       TODO: Check submodule url
 

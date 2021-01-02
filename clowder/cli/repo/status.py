@@ -24,4 +24,4 @@ class RepoStatusCommand(Subcommand):
     @print_clowder_repo_status
     def run(self, args) -> None:
         if ENVIRONMENT.clowder_git_repo_dir is not None:
-            ClowderRepo(ENVIRONMENT.clowder_repo_dir).status(verbose=True)
+            ClowderRepo(ENVIRONMENT.clowder_repo_dir).repo.status(verbose=True)

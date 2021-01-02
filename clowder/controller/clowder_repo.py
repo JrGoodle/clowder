@@ -162,7 +162,7 @@ class ClowderRepo:
 
     @property
     def status(self) -> Optional[str]:
-        """Print clowder repo status"""
+        """Get clowder repo status"""
 
         if ENVIRONMENT.clowder_repo_dir is None:
             return None
