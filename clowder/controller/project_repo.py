@@ -228,7 +228,7 @@ class ProjectRepo(ResolvedProject):
                 if remote_branch.exists_online(self.url):
                     clone_branch = branch
 
-            self.repo.clone(self.path, url=self.url, depth=depth, branch=clone_branch)
+            self.repo.clone(self.path, url=self.url, depth=depth, branch=clone_branch, origin=self.default_remote.name)
 
             if tag is not None:
                 remote_tag = RemoteTag(self.path, name=tag, remote=self.default_remote.name)

@@ -243,8 +243,8 @@ def then_has_no_submodule(tmp_path: Path, directory: str, submodule_path: str) -
 
 
 # TODO: Add @given versions of these and update tests with checks before @when
-@then(parsers.parse("submodule in {directory} at {submodule_path} hasn't been initialized"))
-@then("submodule in <directory> at <submodule_path> hasn't been initialized")
+@then(parsers.parse("submodule in {directory} at {submodule_path} is not initialized"))
+@then("submodule in <directory> at <submodule_path> is not initialized")
 def then_submodule_not_initialized(tmp_path: Path,  directory: str, submodule_path: str) -> None:
     repo_path = tmp_path / directory
     repo = Repo(repo_path)
@@ -254,8 +254,8 @@ def then_submodule_not_initialized(tmp_path: Path,  directory: str, submodule_pa
     assert not submodule.is_initialized
 
 
-@then(parsers.parse("submodule in {directory} at {submodule_path} has been initialized"))
-@then("submodule in <directory> at <submodule_path> has been initialized")
+@then(parsers.parse("submodule in {directory} at {submodule_path} is initialized"))
+@then("submodule in <directory> at <submodule_path> is initialized")
 def then_submodule_initialized(tmp_path: Path, directory: str, submodule_path: str) -> None:
     repo = Repo(tmp_path / directory)
     assert repo.get_submodule(Path(submodule_path)).is_initialized

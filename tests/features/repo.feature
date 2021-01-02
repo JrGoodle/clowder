@@ -52,7 +52,6 @@ Feature: clowder repo command
         And repo at .clowder is clean
         And project at .clowder has no untracked files
 
-    @debug
     Scenario: repo checkout
         Given cats example is initialized
         And repo at .clowder is on branch master
@@ -75,20 +74,20 @@ Feature: clowder repo command
         And repo at .clowder has no remote branch i-dont-exist
         And repo at .clowder is on branch master
 
-    @debug
     Scenario: repo clean
         Given cats example is initialized
         And repo at .clowder is on branch master
         And created file my-staged-file in directory .clowder
-        And repo at .clowder staged file my-staged-file
-        And repo at .clowder is dirty
+#        And repo at .clowder staged file my-staged-file
+        And repo at .clowder is clean
+        And repo at .clowder has untracked files
         When I run 'clowder repo clean'
         Then the command succeeds
         And repo at .clowder is clean
         And my-staged-file file doesn't exist in directory .clowder
+        And repo at .clowder has no untracked files
         And repo at .clowder is on branch master
 
-    @debug
     Scenario: repo status
         Given cats example is initialized
         And created file my-staged-file in directory .clowder

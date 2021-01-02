@@ -246,7 +246,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @submodules @cats @debug
+    @submodules @cats
     Scenario Outline: herd submodules recursive enabled check submodules
         Given cats example is initialized
         And <directory> doesn't exist
@@ -256,14 +256,14 @@ Feature: clowder herd
         And project at <directory> exists
         And project at <directory> is clean
         And project at <directory> has submodule at <submodule_path>
-        And submodule in <directory> at <submodule_path> has been initialized
+        And submodule in <directory> at <submodule_path> is initialized
 #       TODO: Check submodule url
 
         Examples:
         | directory     | submodule_path |
         | mu            | ash            |
 
-    @submodules @cats @debug
+    @submodules @cats
     Scenario Outline: herd submodules recursive enabled check recursive submodules
         Given cats example is initialized
         And <directory> doesn't exist
@@ -273,7 +273,7 @@ Feature: clowder herd
         And project at <directory> exists
         And project at <directory> is clean
         And project at <directory> has submodule at <submodule_path>
-        And submodule in <directory> at <submodule_path> has been initialized
+        And submodule in <directory> at <submodule_path> is initialized
 #       TODO: Check submodule url
 
         Examples:
@@ -309,7 +309,7 @@ Feature: clowder herd
         Then the command succeeds
         And project at <directory> has submodule at <submodule_path>
 #       TODO: Check submodule url
-        And submodule in <directory> at <submodule_path> hasn't been initialized
+        And submodule in <directory> at <submodule_path> is not initialized
 
         Examples:
         | directory | submodule_path |
@@ -933,7 +933,7 @@ Feature: clowder herd
         | directory | branch     | filename     |
         | mu        | lfs        | jrgoodle.png |
 
-    @cats @debug
+    @cats
     Scenario Outline: herd install custom git config alias
         Given cats example is initialized and herded
         And linked git-config clowder version

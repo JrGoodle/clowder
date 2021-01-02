@@ -26,21 +26,13 @@ def link_clowder_yaml(clowder_dir: Path, version: Optional[str] = None) -> None:
     :raise MissingFileError:
     """
 
-    old_yaml = Yaml(clowder_dir / f'clowder.yml')
-    old_yaml.update_extension()
-    old_yaml_symlink = None
-    if old_yaml.exists:
-        old_yaml_symlink = old_yaml.path
-    elif old_yaml.alternate_extension_exists:
-        old_yaml_symlink = old_yaml.path_with_alternate_extension
-
     if version is None:
         source_path = clowder_dir / '.clowder' / f'clowder.yml'
     else:
         source_path = clowder_dir / '.clowder' / 'versions' / f'{version}.clowder.yml'
 
-    new_yaml = Yaml(source_path)
-    source_file = new_yaml.update_extension()
+    yaml = Yaml(source_path)
+    source_file = yaml.update_extension()
 
     if version is None:
         target_file = clowder_dir / source_file.name
@@ -52,8 +44,9 @@ def link_clowder_yaml(clowder_dir: Path, version: Optional[str] = None) -> None:
 
     symlink_clowder_yaml(source_file.relative_to(clowder_dir), target_file)
 
-    if old_yaml_symlink is not None and old_yaml.exists and old_yaml.alternate_extension_exists:
-        fs.remove(old_yaml_symlink)
+    is_ambiguous = yaml.exists and yaml.alternate_extension_exists
+    if is_ambiguous and yaml.path_with_alternate_extension.is_symlink():
+        fs.remove(yaml.path_with_alternate_extension)
 
 
 def symlink_clowder_yaml(source: Path, target: Path) -> None:
@@ -71,7 +64,7 @@ def symlink_clowder_yaml(source: Path, target: Path) -> None:
         raise MissingSourceError(f"Symlink source {Format.path(source)} appears to be missing")
     if target.is_symlink():
         fs.remove_file(target)
-    print(str(source), str(target))
+    # print(str(source), str(target))
     # Create relative symlink
     try:
         path = target.parent
