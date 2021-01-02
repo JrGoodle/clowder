@@ -31,22 +31,23 @@ def link_clowder_yaml(clowder_dir: Path, version: Optional[str] = None) -> None:
     else:
         source_path = clowder_dir / '.clowder' / 'versions' / f'{version}.clowder.yml'
 
-    yaml = Yaml(source_path)
-    source_file = yaml.update_extension()
+    source_yaml = Yaml(source_path)
+    source_file = source_yaml.update_extension()
 
     if version is None:
         target_file = clowder_dir / source_file.name
     else:
         target_file = clowder_dir / Format.remove_prefix(source_file.name, f"{version}.")
 
+    target_yaml = Yaml(target_file)
+    if target_yaml.path.is_symlink():
+        fs.remove(target_yaml.path)
+    if target_yaml.path_with_alternate_extension.is_symlink():
+        fs.remove(target_yaml.path_with_alternate_extension)
+
     symlink_output = Format.symlink(target_file, relative_to=clowder_dir, source=source_file)
     CONSOLE.stdout(f' - Symlink {symlink_output}')
-
     symlink_clowder_yaml(source_file.relative_to(clowder_dir), target_file)
-
-    is_ambiguous = yaml.exists and yaml.alternate_extension_exists
-    if is_ambiguous and yaml.path_with_alternate_extension.is_symlink():
-        fs.remove(yaml.path_with_alternate_extension)
 
 
 def symlink_clowder_yaml(source: Path, target: Path) -> None:
