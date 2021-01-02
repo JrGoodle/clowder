@@ -109,10 +109,9 @@ class ProjectRepo(ResolvedProject):
         if self.default_branch is None and self.default_tag is None and self.default_commit is None:
             remote_branch = self.repo.default_remote.default_branch(self.url)
             if remote_branch is None:
-                remote_branch = 'master'
+                remote_branch = RemoteBranch(self.path, 'master', remote=self.default_remote.name)
             self.default_branch = TrackingBranch(self.path,
                                                  local_branch=remote_branch.name,
-                                                 upstream_branch=remote_branch.name,
                                                  upstream_remote=remote_branch.remote.name)
 
     @property
