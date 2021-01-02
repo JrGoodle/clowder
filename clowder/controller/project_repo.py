@@ -108,6 +108,8 @@ class ProjectRepo(ResolvedProject):
 
         if self.default_branch is None and self.default_tag is None and self.default_commit is None:
             remote_branch = self.repo.default_remote.default_branch(self.url)
+            if remote_branch is None:
+                remote_branch = 'master'
             self.default_branch = TrackingBranch(self.path,
                                                  local_branch=remote_branch.name,
                                                  upstream_branch=remote_branch.name,
