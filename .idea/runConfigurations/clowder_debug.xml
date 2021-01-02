@@ -7,7 +7,7 @@
       <env name="PYTHONUNBUFFERED" value="1 CLOWDER_DEBUG=true" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="/private/var/folders/qg/10dstky52wbfxmt8q1gdlpwh0000gn/T/pytest-of-jrgoodle/pytest-12/test_herd_install_custom_git_c0" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/build/cats" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />

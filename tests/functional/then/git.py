@@ -242,21 +242,22 @@ def then_has_no_submodule(tmp_path: Path, directory: str, submodule_path: str) -
     assert not repo.has_submodule(Path(submodule_path))
 
 
+# TODO: Add @given versions of these and update tests with checks before @when
 @then(parsers.parse("submodule in {directory} at {submodule_path} hasn't been initialized"))
 @then("submodule in <directory> at <submodule_path> hasn't been initialized")
 def then_submodule_not_initialized(tmp_path: Path,  directory: str, submodule_path: str) -> None:
-    path = tmp_path / directory / submodule_path
-    repo = Repo(path)
-    submodule = Submodule(path, Path(submodule_path))
+    repo_path = tmp_path / directory
+    repo = Repo(repo_path)
+    submodule = Submodule(repo_path, Path(submodule_path))
     assert repo.has_submodule(Path(submodule_path))
-    assert GitOffline.is_submodule_placeholder(path)
+    assert GitOffline.is_submodule_placeholder(repo_path / submodule_path)
     assert not submodule.is_initialized
 
 
 @then(parsers.parse("submodule in {directory} at {submodule_path} has been initialized"))
 @then("submodule in <directory> at <submodule_path> has been initialized")
 def then_submodule_initialized(tmp_path: Path, directory: str, submodule_path: str) -> None:
-    repo = Repo(tmp_path / directory / submodule_path)
+    repo = Repo(tmp_path / directory)
     assert repo.get_submodule(Path(submodule_path)).is_initialized
 
 
