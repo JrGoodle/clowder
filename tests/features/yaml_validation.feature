@@ -41,7 +41,7 @@ Feature: clowder yaml validation
         And project at felidae has tracking branch master
         And project at felidae is on branch master
 
-    @ssh
+    @ssh @debug
     Scenario: validate project.git.config
         Given validating property <project_git_config>
         And validation clowder is initialized and herded
@@ -111,7 +111,7 @@ Feature: clowder yaml validation
         And jrgoodle.png file exists in directory felidae
         And jrgoodle.png file in directory felidae is an lfs pointer
 
-    @ssh @submodules
+    @ssh @submodules @debug
     Scenario: validate project.git.submodules
         Given validating property <project_git_submodules>
         And validation clowder is initialized
@@ -126,7 +126,7 @@ Feature: clowder yaml validation
         And project at felidae has no submodule at ash/duffy
         And submodule in felidae at ash/duffy has been initialized
 
-    @ssh @submodules
+    @ssh @submodules @debug
     Scenario: validate implicit project.git.submodules
         Given validating property <project_implicit>
         And validation clowder is initialized
@@ -181,7 +181,7 @@ Feature: clowder yaml validation
         And project at felidae has tracking branch master
         And project at felidae is on branch master
 
-    @ssh
+    @ssh @debug
     Scenario: validate project.remote
         Given validating property <project_remote>
         And validation clowder is initialized

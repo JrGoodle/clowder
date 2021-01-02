@@ -113,7 +113,7 @@ Feature: clowder init
         And clowder.yaml and clowder.yml files exist
         And clowder.yaml and clowder.yml are not symlinks
 
-    @fail @cats
+    @fail @cats @debug
     Scenario: init existing ambiguous yaml symlink, non-symlink yml file, no .clowder directory
         Given cats example non-symlink yaml file exists
         And .clowder directory doesn't exist
@@ -129,7 +129,7 @@ Feature: clowder init
         And clowder.yaml is not a symlink
         And clowder.yml is a symlink pointing to .clowder/clowder.yml
 
-    @cats
+    @cats @debug
     Scenario: init existing ambiguous yaml symlink, yml symlink, no .clowder directory
         Given .clowder directory doesn't exist
         And created file something-to-link-to in directory .

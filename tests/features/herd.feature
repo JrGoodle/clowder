@@ -246,7 +246,7 @@ Feature: clowder herd
         | black-cats/sasha  |
         | black-cats/june   |
 
-    @submodules @cats
+    @submodules @cats @debug
     Scenario Outline: herd submodules recursive enabled check submodules
         Given cats example is initialized
         And <directory> doesn't exist
@@ -263,7 +263,7 @@ Feature: clowder herd
         | directory     | submodule_path |
         | mu            | ash            |
 
-    @submodules @cats
+    @submodules @cats @debug
     Scenario Outline: herd submodules recursive enabled check recursive submodules
         Given cats example is initialized
         And <directory> doesn't exist
