@@ -41,7 +41,7 @@ def create_commit(path: Path, filename: str, contents: str) -> List[CompletedPro
 def set_up_behind_ahead_no_confilct(path: Path, local: str, remote: str, number_behind: int, number_ahead: int,
                                     scenario_info: ScenarioInfo) -> None:
     assert GitOffline.has_no_commits_between_refs(path, local, remote)
-    GitOffline.reset_back_by_number_of_commits(path, number_behind)
+    GitOffline.reset_back(path, number_behind)
     assert GitOffline.is_behind_by_number_commits(path, local, remote, number_behind)
     create_number_commits(path, number_ahead, "something.txt", "something")
     assert GitOffline.is_ahead_by_number_commits(path, local, remote, number_ahead)
@@ -59,8 +59,9 @@ def set_up_behind_ahead_conflict(path: Path, branch: str, number_behind: int, nu
     repo = Repo(path)
     beginning_sha = repo.current_commit()
     create_number_commits(path, number_behind, "something", "something")
-    repo.push(branch=branch)
-    GitOffline.reset_back_by_number_of_commits(path, number_behind)
+    repo.push()
+    repo.fetch(prune=True)
+    GitOffline.reset_back(path, number_behind)
     create_number_commits(path, number_ahead, "something", "something else")
     end_remote_sha = GitOffline.get_branch_commit_sha(path, branch, ORIGIN)
     end_sha = repo.current_commit()
@@ -74,5 +75,5 @@ def set_up_behind(path: Path, local: str, remote: str, number_commits: int, ) ->
 
 
 def set_up_ahead(path: Path, local: str, remote: str, number_commits: int, ) -> None:
-    GitOffline.reset_back_by_number_of_commits(path, number_commits)
+    GitOffline.reset_back(path, number_commits)
     assert GitOffline.is_behind_by_number_commits(path, local, remote, number_commits)
