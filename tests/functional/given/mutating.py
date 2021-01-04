@@ -187,7 +187,7 @@ def given_directory_created_new_commit(tmp_path: Path, directory: str) -> None:
 def given_directory_created_new_commits(tmp_path: Path, directory: str, number_commits: str) -> None:
     number_commits = int(number_commits)
     path = tmp_path / directory
-    results = util.create_number_commits(path, number_commits, "something.txt", "something")
+    results = util.create_number_commits(path, number_commits, "something.txt")
     assert all([r.returncode == 0 for r in results])
 
 
