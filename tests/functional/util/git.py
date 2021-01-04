@@ -7,6 +7,7 @@ from typing import List
 
 import pygoodle.filesystem as fs
 from pygoodle.git import GitOffline, ORIGIN, Repo
+from pygoodle.random import random_alphanumeric_string
 
 from .command import run_command
 from .scenario_info import ScenarioInfo
@@ -16,7 +17,8 @@ def create_number_commits(path: Path, count: int, filename: str, contents: str) 
     commits = copy.copy(count)
     results = []
     while commits > 0:
-        result = create_commit(path, f"{commits}_{filename}", contents)
+        prefix = random_alphanumeric_string(10)
+        result = create_commit(path, f"{prefix}_{filename}", contents)
         results += result
         commits -= 1
     assert all([r.returncode == 0 for r in results])
@@ -25,14 +27,14 @@ def create_number_commits(path: Path, count: int, filename: str, contents: str) 
 
 def create_commit(path: Path, filename: str, contents: str) -> List[CompletedProcess]:
     repo = Repo(path)
-    previous_commit = repo.current_commit()
+    previous_commit = repo.sha(ref='HEAD~1')
     fs.create_file(path / filename, contents)
     results = []
     result = run_command(f"git add {filename}", path)
     results.append(result)
     result = run_command(f"git commit -m 'Add {filename}'", path)
     results.append(result)
-    new_commit = repo.current_commit()
+    new_commit = repo.sha()
     assert previous_commit != new_commit
     assert all([r.returncode == 0 for r in results])
     return results
@@ -55,16 +57,16 @@ def set_up_behind_ahead_no_confilct(path: Path, local: str, remote: str, number_
 
 
 def set_up_behind_ahead_conflict(path: Path, branch: str, number_behind: int, number_ahead: int) -> None:
-    beginning_remote_sha = GitOffline.get_branch_commit_sha(path, branch, ORIGIN)
+    beginning_remote_sha = GitOffline.get_branch_sha(path, branch, ORIGIN)
     repo = Repo(path)
-    beginning_sha = repo.current_commit()
+    beginning_sha = repo.sha()
     create_number_commits(path, number_behind, "something", "something")
     repo.push()
     repo.fetch(prune=True)
     GitOffline.reset_back(path, number_behind)
-    create_number_commits(path, number_ahead, "something", "something else")
-    end_remote_sha = GitOffline.get_branch_commit_sha(path, branch, ORIGIN)
-    end_sha = repo.current_commit()
+    create_number_commits(path, number_ahead, "something", "something_else")
+    end_remote_sha = GitOffline.get_branch_sha(path, branch, ORIGIN)
+    end_sha = repo.sha()
     assert beginning_sha != end_sha
     assert beginning_remote_sha != end_remote_sha
 

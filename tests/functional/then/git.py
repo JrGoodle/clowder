@@ -81,7 +81,7 @@ def then_directory_on_tag(tmp_path: Path, directory: str, tag: str) -> None:
 @then("project at <directory> is on <commit>")
 def then_directory_on_commit(tmp_path: Path, directory: str, commit: str) -> None:
     repo = Repo(tmp_path / directory)
-    assert repo.current_commit() == commit
+    assert repo.sha() == commit
 
 
 @then(parsers.parse("repo at {directory} is not on commit {commit}"))
@@ -89,7 +89,7 @@ def then_directory_on_commit(tmp_path: Path, directory: str, commit: str) -> Non
 @then("project at <directory> is not on <commit>")
 def then_directory_not_on_commit(tmp_path: Path, directory: str, commit: str) -> None:
     repo = Repo(tmp_path / directory)
-    assert repo.current_commit() != commit
+    assert repo.sha() != commit
 
 
 @then(parsers.parse("repo at {directory} has tracking branch {test_branch}"))

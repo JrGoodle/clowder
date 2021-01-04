@@ -65,7 +65,7 @@ def given_directory_branch(tmp_path: Path, directory: str, branch: str) -> None:
 @given("project at <directory> is on <tag>")
 def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
     repo = Repo(tmp_path / directory)
-    assert repo.current_commit() == repo.get_local_tag(tag).sha
+    assert repo.sha() == repo.get_local_tag(tag).sha
 
 
 @given(parsers.parse("repo at {directory} is on commit {commit}"))
@@ -73,7 +73,7 @@ def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
 @given("project at <directory> is on <commit>")
 def given_directory_commit(tmp_path: Path, directory: str, commit: str) -> None:
     repo = Repo(tmp_path / directory)
-    assert repo.current_commit() == commit
+    assert repo.sha() == commit
 
 
 @given(parsers.parse("repo at {directory} has detached HEAD"))
@@ -89,7 +89,7 @@ def given_directory_detached_head(tmp_path: Path, directory: str) -> None:
 @given("project at <directory> has remote <tag>")
 def given_directory_tag(tmp_path: Path, directory: str, tag: str) -> None:
     repo = Repo(tmp_path / directory)
-    assert repo.current_commit() == repo.get_remote_tag(tag).sha
+    assert repo.sha() == repo.get_remote_tag(tag).sha
 
 
 @given(parsers.parse("repo at {directory} is clean"))
