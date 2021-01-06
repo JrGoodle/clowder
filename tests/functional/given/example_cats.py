@@ -116,7 +116,7 @@ def given_cats_local_branch(tmp_path: Path, scenario_info: ScenarioInfo, test_br
         repo.fetch(prune=True, fetch_all=True)
         local_branch = LocalBranch(repo_path, test_branch)
         if not local_branch.exists:
-            local_branch.create()
+            local_branch.create(track=False)
         assert local_branch.exists
 
 

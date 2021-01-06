@@ -292,11 +292,11 @@ class ProjectRepo(ResolvedProject):
         # local branch exists
         if not branch.upstream_branch.exists or not branch.is_checked_out:
             branch.local_branch.checkout(check=check)
-            return
 
         # local and remote branches exist
         if not branch.is_tracking_branch:
             branch.set_upstream()
+
         branch.upstream_branch.pull(rebase=rebase, no_edit=True)
 
     def install_git_herd_alias(self) -> None:
@@ -427,27 +427,6 @@ class ProjectRepo(ResolvedProject):
         """
 
         local_branch = LocalBranch(self.path, branch)
-        self._start_local_branch(local_branch)
-
-        if not tracking:
-            return
-
-        tracking_branch = TrackingBranch(self.path,
-                                         local_branch=branch,
-                                         upstream_branch=branch,
-                                         upstream_remote=self.default_remote.name)
-        if not is_offline():
-            tracking_branch.upstream_branch.remote.fetch()
-
-        if tracking_branch.upstream_branch.exists:
-            # TODO: Set tracking relationship if not present
-            raise NotImplementedError
-
-        if not is_offline():
-            tracking_branch.upstream_branch.create()
-
-    @staticmethod
-    def _start_local_branch(local_branch: LocalBranch) -> None:
         if not local_branch.exists:
             local_branch.create()
             local_branch.checkout()
@@ -457,6 +436,25 @@ class ProjectRepo(ResolvedProject):
             CONSOLE.stdout(' - On correct branch')
             return
         local_branch.checkout()
+
+        if not tracking:
+            return
+
+        tracking_branch = TrackingBranch(self.path,
+                                         local_branch=branch,
+                                         upstream_branch=branch,
+                                         upstream_remote=self.default_remote.name)
+        tracking_branch.create()
+
+        # if not is_offline():
+        #     tracking_branch.upstream_branch.remote.fetch()
+        #
+        # if tracking_branch.upstream_branch.exists:
+        #     # TODO: Set tracking relationship if not present
+        #     raise NotImplementedError
+        #
+        # if not is_offline():
+        #     tracking_branch.upstream_branch.create()
 
     def formatted_name(self, padding: Optional[int] = None, color: bool = False) -> str:
         """Formatted project name"""

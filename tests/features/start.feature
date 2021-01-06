@@ -173,9 +173,9 @@ Feature: clowder start
         And project at <directory> has no tracking <test_branch>
         And project at <directory> is on <start_branch>
         When I run 'clowder start -t pytest-start-branch'
-        Then the command fails
-        And project at <directory> is on <start_branch>
-        And project at <directory> has no tracking <test_branch>
+        Then the command succeeds
+        And project at <directory> is on <test_branch>
+        And project at <directory> has tracking <test_branch>
 
         Examples:
         | directory         | start_branch | test_branch         |
@@ -189,7 +189,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | pytest-start-branch |
         | black-cats/june   | master       | pytest-start-branch |
 
-    @internet @write @ssh
+    @internet @write @ssh @debug
     Scenario Outline: start tracking - tracking exists, checked out
         Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
@@ -209,7 +209,7 @@ Feature: clowder start
         | black-cats/sasha  | pytest-start-branch |
         | black-cats/june   | pytest-start-branch |
 
-    @internet @write @ssh
+    @internet @write @ssh @debug
     Scenario Outline: start tracking - tracking exists, not checked out
         Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
@@ -251,7 +251,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | pytest-start-branch |
         | black-cats/june   | master       | pytest-start-branch |
 
-    @internet @write @fail @ssh
+    @internet @write @fail @ssh @debug
     Scenario Outline: start tracking - local exists checked out, remote exists, no tracking
         Given cats example is initialized and herded with ssh
         And cats example projects have remote branch <test_branch>
@@ -259,9 +259,9 @@ Feature: clowder start
         And project at <directory> checked out <test_branch>
         And project at <directory> has no tracking <test_branch>
         When I run 'clowder start -t pytest-start-branch'
-        Then the command fails
+        Then the command succeeds
         And project at <directory> is on <test_branch>
-        And project at <directory> has no tracking <test_branch>
+        And project at <directory> has tracking <test_branch>
 
         Examples:
         | directory         | test_branch         |
