@@ -143,7 +143,7 @@ Feature: clowder start
         | black-cats/june   | master       | i-dont-exist |
 
     # TODO: Probably need to create a fixture that sets up remote branches
-    @internet @write @ssh
+    @internet @write @ssh @debug
     Scenario Outline: start tracking - no local, no remote
         Given cats example is initialized and herded with ssh
         And cats example projects have no remote branch <test_branch>
@@ -189,7 +189,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | pytest-start-branch |
         | black-cats/june   | master       | pytest-start-branch |
 
-    @internet @write @ssh @debug
+    @internet @write @ssh
     Scenario Outline: start tracking - tracking exists, checked out
         Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
@@ -209,7 +209,7 @@ Feature: clowder start
         | black-cats/sasha  | pytest-start-branch |
         | black-cats/june   | pytest-start-branch |
 
-    @internet @write @ssh @debug
+    @internet @write @ssh
     Scenario Outline: start tracking - tracking exists, not checked out
         Given cats example is initialized and herded with ssh
         And cats example projects have tracking branch <test_branch>
@@ -228,7 +228,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | pytest-start-branch |
         | black-cats/june   | master       | pytest-start-branch |
 
-    @internet @write @fail @ssh
+    @internet @write @fail @ssh @debug
     Scenario Outline: start tracking - no local, remote exists
         Given cats example is initialized and herded with ssh
         And cats example projects have remote branch <test_branch>
@@ -251,7 +251,7 @@ Feature: clowder start
         | black-cats/sasha  | master       | pytest-start-branch |
         | black-cats/june   | master       | pytest-start-branch |
 
-    @internet @write @fail @ssh @debug
+    @internet @write @fail @ssh
     Scenario Outline: start tracking - local exists checked out, remote exists, no tracking
         Given cats example is initialized and herded with ssh
         And cats example projects have remote branch <test_branch>

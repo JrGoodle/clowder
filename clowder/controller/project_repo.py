@@ -427,34 +427,24 @@ class ProjectRepo(ResolvedProject):
         """
 
         local_branch = LocalBranch(self.path, branch)
+
         if not local_branch.exists:
             local_branch.create()
-            local_branch.checkout()
-            return
-        CONSOLE.stdout(f' - {Format.Git.ref(local_branch.name)} already exists')
+
         if local_branch.is_checked_out:
-            CONSOLE.stdout(' - On correct branch')
-            return
-        local_branch.checkout()
+            CONSOLE.stdout(f' - On correct branch {Format.Git.ref(local_branch.name)}')
+        else:
+            local_branch.checkout()
 
         if not tracking:
             return
 
+        self.repo.fetch(prune=True)
         tracking_branch = TrackingBranch(self.path,
                                          local_branch=branch,
                                          upstream_branch=branch,
                                          upstream_remote=self.default_remote.name)
         tracking_branch.create()
-
-        # if not is_offline():
-        #     tracking_branch.upstream_branch.remote.fetch()
-        #
-        # if tracking_branch.upstream_branch.exists:
-        #     # TODO: Set tracking relationship if not present
-        #     raise NotImplementedError
-        #
-        # if not is_offline():
-        #     tracking_branch.upstream_branch.create()
 
     def formatted_name(self, padding: Optional[int] = None, color: bool = False) -> str:
         """Formatted project name"""
