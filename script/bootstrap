@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1091
+# shellcheck disable=SC10916
 
 set -euo pipefail
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
@@ -44,5 +44,5 @@ run git lfs install
 
 if [ -z ${CI+x} ]; then
     h1 'Install Python versions'
-    run pyenv install --skip-existing
+    run pyenv install --skip-existing 3.7.10
 fi
