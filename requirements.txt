@@ -28,7 +28,7 @@ Jinja2==3.0.1
 jsonschema==3.2.0
 keyring==23.0.1
 livereload==2.6.3
-Mako==1.1.4
+Mako==1.2.2
 MarkupSafe==2.0.1
 outcome==1.1.0
 packaging==20.9
