@@ -7,7 +7,7 @@ async-generator==1.10
 attrs==21.2.0
 Babel==2.9.1
 bleach==3.3.0
-certifi==2021.5.30
+certifi==2022.12.7
 chardet==4.0.0
 -e git+git@github.com:JrGoodle/clowder.git@bc787b2888acf4b7bd8351b9a72982c71c143362#egg=clowder_repo
 colorama==0.4.4
