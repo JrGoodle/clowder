@@ -1,66 +1,23 @@
-#!/usr/bin/env python
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
 
-from pathlib import Path
-from subprocess import CompletedProcess
+set -euo pipefail
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
+. 'script/utils.sh'
+. 'script/import_python.sh'
 
-import pygoodle.command as cmd
-import pygoodle.filesystem as fs
-from pygoodle.app import App, BoolArgument
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
+paths=(
+    "${PWD}/build/"
+    "${PWD}/temp/"
+    "${PWD}/dist/"
+    "${PWD}/.pytest_cache/"
+)
 
-repo_path: Path = Path(__file__).resolve().parent.parent.resolve()
-build_dir: Path = repo_path / "build"
-temp_dir: Path = repo_path / "temp"
-dist_dir: Path = repo_path / "dist"
-clowder_repo_egg_dir: Path = repo_path / "clowder_repo.egg-info"
-clowder_dir: Path = repo_path / "clowder"
-pycache = "__pycache__"
-pytest_cache: Path = repo_path / '.pytest_cache'
+for path in "${paths[@]}"; do
+    run rm -rf "$path"
+done
 
+run pipenv --rm
 
-def rm_dir(dir_path: Path) -> None:
-    CONSOLE.stdout(Format.h3(f"Remove {dir_path.relative_to(repo_path)}"))
-    fs.remove_dir(repo_path, ignore_errors=True)
-
-
-def run_command(command: str) -> CompletedProcess:
-    return cmd.run(command, cwd=repo_path, print_command=True)
-
-
-def clean_build() -> None:
-    CONSOLE.stdout(Format.h2('Clean build files'))
-    rm_dir(dist_dir)
-    rm_dir(build_dir)
-    rm_dir(temp_dir)
-
-
-def clean_all() -> None:
-    CONSOLE.stdout(Format.h1('Clean all files'))
-    rm_dir(clowder_repo_egg_dir)
-    # run_command(path, "pipenv --rm")
-    run_command("pip uninstall --yes clowder-repo")
-    rm_dir(clowder_repo_egg_dir)
-    rm_dir(pytest_cache)
-    dirs = [d for d in fs.list_subdirectories(repo_path, recursive=True) if d.name == pycache]
-    for directory in dirs:
-        rm_dir(directory)
-    clean_build()
-
-
-class CleanApp(App):
-    class Meta:
-        name = 'clean'
-        arguments = [
-            BoolArgument('--build', '-b', help='clean build files')
-        ]
-
-    def run(self, _) -> None:
-        if self.parsed_args.args.build:
-            clean_build()
-        else:
-            clean_all()
-
-
-if __name__ == '__main__':
-    CleanApp().main()
+find . -type d -name '__pycache__' -exec rm -rf {} +
+find . -type d -name '*.egg-info' -exec rm -rf {} +
