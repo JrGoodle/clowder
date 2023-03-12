@@ -21,4 +21,5 @@ twine = "*"
 virtualenv = "*"
 
 [packages]
-pygoodle = {git = "https://github.com/JrGoodle/pygoodle.git"}
+# pygoodle = {git = "https://github.com/JrGoodle/pygoodle.git"}
+pygoodle = "*"
