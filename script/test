@@ -10,16 +10,16 @@ from pygoodle.app import App, BoolArgument, CountArgument, MutuallyExclusiveArgu
 
 
 repo_path: Path = Path(__file__).resolve().parent.parent.resolve()
-build_dir: Path = fs.make_dir(repo_path / "build")
-temp_dir: Path = fs.make_dir(repo_path / "temp")
-coverage_dir: Path = fs.make_dir(build_dir / "coverage")
-junit_dir: Path = fs.make_dir(build_dir / f"junit")
-cucumber_dir: Path = fs.make_dir(build_dir / f"cucumber")
+build_dir: Path = fs.make_dir(repo_path / "build", exist_ok=True)
+temp_dir: Path = fs.make_dir(repo_path / "temp", exist_ok=True)
+coverage_dir: Path = fs.make_dir(build_dir / "coverage", exist_ok=True)
+junit_dir: Path = fs.make_dir(build_dir / f"junit", exist_ok=True)
+cucumber_dir: Path = fs.make_dir(build_dir / f"cucumber", exist_ok=True)
 
 
 def run_command(command: str) -> CompletedProcess:
     command = f'. script/import.sh && {command}'
-    return cmd.run_command(command, cwd=repo_path, executable='bin/bash')
+    return cmd.run(command, cwd=repo_path, executable='/bin/bash')
 
 
 def report_coverage() -> None:
@@ -61,7 +61,7 @@ def test(command_options: str, label: Optional[str] = None) -> None:
 
     # BDD reports
     cucumber_file = cucumber_dir / f"results{file_label}.json"
-    bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
+    bdd_reporting_options = f" --cucumberjson={cucumber_file}"
     command += bdd_reporting_options
 
     # Run test command
@@ -80,7 +80,7 @@ def test(command_options: str, label: Optional[str] = None) -> None:
 class TestApp(App):
     class Meta:
         name = 'test'
-        arguments = [
+        args = [
             CountArgument('--groups', help='number of groups to split tests into'),
             CountArgument('--group', "-g", help='group number to run tests for'),
             SingleArgument('--label', '-l', default=None, help='label to append to results'),
@@ -99,8 +99,8 @@ class TestApp(App):
             )
         ]
 
-    def run(self, _) -> None:
-        args = self.parsed_args
+    @staticmethod
+    def run(args) -> None:
         if args.report_coverage:
             report_coverage()
             exit()
