@@ -9,7 +9,6 @@ bleach==6.0.0
 certifi==2022.12.7
 cffi==1.15.1
 charset-normalizer==3.1.0
--e git+ssh://git@github.com/JrGoodle/clowder.git@b5f3d96309faec56a79e570188b39e56cb8a2da5#egg=clowder_repo
 colorama==0.4.6
 commonmark==0.9.1
 coverage==7.2.1

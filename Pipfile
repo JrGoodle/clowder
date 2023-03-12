@@ -21,8 +21,8 @@ twine = "*"
 virtualenv = "*"
 
 [packages]
-# pygoodle = {git = "https://github.com/JrGoodle/pygoodle.git"}
-pygoodle = "*"
+pygoodle = {git = "https://github.com/JrGoodle/pygoodle.git"}
+# pygoodle = "*"
 
 [requires]
 python_version = "3.8.16"
