@@ -21,4 +21,4 @@ twine = "*"
 virtualenv = "*"
 
 [packages]
-pygoodle = {git = "ssh://git@github.com/JrGoodle/pygoodle"}
+pygoodle = {git = "https://github.com/JrGoodle/pygoodle.git"}

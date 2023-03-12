@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0446024ce325094a09423ec2afd0a5bf9d5101936d8822f44d8391fdf1dbe592"
+            "sha256": "e0dbfe3d2266cc9738ef8192f267eb188e464383d7db16adeea7811aa87208b3"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -252,7 +252,7 @@
             "version": "==2.14.0"
         },
         "pygoodle": {
-            "git": "ssh://git@github.com/JrGoodle/pygoodle",
+            "git": "https://github.com/JrGoodle/pygoodle.git",
             "ref": "47c5a6a48c6070f5201ce816b2e59960ad4fea90"
         },
         "pynacl": {

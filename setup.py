@@ -58,7 +58,7 @@ setup(
         ]
     },
     install_requires=[
-        'pygoodle @ git+ssh://git@github.com/JrGoodle/pygoodle#egg=pygoodle'
+        'pygoodle @ git+https://github.com/JrGoodle/pygoodle.git#egg=pygoodle'
     ],
     tests_require=[
         'autopep8',
