@@ -34,9 +34,9 @@ case "$PLATFORM" in
     linux)
         h1 'Update apt-get'
         run sudo apt-get update -y
-        h1 'git'
-        h2 'Install git'
-        run sudo apt-get install python-dev -y
+        # h1 'git'
+        # h2 'Install git'
+        # run sudo apt-get install python-dev -y
         h2 'Install git-lfs'
         run 'sudo curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash'
         run sudo apt-get install git-lfs
