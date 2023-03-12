@@ -11,8 +11,3 @@ run "${PWD}/script/setup"
 
 h1 'Generate requirements.txt'
 run 'pipenv run pip freeze > requirements.txt'
-
-# h3 'Install clowder at user level'
-# run pip install --user -e .
-
-# run pipenv run pip install --user -e .

@@ -17,3 +17,6 @@ run pip install --user --upgrade pipenv
 
 h3 'Update pipenv dependencies'
 run pipenv install --dev --site-packages
+
+h3 'Install clowder in editable mode'
+run pipenv run pip install -e .
