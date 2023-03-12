@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
+# shellcheck disable=SC2016
 
 set -euo pipefail
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
@@ -7,15 +8,7 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 
 run "${PWD}/script/bootstrap"
 
-. 'script/import.sh'
+. script/import.sh
+. script/import_python.sh
 
-h1 'Python'
-h2 'Update pip'
-run pip install --upgrade pip
-h2 'Pipenv'
-h3 'Update pipenv'
-run pip install --user --upgrade pipenv
-h3 'Update pipenv dependencies'
-run pipenv install --dev
-h3 'Install clowder in editable mode'
-run pipenv run pip install -e .
+run script/update_python.sh

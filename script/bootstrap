@@ -5,44 +5,34 @@ set -euo pipefail
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 . 'script/utils.sh'
 
-. 'script/import.sh'
+. script/import.sh
+. script/import_python.sh
 
 case "$PLATFORM" in
     darwin)
+        h1 'Mac dveloper tools'
+        h2 'Enable developer mode'
+        run DevToolsSecurity -enable
+        h2 'Install Xcode command line tools'
+        run_ignore_errors xcode-select --install
+
         h1 'Homebrew'
-        if [ -z ${CI+x} ]; then
-            if command -v brew; then
-                h2 'Update Homebrew'
-                run brew update
-            else
-                h2 'Install Homebrew'
-                /usr/bin/env bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-            fi
-            h2 'Install Homebrew formulas'
-            run brew bundle
+        if command -v brew; then
+            h2 'Update Homebrew'
+            run brew update
         else
-            h2 'Skipping homebrew update on CI'
+            h2 'Install Homebrew'
+            /usr/bin/env bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
         fi
+        h2 'Install Homebrew formulas'
+        run brew bundle
         ;;
     linux)
-        h1 'Update apt-get'
-        run sudo apt-get update -y
-        h1 'git'
-        h2 'Install git'
-        run sudo apt-get install python-dev -y
-        h2 'Install git-lfs'
-        run 'sudo curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash'
-        run sudo apt-get install git-lfs
+        exit_failure 'Linux is not currently supported'
         ;;
     windows)
         exit_failure 'Windows is not currently supported'
         ;;
 esac
 
-h1 'Install git lfs hooks'
-run git lfs install
-
-if [ -z ${CI+x} ]; then
-    h1 'Install Python versions'
-    run pyenv install --skip-existing
-fi
+script/install_python.sh

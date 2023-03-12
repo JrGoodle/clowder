@@ -2,11 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/tmp/cats/black-cats/june" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/tmp/cats/black-cats/kishka" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/tmp/cats/black-cats/kit" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/tmp/cats/black-cats/sasha" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/tmp/cats/duke" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/tmp/cats/mu" vcs="Git" />
   </component>
 </project>

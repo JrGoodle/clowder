@@ -1,19 +1,19 @@
 # shellcheck shell=bash
 
 bold() {
-    if [ -n "$TERM" ] && [ "$TERM" != 'dumb' ]; then
+    if [ -n "$TERM" ] && [ "$TERM" != 'dumb' ] && [ "$TERM" != 'unknown' ] && [ -z ${DISABLE_FORMATTING+x} ]; then
         tput bold
     fi
 }
 
 underline() {
-    if [ -n "$TERM" ] && [ "$TERM" != 'dumb' ]; then
+    if [ -n "$TERM" ] && [ "$TERM" != 'dumb' ] && [ "$TERM" != 'unknown' ] && [ -z ${DISABLE_FORMATTING+x} ]; then
         tput smul
     fi
 }
 
 normal() {
-    if [ -n "$TERM" ] && [ "$TERM" != 'dumb' ]; then
+    if [ -n "$TERM" ] && [ "$TERM" != 'dumb' ] && [ "$TERM" != 'unknown' ] && [ -z ${DISABLE_FORMATTING+x} ]; then
         tput sgr0
     fi
 }
@@ -155,11 +155,28 @@ sudo_append_to_file() {
 }
 export -f sudo_append_to_file
 
+read_trim_file() {
+    local filename="$1"
+    local contents
+    contents=$(cat "$filename")
+    # echo -e "$contents" | awk '{$1=$1};NF'
+    echo -e "$contents" | awk '{$1=$1};1'
+}
+export -f read_trim_file
+
 file_contains_string() {
     local match="$1"
     local input_file="$2"
     grep -q "$match" "$input_file" || return $?
 }
+export -f file_contains_string
+
+get_property() {
+    local match="$1"
+    local property_file="$2"
+    grep "$match" "$property_file"|cut -d'=' -f2
+}
+export -f get_property
 
 if [ -z ${PLATFORM+x} ]; then
     case "$(uname)" in

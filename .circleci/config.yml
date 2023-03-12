@@ -217,7 +217,7 @@ commands:
 jobs:
   test_parallel:
     docker:
-      - image: circleci/python:3.7.7
+      - image: circleci/python:3.8
     parameters:
       groups:
         type: integer
@@ -238,7 +238,7 @@ jobs:
           group: <<parameters.group>>
   test_write:
     docker:
-      - image: circleci/python:3.7.7
+      - image: circleci/python:3.8
     steps:
       - checkout
       - setup_ssh
@@ -262,7 +262,7 @@ jobs:
           label: offline
   report_coverage:
     docker:
-      - image: circleci/python:3.7.7
+      - image: circleci/python:3.8
     steps:
       - checkout
       - setup_git_config
