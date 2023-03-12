@@ -15,3 +15,6 @@ sudo git config --system --unset-all filter.lfs.required || true
 
 h3 'Update pipenv'
 run pip install --upgrade pipenv
+
+h3 'Install clowder in editable mode'
+run pip install -e .
