@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         os: [
-          # macos-latest,
+          macos-latest,
           ubuntu-latest,
           # TODO: windows-latest
         ]
@@ -38,9 +38,9 @@ jobs:
           '3.11'
         ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Setup python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup git config
