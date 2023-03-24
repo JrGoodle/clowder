@@ -215,7 +215,7 @@ class ClowderController:
 
         for project in self.projects:
             if project_id == id(project):
-                return project.repo.current_commit(short=short)
+                return project.repo.sha(short=short)
 
         raise ProjectNotFoundError(f"Project with id {project_id} not found")
 
