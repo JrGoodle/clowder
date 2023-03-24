@@ -51,16 +51,13 @@ jobs:
       name: Fix Python PATH on macOS
       run: |
         ls -al /usr/local/bin
-        # sudo rm -rf /usr/local/bin/python
+        sudo rm -rf /usr/local/bin/python
         ls -al /usr/local/bin
-        tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"'
     - name: Install clowder
       run: |
-        export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
         script/cibuild
     - name: Run pytest functional tests
       run: |
-        export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
         script/test \
           --markers 'not ssh and not offline' \
           --parallel \
