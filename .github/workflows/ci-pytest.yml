@@ -54,6 +54,7 @@ jobs:
     - if: runner.os == 'macOS'
       name: Fix Python PATH on macOS
       run: |
+        sudo rm -rf /usr/local/bin/python
         tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"'
     - if: runner.os == 'macOS'
       name: Print PATH
