@@ -60,6 +60,8 @@ jobs:
       run: |
         export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
         echo $PATH
+        ls -al $pythonLocation/bin
+        ls -al $pythonLocation
     - name: Install clowder
       run: |
         export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
