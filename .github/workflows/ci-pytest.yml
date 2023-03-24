@@ -47,6 +47,10 @@ jobs:
       run: |
         git config --global user.email "joe@polka.cat";
         git config --global user.name "GitHub Actions Workflow"
+    - if: runner.os == 'macOS'
+      name: Fix Python PATH on macOS
+      run: |
+        tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH"'
     - name: Install clowder
       run: script/cibuild
     - name: Run pytest functional tests
