@@ -28,7 +28,7 @@ jobs:
       matrix:
         os: [
           macos-latest,
-          # ubuntu-latest,
+          ubuntu-latest,
           # TODO: windows-latest
         ]
         python-version: [
@@ -47,24 +47,13 @@ jobs:
       run: |
         git config --global user.email "joe@polka.cat";
         git config --global user.name "GitHub Actions Workflow"
-    # - if: runner.os == 'macOS'
-    #   name: Print PATH
-    #   run: |
-    #     echo $PATH
     - if: runner.os == 'macOS'
       name: Fix Python PATH on macOS
       run: |
         ls -al /usr/local/bin
-        sudo rm -rf /usr/local/bin/python
+        # sudo rm -rf /usr/local/bin/python
         ls -al /usr/local/bin
         tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"'
-    - if: runner.os == 'macOS'
-      name: Print PATH
-      run: |
-        export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
-        echo $PATH
-        ls -al $pythonLocation/bin
-        ls -al $pythonLocation
     - name: Install clowder
       run: |
         export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
