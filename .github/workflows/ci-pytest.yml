@@ -47,22 +47,23 @@ jobs:
       run: |
         git config --global user.email "joe@polka.cat";
         git config --global user.name "GitHub Actions Workflow"
-    - if: runner.os == 'macOS'
-      name: Print PATH
-      run: |
-        echo $PATH
-    - if: runner.os == 'macOS'
-      name: Fix Python PATH on macOS
-      run: |
-        tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH"'
-    - if: runner.os == 'macOS'
-      name: Print PATH
-      run: |
-        echo $PATH
+    # - if: runner.os == 'macOS'
+    #   name: Print PATH
+    #   run: |
+    #     echo $PATH
+    # - if: runner.os == 'macOS'
+    #   name: Fix Python PATH on macOS
+    #   run: |
+    #     tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"'
+    # - if: runner.os == 'macOS'
+    #   name: Print PATH
+    #   run: |
+    #     echo $PATH
     - name: Install clowder
       run: script/cibuild
     - name: Run pytest functional tests
       run: |
+        export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
         script/test \
           --markers 'not ssh and not offline' \
           --parallel \
