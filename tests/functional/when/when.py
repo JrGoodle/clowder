@@ -4,8 +4,7 @@ from pathlib import Path
 from pytest_bdd import when, parsers
 
 from pygoodle.connectivity import get_gateway_ip_address, disable_network_connection, enable_network_connection
-import tests.functional.util as util
-from tests.functional.util import CommandResults, ScenarioInfo
+from tests.functional.util import CommandResults, ScenarioInfo, run_command
 
 
 @when("the network connection is disabled")
@@ -34,7 +33,7 @@ def when_change_directory(directory: str, scenario_info: ScenarioInfo) -> None:
 def when_run_command(tmp_path: Path, command: str, command_results: CommandResults,
                      scenario_info: ScenarioInfo) -> None:
     path = scenario_info.cmd_dir
-    result = util.run_command(command, path)
+    result = run_command(command, path)
     command_results.completed_processes.append(result)
 
 
@@ -43,4 +42,4 @@ def when_run_command_and_command(command_1: str, command_2: str,
                                  command_results: CommandResults, scenario_info: ScenarioInfo) -> None:
     path = scenario_info.cmd_dir
     commands = [command_1, command_2]
-    command_results.completed_processes += [util.run_command(c, path) for c in commands]
+    command_results.completed_processes += [run_command(c, path) for c in commands]

@@ -429,7 +429,7 @@ class ProjectRepo(ResolvedProject):
         local_branch = LocalBranch(self.path, branch)
 
         if not local_branch.exists:
-            local_branch.create()
+            local_branch.create(track=False)
 
         if local_branch.is_checked_out:
             CONSOLE.stdout(f' - On correct branch {Format.Git.ref(local_branch.name)}')
