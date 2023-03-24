@@ -143,7 +143,7 @@ Feature: clowder start
         | black-cats/june   | master       | i-dont-exist |
 
     # TODO: Probably need to create a fixture that sets up remote branches
-    @internet @write @ssh @debug
+    @internet @write @ssh
     Scenario Outline: start tracking - no local, no remote
         Given cats example is initialized and herded with ssh
         And cats example projects have no remote branch <test_branch>
