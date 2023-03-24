@@ -54,19 +54,19 @@ jobs:
     # - if: runner.os == 'macOS'
     #   name: Fix Python PATH on macOS
     #   run: |
-    #     tee -a ~/.profile <<<'export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"'
+    #     tee -a ~/.profile <<<'export PATH="$pythonLocation:$PATH:$pythonLocation"'
     - if: runner.os == 'macOS'
       name: Print PATH
       run: |
-        export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
+        export PATH="$pythonLocation:$PATH:$pythonLocation"
         echo $PATH
     - name: Install clowder
       run: |
-        export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
+        export PATH="$pythonLocation:$PATH:$pythonLocation"
         script/cibuild
     - name: Run pytest functional tests
       run: |
-        export PATH="$pythonLocation/bin:$PATH:$pythonLocation/bin"
+        export PATH="$pythonLocation:$PATH:$pythonLocation"
         script/test \
           --markers 'not ssh and not offline' \
           --parallel \
