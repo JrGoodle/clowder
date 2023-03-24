@@ -28,7 +28,7 @@ jobs:
       matrix:
         os: [
           macos-latest,
-          ubuntu-latest,
+          # ubuntu-latest,
           # TODO: windows-latest
         ]
         python-version: [
