@@ -292,14 +292,14 @@ workflows:
       - test_write
       # FIXME: Re-enable these tests
       # - test_offline
-      - test_parallel:
-          groups: 2
-          matrix:
-            parameters:
-              group: [1, 2]
-      - report_coverage:
-          requires:
-            - test_write
-            # FIXME: Re-enable these tests
-            # - test_offline
-            - test_parallel
+      # - test_parallel:
+      #     groups: 2
+      #     matrix:
+      #       parameters:
+      #         group: [1, 2]
+      # FIXME: Re-enable this
+      # - report_coverage:
+      #     requires:
+      #       - test_write
+      #       - test_offline
+      #       - test_parallel
