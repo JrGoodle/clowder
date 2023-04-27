@@ -9,13 +9,15 @@ from enum import auto, unique
 from functools import wraps
 from typing import Any, List, Optional, Tuple
 
+import pygoodle.filesystem as fs
+from pygoodle.console import CONSOLE
+from pygoodle.enum import AutoLowerName
+from pygoodle.format import Format
+from pygoodle.git import Protocol
+
 import clowder.util.formatting as fmt
-from clowder.util.enum import AutoLowerName
 from clowder.environment import ENVIRONMENT
-from clowder.git import GitProtocol
-from clowder.util.console import CONSOLE
 from clowder.util.error import MissingFileError, UnknownProjectError
-from clowder.util.file_system import remove_file
 
 
 def print_config(func):
@@ -52,7 +54,7 @@ class GitConfigType(AutoLowerName):
         return 'git'
 
 
-class Config(object):
+class Config:
     """Config class
 
     :ivar str name: Name of clowder
@@ -115,15 +117,15 @@ class Config(object):
         self._set_command_option(CommandConfigType.PROJECTS, ", ".join(projects))
 
     @property
-    def protocol(self) -> Optional[GitProtocol]:
+    def protocol(self) -> Optional[Protocol]:
         protocol = str(GitConfigType.PROTOCOL.value)
         protocol = self._git_config.get(protocol)
         if protocol is None:
             return None
-        return GitProtocol(protocol)
+        return Protocol(protocol)
 
     @protocol.setter
-    def protocol(self, protocol: Optional[GitProtocol]):
+    def protocol(self, protocol: Optional[Protocol]):
         self._set_git_option(GitConfigType.PROTOCOL, protocol.value)
 
     @property
@@ -140,7 +142,7 @@ class Config(object):
         """Clear all config settings"""
 
         if ENVIRONMENT.clowder_config is not None and ENVIRONMENT.clowder_config.exists():
-            remove_file(ENVIRONMENT.clowder_config)
+            fs.remove_file(ENVIRONMENT.clowder_config)
 
     @staticmethod
     def print_config() -> None:
@@ -150,9 +152,9 @@ class Config(object):
             CONSOLE.stdout(' - No config file found')
             return
 
-        CONSOLE.stdout(fmt.bold('Current config\n'))
+        CONSOLE.stdout(Format.bold('Current config\n'))
         text = ENVIRONMENT.clowder_config.read_text()
-        CONSOLE.stdout(fmt.escape(f"{text.strip()}\n"))
+        CONSOLE.stdout(Format.escape(f"{text.strip()}\n"))
 
     def process_projects_arg(self, projects: List[str]) -> Tuple[str, ...]:
         """Process project args based on parameters and config
@@ -205,7 +207,7 @@ class Config(object):
 
         for project in self.projects:
             if project not in project_options:
-                message = f"{fmt.path(ENVIRONMENT.clowder_config)}\n" \
+                message = f"{Format.path(ENVIRONMENT.clowder_config)}\n" \
                           f"Clowder config file appears to be invalid" \
                           f"Unknown project {fmt.project_name(project)}"
                 raise UnknownProjectError(message)

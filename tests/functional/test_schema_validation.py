@@ -290,4 +290,3 @@ def test_validate_upstream_source_url(upstream_source_url: Path):
 )
 def test_validate_upstream_source_url_implicit(upstream_implicit: Path):
     pass
-

@@ -34,20 +34,23 @@ Feature: clowder repo command
         Given cats example is initialized
         And .clowder/my-file file doesn't exist
         And repo at .clowder is clean
+        And repo at .clowder has no untracked files
         When I run 'clowder repo run "touch my-file"'
         Then the command succeeds
         And .clowder/my-file file exists
-        And repo at .clowder is dirty
+        And repo at .clowder is clean
+        And repo at .clowder has untracked files
 
     Scenario: repo run delete file
         Given cats example is initialized
         And created file my-file in directory .clowder
         And repo at .clowder has untracked file my-file
-        And repo at .clowder is dirty
+        And repo at .clowder is clean
         When I run 'clowder repo run "rm my-file"'
         Then the command succeeds
         And my-file file doesn't exist in directory .clowder
         And repo at .clowder is clean
+        And project at .clowder has no untracked files
 
     Scenario: repo checkout
         Given cats example is initialized
@@ -75,12 +78,14 @@ Feature: clowder repo command
         Given cats example is initialized
         And repo at .clowder is on branch master
         And created file my-staged-file in directory .clowder
-        And repo at .clowder staged file my-staged-file
-        And repo at .clowder is dirty
+#        And repo at .clowder staged file my-staged-file
+        And repo at .clowder is clean
+        And repo at .clowder has untracked files
         When I run 'clowder repo clean'
         Then the command succeeds
         And repo at .clowder is clean
         And my-staged-file file doesn't exist in directory .clowder
+        And repo at .clowder has no untracked files
         And repo at .clowder is on branch master
 
     Scenario: repo status

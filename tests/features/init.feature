@@ -135,7 +135,6 @@ Feature: clowder init
         And created file something-to-link-to in directory .
         And created clowder.yml and clowder.yaml symlinks pointing to something-to-link-to
         When I run 'clowder init https://github.com/JrGoodle/cats.git'
-        # TODO: Should this actually be a failure???
         Then the command succeeds
         And .clowder directory exists
         And directory at .clowder is a git repository

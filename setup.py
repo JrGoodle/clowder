@@ -36,10 +36,10 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Operating System :: MacOS',
         'Operating System :: POSIX :: Linux',
         'Intended Audience :: Developers',
@@ -48,25 +48,17 @@ setup(
     ],
     packages=find_packages(exclude=['tests.*']),
     package_data={
-        "clowder.util": [
-            "clowder.schema.json",
-            "clowder.config.schema.json"
+        "clowder": [
+            "clowder.schema.json"
         ],
     },
     entry_points={
         'console_scripts': [
-            'clowder=clowder.clowder_app:main',
+            'clowder=clowder.app:main',
         ]
     },
     install_requires=[
-        'argcomplete',
-        'colorama',
-        'jsonschema',
-        'GitPython',
-        'PyYAML',
-        'rich',
-        'tqdm',
-        'trio'
+        'pygoodle @ git+https://github.com/JrGoodle/pygoodle.git#egg=pygoodle'
     ],
     tests_require=[
         'autopep8',

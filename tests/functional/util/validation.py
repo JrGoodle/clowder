@@ -5,8 +5,8 @@ import os
 from pathlib import Path
 from typing import List
 
-from .file_system import copy_file
-from .formatting import remove_prefix, remove_suffix
+import pygoodle.filesystem as fs
+from pygoodle.format import Format
 
 tests_dir = Path(__file__).resolve().parent.parent.resolve()
 clowder_project_tests = [
@@ -36,13 +36,13 @@ def should_remove_non_base(prop: str) -> bool:
 def yaml_property_tests(yaml_property: str) -> List[str]:
     if yaml_property.startswith(project_prefix):
         tests = clowder_project_tests
-        prop = remove_prefix(yaml_property, project_prefix)
+        prop = Format.remove_prefix(yaml_property, project_prefix)
     elif yaml_property.startswith(upstream_prefix):
         tests = clowder_upstream_tests
-        prop = remove_prefix(yaml_property, upstream_prefix)
+        prop = Format.remove_prefix(yaml_property, upstream_prefix)
     else:
         assert False
-    prop = remove_suffix(prop, base_suffix)
+    prop = Format.remove_suffix(prop, base_suffix)
 
     files: List[Path] = []
     yaml_dir = tests_dir / "data" / "yaml"
@@ -101,5 +101,5 @@ def create_yaml_validation_clowders(path: Path) -> Path:
         clowder_repo = clowder_dir / ".clowder"
         clowder_repo.mkdir()
         clowder_yml = clowder_repo / "clowder.yml"
-        copy_file(file, clowder_yml)
+        fs.copy_file(file, clowder_yml)
     return path

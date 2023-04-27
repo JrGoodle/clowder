@@ -4,43 +4,35 @@
 
 """
 
-import argparse
+from pygoodle.app import Subcommand
+from pygoodle.console import CONSOLE
 
-import clowder.util.formatting as fmt
-from clowder.clowder_controller import CLOWDER_CONTROLLER, print_clowder_name, valid_clowder_yaml_required
+from clowder.controller import (
+    CLOWDER_CONTROLLER,
+    print_clowder_name,
+    print_clowder_repo_status,
+    valid_clowder_yaml_required
+)
 from clowder.config import Config
-from clowder.git.clowder_repo import print_clowder_repo_status
-from clowder.util.console import CONSOLE
 
-from .util import add_parser_arguments
+from .util import ProjectsArgument
 
 
-def add_diff_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
-    """Add clowder diff parser
+class DiffCommand(Subcommand):
+    class Meta:
+        name = 'diff'
+        help = 'Show git diff for projects'
+        args = [
+            ProjectsArgument('projects and groups to show diff for')
+        ]
 
-    :param argparse._SubParsersAction subparsers: Subparsers action to add parser to
-    """
+    @valid_clowder_yaml_required
+    @print_clowder_name
+    @print_clowder_repo_status
+    def run(self, args) -> None:
+        projects = Config().process_projects_arg(args.projects)
+        projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
 
-    parser = subparsers.add_parser('diff', help='Show git diff for projects')
-    parser.formatter_class = argparse.RawTextHelpFormatter
-    parser.set_defaults(func=diff)
-
-    add_parser_arguments(parser, [
-        (['projects'], dict(metavar='<project|group>', default='default', nargs='*',
-                            choices=CLOWDER_CONTROLLER.project_choices_with_default,
-                            help=fmt.project_options_help_message('projects and groups to show diff for'))),
-    ])
-
-
-@valid_clowder_yaml_required
-@print_clowder_name
-@print_clowder_repo_status
-def diff(args) -> None:
-    """Clowder diff command private implementation"""
-
-    projects = Config().process_projects_arg(args.projects)
-    projects = CLOWDER_CONTROLLER.filter_projects(CLOWDER_CONTROLLER.projects, projects)
-
-    for project in projects:
-        CONSOLE.stdout(project.status())
-        project.diff()
+        for project in projects:
+            CONSOLE.stdout(project.status())
+            project.diff()

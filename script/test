@@ -1,51 +1,25 @@
 #!/usr/bin/env python
 
-import argparse
-import os
-import random
-import string
-import subprocess
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import List, Tuple, Optional, Union
+from typing import Optional
 
-Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
-Arguments = List[Tuple[list, dict]]
-
-
-def make_dir(dir_path: Path) -> Path:
-    dir_path.mkdir(parents=True, exist_ok=True)
-    return dir_path
+import pygoodle.filesystem as fs
+import pygoodle.command as cmd
+from pygoodle.app import App, BoolArgument, CountArgument, MutuallyExclusiveArgumentGroup, SingleArgument
 
 
 repo_path: Path = Path(__file__).resolve().parent.parent.resolve()
-build_dir: Path = make_dir(repo_path / "build")
-temp_dir: Path = make_dir(repo_path / "temp")
-coverage_dir: Path = make_dir(build_dir / "coverage")
-junit_dir: Path = make_dir(build_dir / f"junit")
-cucumber_dir: Path = make_dir(build_dir / f"cucumber")
+build_dir: Path = fs.make_dir(repo_path / "build", exist_ok=True)
+temp_dir: Path = fs.make_dir(repo_path / "temp", exist_ok=True)
+coverage_dir: Path = fs.make_dir(build_dir / "coverage", exist_ok=True)
+junit_dir: Path = fs.make_dir(build_dir / f"junit", exist_ok=True)
+cucumber_dir: Path = fs.make_dir(build_dir / f"cucumber", exist_ok=True)
 
 
-def run_command(cmd: str, check: bool = True) -> CompletedProcess:
-    cmd_env = os.environ.copy()
-    cmd = f'. script/import.sh && {cmd}'
-    print(f'> {cmd}')
-    completed_process = subprocess.run(cmd, cwd=repo_path, shell=True, env=cmd_env, executable='/bin/bash')
-    if check:
-        assert completed_process.returncode == 0
-    return completed_process
-
-
-generated_random_string: bool = False
-
-
-def get_random_alphanumeric_string(length: int) -> str:
-    letters_and_digits = string.ascii_letters + string.digits
-    result_str = ''.join((random.choice(letters_and_digits) for _ in range(length)))
-    print(f"Random alphanumeric String is: {result_str}")
-    global generated_random_string
-    generated_random_string = True
-    return result_str
+def run_command(command: str) -> CompletedProcess:
+    command = f'. script/import.sh && {command}'
+    return cmd.run(command, cwd=repo_path, executable='/bin/bash')
 
 
 def report_coverage() -> None:
@@ -65,7 +39,7 @@ def test(command_options: str, label: Optional[str] = None) -> None:
     file_label = "" if label is None else f".{label}"
 
     # Base command
-    command = f"pipenv run pytest --basetemp={temp_dir} -vv"
+    command = f"pytest --basetemp={temp_dir} -vv"
 
     # Add extra arguments
     command += command_options
@@ -87,7 +61,7 @@ def test(command_options: str, label: Optional[str] = None) -> None:
 
     # BDD reports
     cucumber_file = cucumber_dir / f"results{file_label}.json"
-    bdd_reporting_options = f" --cucumberjson={cucumber_file} --cucumberjson-expanded"
+    bdd_reporting_options = f" --cucumberjson={cucumber_file}"
     command += bdd_reporting_options
 
     # Run test command
@@ -103,41 +77,30 @@ def test(command_options: str, label: Optional[str] = None) -> None:
         exit(result.returncode)
 
 
-def add_parser_arguments(parser: Parser, arguments: Arguments) -> None:
-    for argument in arguments:
-        parser.add_argument(*argument[0], **argument[1])
+class TestApp(App):
+    class Meta:
+        name = 'test'
+        args = [
+            CountArgument('--groups', help='number of groups to split tests into'),
+            CountArgument('--group', "-g", help='group number to run tests for'),
+            SingleArgument('--label', '-l', default=None, help='label to append to results'),
+            BoolArgument('--parallel', '-p', help='run tests in parallel'),
+            BoolArgument('--exitfirst', '-x', help='exit on first failure'),
+            BoolArgument('--verbose', '-v', help='Print all output')
+        ]
 
+        mutually_exclusive_args = [
+            MutuallyExclusiveArgumentGroup(
+                required=True,
+                args=[
+                    BoolArgument('--report-coverage', '-r', help='generate test coverage reports'),
+                    SingleArgument('--markers', '-m', help='test markers to run')
+                ]
+            )
+        ]
 
-def create_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser()
-    arguments = [
-        (['--groups'], dict(metavar='<n>', nargs=1, default=None, type=int,
-                            help='number of groups to split tests into')),
-        (['--group', "-g"], dict(metavar='<n>', nargs=1, default=None, type=int,
-                                 help='number of groups to split tests into')),
-        (['--label', '-l'], dict(nargs=1, metavar='<label>', default=None,
-                                 help='label to append to results')),
-        (['--parallel', '-p'], dict(action='store_true', help='run tests in parallel')),
-        (['--exitfirst', '-x'], dict(action='store_true', help='exit on first failure')),
-        (['--verbose', '-v'], dict(action='store_true', help='Print all output'))
-    ]
-    add_parser_arguments(parser, arguments)
-
-    group = parser.add_mutually_exclusive_group(required=True)
-    mutually_exclusive_arguments = [
-        (['--report-coverage', '-r'], dict(action='store_true', help='generate test coverage reports')),
-        (['--markers', '-m'], dict(nargs=1, metavar='<markers>', help='test markers to run'))
-    ]
-    add_parser_arguments(group, mutually_exclusive_arguments)
-
-    return parser
-
-
-def main() -> None:
-    try:
-        parser = create_parser()
-        args = parser.parse_args()
-
+    @staticmethod
+    def run(args) -> None:
         if args.report_coverage:
             report_coverage()
             exit()
@@ -168,10 +131,6 @@ def main() -> None:
 
         test(options, label)
 
-    except Exception as err:
-        print(err)
-        exit(1)
-
 
 if __name__ == '__main__':
-    main()
+    TestApp().main()

@@ -1,102 +1,23 @@
-#!/usr/bin/env python
+#!/usr/bin/env bash
+# shellcheck disable=SC1091
 
-import argparse
-import os
-import shutil
-import subprocess
-from pathlib import Path
-from subprocess import CompletedProcess
-from typing import List, Tuple, Union
+set -euo pipefail
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
+. 'script/utils.sh'
+. 'script/import_python.sh'
 
-Parser = Union[argparse.ArgumentParser, argparse._MutuallyExclusiveGroup, argparse._ArgumentGroup]  # noqa
-Arguments = List[Tuple[list, dict]]
+paths=(
+    "${PWD}/build/"
+    "${PWD}/temp/"
+    "${PWD}/dist/"
+    "${PWD}/.pytest_cache/"
+)
 
-repo_path: Path = Path(__file__).resolve().parent.parent.resolve()
-build_dir: Path = repo_path / "build"
-temp_dir: Path = repo_path / "temp"
-dist_dir: Path = repo_path / "dist"
-clowder_repo_egg_dir: Path = repo_path / "clowder_repo.egg-info"
-clowder_dir: Path = repo_path / "clowder"
-pycache = "__pycache__"
-pytest_cache: Path = repo_path / '.pytest_cache'
+for path in "${paths[@]}"; do
+    run rm -rf "$path"
+done
 
+run pipenv --rm
 
-def rm_dir(dir_path: Path) -> None:
-    h3(f"Remove {dir_path.relative_to(repo_path)}")
-    shutil.rmtree(dir_path, ignore_errors=True)
-
-
-def separator(message: str, character: str) -> None:
-    print(character * len(message))
-    print()
-
-
-def h1(message: str) -> None:
-    print(message)
-    separator(message, '=')
-
-
-def h2(message: str) -> None:
-    print(message)
-    separator(message, '-')
-
-
-def h3(message: str) -> None:
-    print(f'* {message}')
-
-
-def clean_build() -> None:
-    h2('Clean build files')
-    rm_dir(dist_dir)
-    rm_dir(build_dir)
-    rm_dir(temp_dir)
-
-
-def clean_all() -> None:
-    h1('Clean all files')
-    rm_dir(clowder_repo_egg_dir)
-    # run_command(path, "pipenv --rm")
-    run_command("pip uninstall --yes clowder-repo")
-    shutil.rmtree(clowder_repo_egg_dir, ignore_errors=True)
-    shutil.rmtree(pytest_cache, ignore_errors=True)
-    for root, dirs, files in os.walk(repo_path, topdown=False):
-        for name in dirs:
-            if name == pycache:
-                dir_path = Path(root) / name
-                shutil.rmtree(dir_path, ignore_errors=True)
-    clean_build()
-
-
-def run_command(cmd: str, cwd: Path = repo_path) -> CompletedProcess:
-    cmd_env = os.environ.copy()
-    print(f"> {cmd}")
-    completed_process = subprocess.run(cmd, cwd=cwd, shell=True, env=cmd_env)
-    print()
-    return completed_process
-
-
-def add_parser_arguments(parser: Parser, arguments: Arguments) -> None:
-    for argument in arguments:
-        parser.add_argument(*argument[0], **argument[1])
-
-
-def main() -> None:
-    try:
-        parser = argparse.ArgumentParser()
-        group = parser.add_mutually_exclusive_group()
-        mutually_exclusive_arguments = [
-            (['--build', '-b'], dict(action='store_true', help='clean build files'))
-        ]
-        add_parser_arguments(group, mutually_exclusive_arguments)
-        args = parser.parse_args()
-        if args.build:
-            clean_build()
-        else:
-            clean_all()
-    except Exception as err:
-        print(err)
-        exit(1)
-
-
-if __name__ == '__main__':
-    main()
+find . -type d -name '__pycache__' -exec rm -rf {} +
+find . -type d -name '*.egg-info' -exec rm -rf {} +

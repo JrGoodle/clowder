@@ -1,16 +1,23 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC10916
+# shellcheck disable=SC1091
 
 set -euo pipefail
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 . 'script/utils.sh'
 
-. 'script/import.sh'
+. script/import.sh
+. script/import_python.sh
 
 case "$PLATFORM" in
     darwin)
-        h1 'Homebrew'
         if [ -z ${CI+x} ]; then
+            h1 'Mac dveloper tools'
+            h2 'Enable developer mode'
+            run DevToolsSecurity -enable
+            h2 'Install Xcode command line tools'
+            run_ignore_errors xcode-select --install
+
+            h1 'Homebrew'
             if command -v brew; then
                 h2 'Update Homebrew'
                 run brew update
@@ -27,9 +34,9 @@ case "$PLATFORM" in
     linux)
         h1 'Update apt-get'
         run sudo apt-get update -y
-        h1 'git'
-        h2 'Install git'
-        run sudo apt-get install python-dev -y
+        # h1 'git'
+        # h2 'Install git'
+        # run sudo apt-get install python-dev -y
         h2 'Install git-lfs'
         run 'sudo curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash'
         run sudo apt-get install git-lfs
@@ -39,10 +46,12 @@ case "$PLATFORM" in
         ;;
 esac
 
-h1 'Install git lfs hooks'
+h2 'Install git lfs hooks'
 run git lfs install
 
+h2 'Pull git lfs files'
+run git lfs pull
+
 if [ -z ${CI+x} ]; then
-    h1 'Install Python versions'
-    run pyenv install --skip-existing 3.7.10
+    script/install_python.sh
 fi

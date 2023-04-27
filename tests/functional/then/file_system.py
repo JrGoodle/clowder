@@ -4,12 +4,14 @@ from pathlib import Path
 
 from pytest_bdd import then, parsers
 
+import pygoodle.filesystem as fs
+
 import tests.functional.util as util
 
 
 @then(parsers.parse("test directory is empty"))
 def then_test_dir_empty(tmp_path: Path) -> None:
-    assert util.is_directory_empty(tmp_path)
+    assert fs.is_empty_dir(tmp_path)
 
 
 @then(parsers.parse("{directory} directory exists"))
@@ -103,7 +105,7 @@ def then_has_symlink(tmp_path: Path, filename: str) -> None:
 @then(parsers.parse("{filename} is a symlink pointing to {destination}"))
 def then_is_symlink_pointing_to(tmp_path: Path, filename: str, destination: str) -> None:
     path = tmp_path / filename
-    assert util.is_relative_symlink_from_to(path, destination)
+    assert fs.is_relative_symlink_from_to(path, destination)
 
 
 @then(parsers.parse("{filename_1} and {filename_2} files exist"))

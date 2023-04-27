@@ -43,13 +43,13 @@ Requirements:
 To install or upgrade `clowder` from PyPI:
 
 ```bash
-sudo pip3 install clowder-repo --upgrade
+sudo pip install clowder-repo --upgrade
 ```
 
 To install the latest pre-release version:
 
 ```bash
-sudo pip3 install clowder-repo --force-reinstall --pre
+sudo pip install clowder-repo --force-reinstall --pre
 ```
 
 For command autocompletion, add to your shell profile:

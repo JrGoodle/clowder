@@ -5,46 +5,10 @@
 """
 
 import math
-from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
-from clowder.util.console import CONSOLE
-
-
-Output = Union[str, Path]
-
-
-def bold(output: Output) -> str:
-    return f'[bold]{output}[/bold]'
-
-
-def cyan(output: Output) -> str:
-    return f'[cyan]{output}[/cyan]'
-
-
-def green(output: Output) -> str:
-    return f'[green]{output}[/green]'
-
-
-def red(output: Output) -> str:
-    return f'[red]{output}[/red]'
-
-
-def magenta(output: Output) -> str:
-    return f'[magenta]{output}[/magenta]'
-
-
-def yellow(output: Output) -> str:
-    return f'[yellow]{output}[/yellow]'
-
-
-def escape(output: Output) -> str:
-    import rich.markup as markup
-    return markup.escape(output)
-
-
-def underline(output: Output) -> str:
-    return f'[underline]{output}[/underline]'
+from pygoodle.console import CONSOLE
+from pygoodle.format import Format
 
 
 # TODO: Update to return list of all duplicates found
@@ -64,16 +28,6 @@ def check_for_duplicates(list_of_elements: List[str]) -> Optional[str]:
     return None
 
 
-def clowder_command(cmd: str) -> str:
-    """Return formatted clowder command name
-
-    :param str cmd: Clowder command name
-    :return: Formatted clowder command name
-    """
-
-    return bold(cmd)
-
-
 def clowder_name(name: str) -> str:
     """Return formatted clowder name
 
@@ -81,28 +35,7 @@ def clowder_name(name: str) -> str:
     :return: Formatted clowder name
     """
 
-    return bold(name)
-
-
-def command(cmd: Union[str, List[str]]) -> str:
-    """Return formatted command name
-
-    :param Union[str, List[str]] cmd: Clowder command name
-    :return: Formatted clowder command name
-    """
-
-    command_output = " ".join(cmd) if isinstance(cmd, list) else cmd
-    return bold(f"$ {command_output}")
-
-
-def invalid_yaml(name: str) -> str:
-    """Return error message for invalid yaml file
-
-    :param str name: Invalid file's name
-    :return: Formatted yaml error
-    """
-
-    return f"{path(Path(name))} appears to be invalid"
+    return Format.bold(name)
 
 
 # def error_source_not_found(source: str, yml: Path, project: str, upstream_name: Optional[str] = None) -> str:
@@ -123,18 +56,6 @@ def invalid_yaml(name: str) -> str:
 #                 f"{yaml_path(yml)}",
 #                 f"source '{source}'{upstream_output} specified in project '{project}' not found in 'sources'"]
 #     return "\n".join(messages)
-
-
-# FIXME: Only print project name using this where appropriate (now that project status and upstream_string
-# are printed back to back)
-def upstream(name: str) -> str:
-    """Return formatted upstream name
-
-    :param str name: Upstream name
-    :return: Formatted upstream name
-    """
-
-    return cyan(name)
 
 
 def options_help_message(options: Tuple[str, ...], message: str) -> str:
@@ -174,7 +95,7 @@ def project_options_help_message(message: str) -> str:
         length = len(max(options, key=len))
         return length + spacing
 
-    from clowder.clowder_controller import CLOWDER_CONTROLLER
+    from clowder.controller import CLOWDER_CONTROLLER
 
     project_names = CLOWDER_CONTROLLER.project_names
     upstream_names = CLOWDER_CONTROLLER.upstream_names
@@ -274,59 +195,6 @@ def project_options_help_message(message: str) -> str:
     return message
 
 
-def path(text: Path) -> str:
-    """Return formatted path
-
-    :param Path text: Path name
-    :return: Formatted path name
-    """
-
-    return cyan(text.resolve())
-
-
-def ref(text: str) -> str:
-    """Return formatted ref name
-
-    :param str text: Git reference
-    :return: Formatted ref name
-    """
-
-    return magenta(text)
-
-
-def remote(text: str) -> str:
-    """Return formatted remote name
-
-    :param str text: Remote name
-    :return: Formmatted remote name
-    """
-
-    return yellow(text)
-
-
-def remove_prefix(text: str, prefix: str) -> str:
-    """Remove prefix from string
-
-    :param str text: Text to remove prefix from
-    :param str prefix: Prefix to remoe
-    :return: Text with prefix removed if present
-    """
-
-    if text.startswith(prefix):
-        return text[len(prefix):]
-    return text
-
-
-def url_string(url: str) -> str:
-    """Return formatted url
-
-    :param str url: URL
-    :return: Formatted URL
-    """
-
-    return cyan(url)
-
-
 def version_options_help_message(message: str, versions: Tuple[str, ...]) -> str:
     """Help message for projects/groups options
 
@@ -410,7 +278,7 @@ def version(version_name: str) -> str:
     :return: Formatted clowder version name
     """
 
-    return bold(version_name)
+    return Format.bold(version_name)
 
 
 def project_name(name: str) -> str:
@@ -420,7 +288,7 @@ def project_name(name: str) -> str:
     :return: Formatted project name
     """
 
-    return green(name)
+    return Format.green(name)
 
 
 def _validate_help_options(options: Optional[Union[str, list, tuple]]) -> bool:

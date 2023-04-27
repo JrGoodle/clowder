@@ -6,6 +6,8 @@ from pathlib import Path
 
 from pytest import fixture
 
+import pygoodle.filesystem as fs
+
 import tests.functional.util as util
 from tests.functional.util import ScenarioInfo
 
@@ -13,7 +15,7 @@ from tests.functional.util import ScenarioInfo
 @fixture
 def validation_init(tmp_path: Path, validation_init_session: Path, scenario_info: ScenarioInfo) -> None:
     path = validation_init_session / scenario_info.current_validation_test
-    util.copy_directory(path, to=tmp_path)
+    fs.copy_directory(path, to_path=tmp_path)
     util.run_command("clowder link", tmp_path, check=True)
 
 
@@ -27,6 +29,6 @@ def validation_init_session(tmp_path_factory) -> Path:
 def validation_init_herd(tmp_path: Path, validation_init_session: Path,
                          scenario_info: ScenarioInfo) -> None:
     path = validation_init_session / scenario_info.current_validation_test
-    util.copy_directory(path, to=tmp_path)
+    fs.copy_directory(path, to_path=tmp_path)
     util.run_command("clowder link", tmp_path, check=True)
     util.run_command("clowder herd", tmp_path, check=True)

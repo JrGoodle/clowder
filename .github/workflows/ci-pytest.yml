@@ -32,23 +32,30 @@ jobs:
           # TODO: windows-latest
         ]
         python-version: [
-          '3.6',
-          '3.7',
           '3.8',
-          '3.9'
+          '3.9',
+          '3.10',
+          '3.11'
         ]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Setup python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup git config
       run: |
         git config --global user.email "joe@polka.cat";
         git config --global user.name "GitHub Actions Workflow"
+    - if: runner.os == 'macOS'
+      name: Fix Python PATH on macOS
+      run: |
+        ls -al /usr/local/bin
+        sudo rm -rf /usr/local/bin/python
+        ls -al /usr/local/bin
     - name: Install clowder
-      run: script/cibuild
+      run: |
+        script/cibuild
     - name: Run pytest functional tests
       run: |
         script/test \

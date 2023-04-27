@@ -4,46 +4,37 @@
 
 """
 
-import argparse
+from pygoodle.app import Argument, SingleArgument, Subcommand
+from pygoodle.connectivity import network_connection_required
+from pygoodle.console import CONSOLE
+from pygoodle.format import Format
 
-import clowder.util.formatting as fmt
+from clowder.log import LOG
 from clowder.environment import ENVIRONMENT
-from clowder.git.clowder_repo import ClowderRepo
-from clowder.util.console import CONSOLE
-from clowder.util.logging import LOG
-from clowder.util.connectivity import network_connection_required
-
-from .util import add_parser_arguments
+from clowder.controller import ClowderRepo
 
 
-def add_init_parser(subparsers: argparse._SubParsersAction) -> None:  # noqa
+class InitCommand(Subcommand):
+    class Meta:
+        name = 'init'
+        help = 'Clone repository to clowder directory and create clowder yaml symlink'
+        args = [
+            Argument('url', help='url of repo containing clowder yaml file'),
+            SingleArgument('--branch', '-b', help='branch of repo containing clowder yaml file')
+        ]
 
-    parser = subparsers.add_parser('init', help='Clone repository to clowder directory and create clowder yaml symlink')
-    parser.set_defaults(func=init)
+    @network_connection_required
+    def run(self, args) -> None:
+        clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
+        if clowder_repo_dir.is_dir():
+            try:
+                clowder_repo_dir.rmdir()
+            except OSError:
+                LOG.error("Clowder already initialized in this directory")
+                raise
 
-    add_parser_arguments(parser, [
-        (['url'], dict(metavar='<url>', help='url of repo containing clowder yaml file')),
-        (['--branch', '-b'], dict(nargs=1, metavar='<branch>', help='branch of repo containing clowder yaml file'))
-    ])
-
-
-@network_connection_required
-def init(args) -> None:
-    """Clowder init command private implementation"""
-
-    clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
-    if clowder_repo_dir.is_dir():
-        try:
-            clowder_repo_dir.rmdir()
-        except OSError:
-            LOG.error("Clowder already initialized in this directory")
-            raise
-
-    CONSOLE.stdout(f"Create clowder repo from {fmt.green(args.url)}\n")
-    if args.branch is None:
-        branch = 'master'
-    else:
-        branch = str(args.branch[0])
-    clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
-    repo = ClowderRepo(clowder_repo_dir)
-    repo.init(args.url, branch)
+        CONSOLE.stdout(f"Create clowder repo from {Format.green(args.url)}\n")
+        branch = None if args.branch is None else str(args.branch[0])
+        clowder_repo_dir = ENVIRONMENT.current_dir / '.clowder'
+        repo = ClowderRepo(clowder_repo_dir)
+        repo.init(args.url, branch=branch)

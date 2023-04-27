@@ -7,10 +7,11 @@ cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 
 run "${PWD}/script/setup"
 
-. 'script/import.sh'
+. script/import.sh
+. script/import_python.sh
+
+h3 'Install clowder in editable mode'
+run pipenv run pip install -e .
 
 h1 'Generate requirements.txt'
 run 'pipenv run pip freeze > requirements.txt'
-
-h3 'Install clowder at user level'
-run pip install --user -e .

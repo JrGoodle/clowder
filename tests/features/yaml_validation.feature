@@ -46,11 +46,13 @@ Feature: clowder yaml validation
         Given validating property <project_git_config>
         And validation clowder is initialized and herded
         And project at felidae is clean
+        And project at felidae has no untracked files
         And something file doesn't exist in directory felidae
         When I change to directory felidae
         And I run 'git something'
         Then the command succeeds
-        And project at felidae is dirty
+        And project at felidae is clean
+        And project at felidae has untracked files
         And something file exists in directory felidae
 
     @ssh
@@ -121,10 +123,10 @@ Feature: clowder yaml validation
         And project at felidae exists
         And project at felidae is clean
         And project at felidae has submodule at ash
-        And submodule in felidae at ash has been initialized
+        And submodule in felidae at ash is initialized
 #       TODO: Better recursize submodule check
-        And project at felidae has no submodule at ash/duffy
-        And submodule in felidae at ash/duffy has been initialized
+        And project at felidae has submodule at ash/duffy
+        And submodule in felidae at ash/duffy is initialized
 
     @ssh @submodules
     Scenario: validate implicit project.git.submodules
@@ -136,7 +138,7 @@ Feature: clowder yaml validation
         And project at felidae exists
         And project at felidae is clean
         And project at felidae has submodule at ash
-        And submodule in felidae at ash hasn't been initialized
+        And submodule in felidae at ash is not initialized
 
     @ssh
     Scenario: validate project.groups

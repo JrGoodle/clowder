@@ -5,8 +5,10 @@ verify_ssl = true
 
 [dev-packages]
 coverage = "*"
+flake8 = "*"
+pylint = "*"
 pytest = "*"
-pytest-bdd = "*"
+pytest-bdd = "==4.0.2"
 pytest-xdist = "*"
 pytest-datadir = "*"
 pytest-cov = "*"
@@ -19,11 +21,8 @@ twine = "*"
 virtualenv = "*"
 
 [packages]
-argcomplete = "*"
-colorama = "*"
-jsonschema = "*"
-rich = "*"
-tqdm = "*"
-trio = "*"
-GitPython = "*"
-PyYAML = "*"
+pygoodle = {git = "https://github.com/JrGoodle/pygoodle.git"}
+# pygoodle = "*"
+
+[requires]
+python_version = "3.8.16"

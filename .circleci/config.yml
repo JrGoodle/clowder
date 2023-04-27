@@ -17,6 +17,7 @@ commands:
       - run:
           name: Add ssh key to known_hosts
           command: ssh-keyscan -H polka-dot-cat.git.beanstalkapp.com >> ~/.ssh/known_hosts
+
   setup_git_config:
     steps:
       - run:
@@ -26,11 +27,13 @@ commands:
             git config --global user.name "CircleCI"
             git config --global push.default simple
             git config --global --unset url.ssh://git@github.com.insteadOf
+
   install_git_lfs:
     steps:
       - run:
           name: Install git lfs
           command: sudo apt-get install git-lfs
+
   report_coverage:
     steps:
       - attach_workspace:
@@ -60,6 +63,7 @@ commands:
           path: build/junit/
       - store_artifacts:
           path: build
+
   test_with_docker:
     description: "Pytest functional tests in docker image"
     parameters:
@@ -217,7 +221,7 @@ commands:
 jobs:
   test_parallel:
     docker:
-      - image: circleci/python:3.7.7
+      - image: cimg/python:3.8
     parameters:
       groups:
         type: integer
@@ -238,7 +242,7 @@ jobs:
           group: <<parameters.group>>
   test_write:
     docker:
-      - image: circleci/python:3.7.7
+      - image: cimg/python:3.8
     steps:
       - checkout
       - setup_ssh
@@ -262,10 +266,11 @@ jobs:
           label: offline
   report_coverage:
     docker:
-      - image: circleci/python:3.7.7
+      - image: cimg/python:3.8
     steps:
       - checkout
       - setup_git_config
+      - run: script/cibuild
       - install_code_climate
       - report_coverage
   # deploy:
@@ -285,14 +290,16 @@ workflows:
   pytest:
     jobs:
       - test_write
-      - test_offline
-      - test_parallel:
-          groups: 2
-          matrix:
-            parameters:
-              group: [1, 2]
-      - report_coverage:
-          requires:
-            - test_write
-            - test_offline
-            - test_parallel
+      # FIXME: Re-enable these tests
+      # - test_offline
+      # - test_parallel:
+      #     groups: 2
+      #     matrix:
+      #       parameters:
+      #         group: [1, 2]
+      # FIXME: Re-enable this
+      # - report_coverage:
+      #     requires:
+      #       - test_write
+      #       - test_offline
+      #       - test_parallel

@@ -1,15 +1,12 @@
 """New syntax test file"""
 
+import re
+from pathlib import Path
+from subprocess import CompletedProcess
 from typing import List
 
-import os
-import re
-import subprocess
-from subprocess import CompletedProcess, STDOUT, PIPE
-from pathlib import Path
-
-import clowder.util.formatting as fmt
-from clowder.util.console import CONSOLE
+import pygoodle.command as cmd
+from pygoodle.console import CONSOLE
 
 
 class CommandResults:
@@ -17,15 +14,13 @@ class CommandResults:
         self.completed_processes: List[CompletedProcess] = []
 
 
-def run_command(command: str, path: Path, check: bool = False) -> CompletedProcess:
-    cmd_env = os.environ.copy()
-    cmd_env.update({"CLOWDER_DEBUG": "true"})
-    processed_cmd = _process_clowder_commands(command)
-    CONSOLE.stdout(fmt.bold(f'> {processed_cmd}'))
-
-    # TODO: Replace universal_newlines with text when Python 3.6 support is dropped
-    result = subprocess.run(processed_cmd, cwd=path, shell=True, stdout=PIPE, stderr=STDOUT,
-                            universal_newlines=True, env=cmd_env)
+def run_command(command: str, cwd: Path, check: bool = False) -> CompletedProcess:
+    env = {"DEBUG": "true"}
+    processed_command = _process_clowder_commands(command)
+    CONSOLE.stdout('echo $PATH')
+    result = cmd.run('echo $PATH', cwd=cwd, check=check, print_output=False, print_command=True, env=env)
+    CONSOLE.stdout(result.stdout.strip())
+    result = cmd.run(processed_command, cwd=cwd, check=check, print_output=False, print_command=True, env=env)
 
     output = result.stdout.strip()
     if output:
@@ -39,7 +34,7 @@ def run_command(command: str, path: Path, check: bool = False) -> CompletedProce
 def _process_clowder_commands(command: str) -> str:
 
     pattern = r'^(clowder(.+?))'
-    replace = r'python -m clowder.clowder_app '
+    replace = r'python -m clowder.app '
     output = re.sub(pattern, replace, command)
 
     return output

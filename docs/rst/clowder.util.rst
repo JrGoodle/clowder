@@ -20,14 +20,6 @@ clowder.util.decorators module
    :undoc-members:
    :show-inheritance:
 
-clowder.util.execute module
----------------------------
-
-.. automodule:: clowder.util.execute
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 clowder.util.file\_system module
 --------------------------------
 

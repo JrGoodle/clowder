@@ -2,17 +2,18 @@
 This module contains fixtures
 """
 
-import os
 from pathlib import Path
 
 from pytest import fixture
+
+import pygoodle.filesystem as fs
 
 import tests.functional.util as util
 
 
 @fixture
 def misc_init(tmp_path: Path, misc_init_session: Path) -> None:
-    util.copy_directory(misc_init_session, to=tmp_path)
+    fs.copy_directory(misc_init_session, to_path=tmp_path)
 
 
 @fixture(scope="session")
