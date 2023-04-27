@@ -291,13 +291,8 @@ The `clowder init` command does the following:
 * Clones the [examples clowder repo](https://github.com/JrGoodle/clowder-examples) in the `.clowder` directory
 * Creates a symlink in the `cats` directory: `clowder.yml` -> `.clowder/clowder.yml`
 
-<details>
-
-<summary>Output Preview</summary>
-
 ![clowder init](docs/examples/clowder-init.gif)
 
-</details>
 </details>
 
 <details>
@@ -312,13 +307,8 @@ The `clowder herd` command updates the state of the projects. When the command i
 * If the current git ref checked out doesn't match the `clowder.yml` configuration, the correct ref will be checked out
 * The latest changes are pulled for branches. For commits and tags, the commits are checked out into a detached `HEAD` state
 
-<details>
-
-<summary>Output Preview</summary>
-
 ![clowder herd](docs/examples/clowder-herd.gif)
 
-</details>
 </details>
 
 <details>
@@ -327,13 +317,8 @@ The `clowder herd` command updates the state of the projects. When the command i
 
 The `clowder status` command prints the current state of all projects.
 
-<details>
-
-<summary>Output Preview</summary>
-
 ![clowder status](docs/examples/clowder-status.gif)
 
-</details>
 </details>
 
 <details>
