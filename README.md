@@ -8,24 +8,11 @@
 |:-|:-|
 | docs | [![Documentation Status](https://readthedocs.org/projects/clowder/badge/?version=latest)](http://clowder.readthedocs.io) |
 | tests | [![GitHub Actions Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FJrGoodle%2Fclowder%2Fbadge&style=flat)](https://actions-badge.atrox.dev/JrGoodle/clowder/goto) [![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=shield)](https://circleci.com/gh/JrGoodle/clowder) [![Code Climate Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/test_coverage)](https://codeclimate.com/github/JrGoodle/clowder/test_coverage) |
-| package | [![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo) [![Python versions](https://img.shields.io/pypi/pyversions/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![License](https://img.shields.io/pypi/l/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![Status](https://img.shields.io/pypi/status/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![Requirements Status](https://requires.io/github/JrGoodle/clowder/requirements.svg?branch=master)](https://requires.io/github/JrGoodle/clowder/requirements/?branch=master) |
+| package | [![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo) [![Python versions](https://img.shields.io/pypi/pyversions/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![License](https://img.shields.io/pypi/l/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![Status](https://img.shields.io/pypi/status/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) |
 
-## Table of Contents
+<details>
 
-* [Why clowder](#why-clowder)
-* [Installation](#installation)
-* [clowder.yml](#clowderyml)
-* [Command Usage](#command-usage)
-  * [clowder init](#clowder-init)
-  * [clowder herd](#clowder-herd)
-  * [clowder status](#clowder-status)
-  * [clowder forall](#clowder-forall)
-  * [git commands](#git-commands)
-  * [clowder repo commands](#clowder-repo-commands)
-  * [config commands](#config-command)
-* [Development](#development)
-
-## Why clowder
+<summary>Why clowder</summary>
 
 There are many ways to organize projects with git. Monorepos, submodules, subtrees, or [some](https://github.com/cristibalan/braid) [other](https://github.com/mixu/gr) [tool](https://github.com/ingydotnet/git-subrepo). `clowder` is one of the other tools. Its approach is heavily influeced by the [repo tool](https://gerrit.googlesource.com/git-repo) Google uses to manage the Android Open Source Project.
 
@@ -33,7 +20,11 @@ Projects information is stored in a `clowder.yml` file. If checked into its own 
 
 Daily development still takes place in individual repos, with normal `git` commands. But `clowder` is there if you need to synchronize or run commands on multiple repos.
 
-## Installation
+</details>
+
+<details>
+
+<summary>Installation Instructions</summary>
 
 Requirements:
 
@@ -57,6 +48,8 @@ For command autocompletion, add to your shell profile:
 ```bash
 command -v clowder >/dev/null 2>&1 && eval "$(register-python-argcomplete clowder)"
 ```
+
+</details>
 
 ## clowder.yml
 
@@ -285,7 +278,9 @@ mkdir cats
 cd cats
 ```
 
-### clowder init
+<details>
+
+<summary>clowder init</summary>
 
 ```bash
 clowder init git@github.com:JrGoodle/clowder-examples.git
@@ -298,7 +293,11 @@ The `clowder init` command does the following:
 
 ![clowder init](docs/examples/clowder-init.gif)
 
-### clowder herd
+</details>
+
+<details>
+
+<summary>clowder herd</summary>
 
 The `clowder herd` command updates the state of the projects. When the command is run, the following happens:
 
@@ -310,20 +309,32 @@ The `clowder herd` command updates the state of the projects. When the command i
 
 ![clowder herd](docs/examples/clowder-herd.gif)
 
-### clowder status
+</details>
+
+<details>
+
+<summary>clowder status</summary>
 
 The `clowder status` command prints the current state of all projects.
 
 ![clowder status](docs/examples/clowder-status.gif)
 
-### clowder forall
+</details>
+
+<details>
+
+<summary>clowder forall</summary>
 
 ```bash
 # Run command in all project directories
 clowder forall -c 'git status'
 ```
 
-### git commands
+</details>
+
+<details>
+
+<summary>clowder git commands</summary>
 
 For more information, see [the commands doc](docs/commands.md#git-commands)
 
@@ -350,7 +361,11 @@ clowder stash
 clowder prune 'stale_branch'
 ```
 
-### clowder repo commands
+</details>
+
+<details>
+
+<summary>clowder repo commands</summary>
 
 For more information, see [the commands doc](docs/commands.md#clowder-repo-commands)
 
@@ -365,7 +380,11 @@ clowder repo run 'git status'
 clowder save 'v0.1'
 ```
 
-### config commands
+</details>
+
+<details>
+
+<summary>clowder config commands</summary>
 
 **_NOTE: EXPERIMENTAL_**
 
@@ -381,6 +400,8 @@ clowder config set projects 'my_group'
 # Clear config values
 clowder config clear projects
 ```
+
+</details>
 
 ## Development
 
