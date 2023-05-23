@@ -69,7 +69,7 @@ pytz==2022.7.1
 PyYAML==6.0
 readme-renderer==37.3
 recommonmark==0.7.1
-requests==2.28.2
+requests==2.31.0
 requests-toolbelt==0.10.1
 resource-pool==0.2.0
 rfc3986==2.0.0
