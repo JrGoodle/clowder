@@ -58,7 +58,16 @@ setup(
         ]
     },
     install_requires=[
-        'pygoodle @ git+https://github.com/JrGoodle/pygoodle.git#egg=pygoodle'
+        'argcomplete',
+        'colorama',
+        'humanize',
+        'jsonschema',
+        'paramiko',
+        'pick',
+        'PyYAML',
+        'resource_pool',
+        'rich',
+        'trio'
     ],
     tests_require=[
         'autopep8',

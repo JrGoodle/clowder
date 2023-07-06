@@ -21,8 +21,16 @@ twine = "*"
 virtualenv = "*"
 
 [packages]
-pygoodle = {git = "https://github.com/JrGoodle/pygoodle.git"}
-# pygoodle = "*"
+argcomplete = "*"
+colorama = "*"
+humanize = "*"
+jsonschema = "*"
+paramiko = "*"
+pick = "*"
+resource_pool = "*"
+rich = "*"
+trio = "*"
+PyYAML = "*"
 
 [requires]
 python_version = "3.8.16"
