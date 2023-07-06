@@ -7,10 +7,12 @@
 from pathlib import Path
 from typing import Optional
 
+import jsonschema
+import yaml as pyyaml
+
 import clowder.util.filesystem as fs
 from clowder.util.console import CONSOLE
 from clowder.util.format import Format
-from clowder.util.yaml import Yaml
 
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import ExistingFileError, MissingSourceError
@@ -71,18 +73,6 @@ def print_clowder_yaml() -> None:
 #     else:
 #         output = f'\n{Format.path(yaml_file, relative_to=ENVIRONMENT.clowder_dir)}\n'
 #         CONSOLE.stdout(output)
-
-
-from pathlib import Path
-from typing import Optional
-
-import jsonschema
-import yaml as pyyaml
-
-import clowder.util.filesystem as fs
-from clowder.util.console import CONSOLE
-from .error import ExistingFileError
-from .format import Format
 
 YAML: str = '.yaml'
 YML: str = '.yml'
