@@ -7,10 +7,10 @@
 from pathlib import Path
 from typing import Optional
 
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
-from pygoodle.git.model.ref import Ref
-from pygoodle.git.offline import GitOffline
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
+from clowder.util.git.model.ref import Ref
+from clowder.util.git.offline import GitOffline
 
 
 class Branch(Ref):

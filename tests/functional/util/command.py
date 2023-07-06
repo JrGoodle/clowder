@@ -5,8 +5,8 @@ from pathlib import Path
 from subprocess import CompletedProcess
 from typing import List
 
-import pygoodle.command as cmd
-from pygoodle.console import CONSOLE
+import clowder.util.command as cmd
+from clowder.util.console import CONSOLE
 
 
 class CommandResults:

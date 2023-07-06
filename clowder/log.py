@@ -4,6 +4,6 @@
 
 """
 
-from pygoodle.log import Log
+from clowder.util.log import Log
 
 LOG = Log('CLOWDER')

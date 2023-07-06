@@ -9,8 +9,8 @@ from typing import Any, List, Optional
 
 import trio
 
-from pygoodle.console import disable_output
-from pygoodle.util import values_sorted_by_key
+from clowder.util.console import disable_output
+from clowder.util.util import values_sorted_by_key
 
 
 class Task:

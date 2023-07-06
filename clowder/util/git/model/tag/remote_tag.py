@@ -7,13 +7,13 @@
 from pathlib import Path
 from typing import Optional
 
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
-from pygoodle.git.constants import ORIGIN
-# from pygoodle.git.decorators import error_msg
-from pygoodle.git.offline import GitOffline
-from pygoodle.git.online import GitOnline
-from pygoodle.git.model.remote import Remote
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
+from clowder.util.git.constants import ORIGIN
+# from clowder.util.git.decorators import error_msg
+from clowder.util.git.offline import GitOffline
+from clowder.util.git.online import GitOnline
+from clowder.util.git.model.remote import Remote
 
 from .tag import Tag
 
@@ -72,9 +72,9 @@ class RemoteTag(Tag):
 
     @property
     def exists(self) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.has_remote_tag(self.path, self.name, self.remote.name)
 
     def exists_online(self, url: str) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.has_remote_tag(self.path, tag=self.name, remote=self.remote.name, url=url)

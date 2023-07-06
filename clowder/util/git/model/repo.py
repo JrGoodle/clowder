@@ -7,14 +7,14 @@
 from pathlib import Path
 from typing import List, Optional, Union, TYPE_CHECKING
 
-from pygoodle.console import CONSOLE
-# from pygoodle.git.decorators import not_detached
-from pygoodle.format import Format
-from pygoodle.git.constants import GitConfig, HEAD, ORIGIN
-from pygoodle.git.decorators import error_msg
-from pygoodle.git.log import GIT_LOG
-from pygoodle.git.offline import GitOffline
-from pygoodle.git.online import GitOnline
+from clowder.util.console import CONSOLE
+# from clowder.util.git.decorators import not_detached
+from clowder.util.format import Format
+from clowder.util.git.constants import GitConfig, HEAD, ORIGIN
+from clowder.util.git.decorators import error_msg
+from clowder.util.git.log import GIT_LOG
+from clowder.util.git.offline import GitOffline
+from clowder.util.git.online import GitOnline
 
 from .branch.local_branch import LocalBranch
 from .branch.remote_branch import RemoteBranch
@@ -89,27 +89,27 @@ class Repo:
         return GitOffline.is_rebase_in_progress(self.path)
 
     def get_remotes(self) -> List[Remote]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_remotes(self.path)
 
     def get_submodules(self) -> List['Submodule']:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_submodules(self.path)
 
     def get_tracking_branches(self) -> List[TrackingBranch]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_tracking_branches(self.path)
 
     def get_local_branches(self) -> List[LocalBranch]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_local_branches(self.path)
 
     def get_remote_branches(self, online: bool = False) -> List[RemoteBranch]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_all_remote_branches(self.path, online=online)
 
     def get_all_branches(self, online: bool = False) -> 'AllBranches':
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_all_branches(self.path, online=online)
 
     def has_local_branch(self, branch: str) -> bool:
@@ -130,27 +130,27 @@ class Repo:
         return submodule is not None
 
     def get_submodule(self, submodule_path: Path) -> Optional['Submodule']:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_submodule(self.path, submodule_path)
 
     def get_local_branch(self, branch: str) -> Optional[LocalBranch]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_local_branch(self.path, branch)
 
     def get_remote_branch(self, branch: str, remote: Optional[str] = None,
                           url: Optional[str] = None, online: bool = False) -> Optional[RemoteBranch]:
         remote = ORIGIN if remote is None else remote
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         if online or url is not None:
             return GitFactory.get_remote_branch_online(self.path, branch=branch, remote=remote, url=url)
         return GitFactory.get_remote_branch_offline(self.path, branch=branch, remote=remote)
 
     def get_local_tags(self) -> List[LocalTag]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_local_tags(self.path)
 
     def get_local_tag(self, tag: str) -> Optional[LocalTag]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_local_tag(self.path, tag)
 
     def has_local_tag(self, tag: str) -> bool:
@@ -165,18 +165,18 @@ class Repo:
     def get_remote_tag(self, tag: str, remote: Optional[str] = None,
                        url: Optional[str] = None) -> Optional[RemoteTag]:
         remote = ORIGIN if remote is None else remote
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_remote_tag(self.path, tag, remote, url=url)
 
     def get_remote_tags(self, remote: Optional[str] = None,
                         url: Optional[str] = None) -> List[RemoteTag]:
         remote = ORIGIN if remote is None else remote
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_remote_tags(self.path, remote, url=url)
 
     def get_remote(self, remote: Optional[str] = None, fetch_url: Optional[str] = None,
                    push_url: Optional[str] = None) -> Optional[Remote]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         remotes = GitFactory.get_remotes(self.path)
         if remote is not None:
             remotes = [r for r in remotes if r.name == remote]
@@ -192,11 +192,11 @@ class Repo:
         return remote is not None
 
     def get_tracking_branch(self, branch: str, remote: Optional[str] = None) -> Optional[TrackingBranch]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_tracking_branch(self.path, branch, remote=remote)
 
     def get_diff(self) -> 'Diff':
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_diff(self.path)
 
     @property
@@ -229,7 +229,7 @@ class Repo:
         return all([s.is_valid(allow_missing=allow_missing) for s in submodules])
 
     def remote(self, name: str) -> Optional[Remote]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.get_remote(self.path, name)
 
     @property

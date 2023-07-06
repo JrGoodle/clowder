@@ -7,10 +7,10 @@
 from pathlib import Path
 from typing import Optional
 
-import pygoodle.filesystem as fs
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
-from pygoodle.yaml import Yaml
+import clowder.util.filesystem as fs
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
+from clowder.util.yaml import Yaml
 
 from clowder.environment import ENVIRONMENT
 from clowder.util.error import ExistingFileError, MissingSourceError
@@ -79,8 +79,8 @@ from typing import Optional
 import jsonschema
 import yaml as pyyaml
 
-import pygoodle.filesystem as fs
-from pygoodle.console import CONSOLE
+import clowder.util.filesystem as fs
+from clowder.util.console import CONSOLE
 from .error import ExistingFileError
 from .format import Format
 

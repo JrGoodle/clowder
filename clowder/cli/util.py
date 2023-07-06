@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Argument, CountArgument
+from clowder.util.app import Argument, CountArgument
 
 import clowder.util.formatting as fmt
 from clowder.controller import CLOWDER_CONTROLLER

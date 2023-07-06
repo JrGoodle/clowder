@@ -8,9 +8,9 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional
 
-import pygoodle.filesystem as fs
-from pygoodle.format import Format
-from pygoodle.git import (
+import clowder.util.filesystem as fs
+from clowder.util.format import Format
+from clowder.util.git import (
     Branch,
     LocalBranch,
     Protocol,
@@ -20,8 +20,8 @@ from pygoodle.git import (
     Repo,
     TrackingBranch
 )
-from pygoodle.connectivity import is_offline
-from pygoodle.console import CONSOLE
+from clowder.util.connectivity import is_offline
+from clowder.util.console import CONSOLE
 
 from clowder.environment import ENVIRONMENT
 from clowder.model import Defaults, Project, Section

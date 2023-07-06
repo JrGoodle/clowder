@@ -6,7 +6,7 @@
 
 from typing import Dict, Optional, Set, Union
 
-from pygoodle.git import Protocol
+from clowder.util.git import Protocol
 
 from clowder.model import Source, SourceName
 from clowder.util.error import SourcesValidatedError, UnknownSourceError, UnknownTypeError

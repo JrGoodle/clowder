@@ -9,8 +9,8 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional
 
-from pygoodle.format import Format
-from pygoodle.git.offline import GitOffline
+from clowder.util.format import Format
+from clowder.util.git.offline import GitOffline
 
 from clowder.util.error import (
     AmbiguousYamlError,

@@ -8,9 +8,9 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Optional, Set, TypeVar
 
-import pygoodle.command as cmd
-from pygoodle.format import Format
-from pygoodle.git import Commit, ORIGIN, Protocol, Ref, Remote, RemoteTag, TrackingBranch
+import clowder.util.command as cmd
+from clowder.util.format import Format
+from clowder.util.git import Commit, ORIGIN, Protocol, Ref, Remote, RemoteTag, TrackingBranch
 
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT

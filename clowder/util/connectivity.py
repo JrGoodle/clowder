@@ -11,7 +11,7 @@ from subprocess import CompletedProcess
 from time import sleep
 from typing import Optional
 
-import pygoodle.command as cmd
+import clowder.util.command as cmd
 
 
 class NetworkConnectionError(Exception):

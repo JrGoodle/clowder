@@ -4,10 +4,10 @@
 
 """
 
-from pygoodle.app import Argument, SingleArgument, Subcommand
-from pygoodle.connectivity import network_connection_required
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
+from clowder.util.app import Argument, SingleArgument, Subcommand
+from clowder.util.connectivity import network_connection_required
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
 
 from clowder.log import LOG
 from clowder.environment import ENVIRONMENT

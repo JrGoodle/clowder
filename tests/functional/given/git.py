@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from pygoodle.git import GitOffline, Repo
+from clowder.util.git import GitOffline, Repo
 from pytest_bdd import given, parsers
 
 

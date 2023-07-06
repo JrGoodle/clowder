@@ -7,12 +7,12 @@
 from pathlib import Path
 from typing import List, Optional
 
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
-# from pygoodle.git.decorators import error_msg
-from pygoodle.git.log import GIT_LOG
-from pygoodle.git.offline import GitOffline
-from pygoodle.git.online import GitOnline
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
+# from clowder.util.git.decorators import error_msg
+from clowder.util.git.log import GIT_LOG
+from clowder.util.git.offline import GitOffline
+from clowder.util.git.online import GitOnline
 
 from .branch.remote_branch import RemoteBranch
 
@@ -53,7 +53,7 @@ class Remote:
         return GitOffline.get_remote_push_url(self.path, self.name)
 
     def branches(self, url: Optional[str] = None, online: bool = False) -> List[RemoteBranch]:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         if online or url is not None:
             return GitFactory.get_remote_branches_online(self.path, remote=self.name, url=url)
         return GitFactory.get_remote_branches_offline(self.path, self.name)
@@ -68,7 +68,7 @@ class Remote:
 
     @property
     def exists(self) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.has_remote(self.path, remote=self.name)
 
     def default_branch(self, url: str) -> Optional[RemoteBranch]:

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from pytest_bdd import then, parsers
 
-from pygoodle.format import Format
+from clowder.util.format import Format
 
 from tests.functional.util import CommandResults
 

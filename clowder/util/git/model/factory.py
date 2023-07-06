@@ -7,8 +7,8 @@
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from pygoodle.git.offline import GitOffline
-from pygoodle.git.online import GitOnline
+from clowder.util.git.offline import GitOffline
+from clowder.util.git.online import GitOnline
 
 from .change import Change
 from .diff import Diff

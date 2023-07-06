@@ -4,10 +4,10 @@
 
 """
 
-from pygoodle.app import SingleArgument, Subcommand
-from pygoodle.console import CONSOLE
+from clowder.util.app import SingleArgument, Subcommand
+from clowder.util.console import CONSOLE
 
-from pygoodle.git import Protocol
+from clowder.util.git import Protocol
 
 import clowder.util.formatting as fmt
 from clowder.controller import (

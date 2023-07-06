@@ -5,9 +5,9 @@ from pathlib import Path
 from subprocess import CompletedProcess
 from typing import List, Optional
 
-import pygoodle.filesystem as fs
-from pygoodle.git import GitOffline, ORIGIN, Repo
-from pygoodle.random import random_alphanumeric_string
+import clowder.util.filesystem as fs
+from clowder.util.git import GitOffline, ORIGIN, Repo
+from clowder.util.random import random_alphanumeric_string
 
 from .command import run_command
 from .scenario_info import ScenarioInfo

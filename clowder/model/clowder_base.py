@@ -6,7 +6,7 @@
 
 from typing import List, Optional
 
-from pygoodle.git import Protocol
+from clowder.util.git import Protocol
 
 from .clowder import Clowder
 from .defaults import Defaults

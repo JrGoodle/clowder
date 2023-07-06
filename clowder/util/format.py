@@ -109,7 +109,7 @@ class Format:
 
     @classmethod
     def path(cls, path: Path, relative_to: Optional[Path] = None) -> str:
-        import pygoodle.filesystem as fs
+        import clowder.util.filesystem as fs
         if relative_to is not None and fs.is_relative_to(path, relative_to):
             path = path.relative_to(relative_to)
         return Format.cyan(path)

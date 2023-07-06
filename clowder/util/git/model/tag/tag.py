@@ -6,9 +6,9 @@
 
 from pathlib import Path
 
-from pygoodle.console import CONSOLE
-from pygoodle.git.model.ref import Ref
-from pygoodle.git.offline import GitOffline
+from clowder.util.console import CONSOLE
+from clowder.util.git.model.ref import Ref
+from clowder.util.git.offline import GitOffline
 
 
 class Tag(Ref):

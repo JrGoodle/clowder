@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Tuple
 
-from pygoodle.format import Format
+from clowder.util.format import Format
 
 from .constants import FETCH_URL, PUSH_URL
 
@@ -90,8 +90,8 @@ class ProcessOutput:
     @classmethod
     def remotes(cls, output: str) -> Dict[str, Dict[str, str]]:
         # Expected output format:
-        # origin	git@github.com:JrGoodle/pygoodle.git (fetch)
-        # origin	git@github.com:JrGoodle/pygoodle.git (push)
+        # origin	git@github.com:JrGoodle/clowder.util.git (fetch)
+        # origin	git@github.com:JrGoodle/clowder.util.git (push)
 
         lines = output.splitlines()
         line = [line.split() for line in lines]

@@ -8,9 +8,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from pygoodle.console import CONSOLE
-from pygoodle.git.log import GIT_LOG
-from pygoodle.git.offline import GitOffline
+from clowder.util.console import CONSOLE
+from clowder.util.git.log import GIT_LOG
+from clowder.util.git.offline import GitOffline
 
 
 class Ref:

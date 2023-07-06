@@ -5,9 +5,9 @@ from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess
 from typing import Dict, List, Optional, Tuple
 
-import pygoodle.command as cmd
-import pygoodle.filesystem as fs
-from pygoodle.format import Format
+import clowder.util.command as cmd
+import clowder.util.filesystem as fs
+from clowder.util.format import Format
 
 from .constants import HEAD, FETCH_URL, PUSH_URL
 from .process_output import ProcessOutput

@@ -7,7 +7,7 @@
 import argparse
 from typing import List, Optional, Type
 
-import pygoodle.reflection as reflect
+import clowder.util.reflection as reflect
 from .argument import Argument
 from .argument_group import ArgumentGroup
 from .mutually_exclusive_argument_group import MutuallyExclusiveArgumentGroup

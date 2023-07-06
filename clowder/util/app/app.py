@@ -11,7 +11,7 @@ from subprocess import CalledProcessError
 from typing import Any, List, Optional, Type, Union
 
 import argcomplete
-import pygoodle.reflection as reflect
+import clowder.util.reflection as reflect
 from trio import MultiError
 
 from ..console import CONSOLE

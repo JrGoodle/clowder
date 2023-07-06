@@ -3,9 +3,9 @@
 from functools import wraps
 from typing import Callable, Union
 
-from pygoodle.console import CONSOLE
-from pygoodle.git.offline import GitOffline
-from pygoodle.git.log import GIT_LOG
+from clowder.util.console import CONSOLE
+from clowder.util.git.offline import GitOffline
+from clowder.util.git.log import GIT_LOG
 
 
 def output_msg(message: Union[Callable, str]):

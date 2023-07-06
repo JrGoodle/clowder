@@ -7,8 +7,8 @@
 import os
 from typing import Optional
 
-from pygoodle.app import Subcommand
-from pygoodle.connectivity import network_connection_required
+from clowder.util.app import Subcommand
+from clowder.util.connectivity import network_connection_required
 
 import clowder.util.parallel as parallel
 from clowder.controller import (

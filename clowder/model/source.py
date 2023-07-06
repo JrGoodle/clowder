@@ -6,7 +6,7 @@
 
 from typing import Dict, Optional
 
-from pygoodle.git import Protocol
+from clowder.util.git import Protocol
 
 SourceName = str
 

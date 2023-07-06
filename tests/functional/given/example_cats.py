@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from pygoodle.git import LocalBranch, RemoteBranch, Repo, TrackingBranch
+from clowder.util.git import LocalBranch, RemoteBranch, Repo, TrackingBranch
 from pytest_bdd import given, parsers
 
 from tests.functional.util import ScenarioInfo, CATS_REPOS_DEFAULT

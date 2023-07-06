@@ -12,7 +12,7 @@ import shutil
 from pathlib import Path
 from typing import List
 
-import pygoodle.command as cmd
+import clowder.util.command as cmd
 
 
 def list_subdirectories(path: Path, recursive: bool = False) -> List[Path]:

@@ -1,4 +1,4 @@
-"""pygoodle.tasks module __init__
+"""clowder.util.tasks module __init__
 
 .. codeauthor:: Joe DeCapo <joe@polka.cat>
 

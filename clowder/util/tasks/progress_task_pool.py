@@ -6,8 +6,8 @@
 
 from typing import List, Optional
 
-from pygoodle.console import CONSOLE, Console
-from pygoodle.progress import Progress
+from clowder.util.console import CONSOLE, Console
+from clowder.util.progress import Progress
 
 from .task_pool import Task, TaskPool
 

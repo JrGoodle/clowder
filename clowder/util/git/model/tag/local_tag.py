@@ -4,10 +4,10 @@
 
 """
 
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
-# from pygoodle.git.decorators import error_msg
-from pygoodle.git.offline import GitOffline
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
+# from clowder.util.git.decorators import error_msg
+from clowder.util.git.offline import GitOffline
 
 from .tag import Tag
 
@@ -46,5 +46,5 @@ class LocalTag(Tag):
 
     @property
     def exists(self) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.has_local_tag(self.path, self.name)

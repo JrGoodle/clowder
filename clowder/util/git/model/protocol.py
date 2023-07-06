@@ -6,7 +6,7 @@
 
 from enum import auto, unique
 
-from pygoodle.enum import AutoLowerName, UnknownEnumCaseError
+from clowder.util.enum import AutoLowerName, UnknownEnumCaseError
 
 
 @unique

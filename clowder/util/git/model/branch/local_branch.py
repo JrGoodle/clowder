@@ -6,12 +6,12 @@
 
 from typing import Optional
 
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
-# from pygoodle.git.decorators import error_msg
-from pygoodle.git.model.commit import Commit
-from pygoodle.git.offline import GitOffline
-from pygoodle.git.online import GitOnline
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
+# from clowder.util.git.decorators import error_msg
+from clowder.util.git.model.commit import Commit
+from clowder.util.git.offline import GitOffline
+from clowder.util.git.online import GitOnline
 
 from .branch import Branch
 
@@ -28,7 +28,7 @@ class LocalBranch(Branch):
 
     @property
     def is_tracking_branch(self) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         branches = GitFactory.get_tracking_branches(self.path)
         return any([branch.name == self.name for branch in branches])
 
@@ -45,7 +45,7 @@ class LocalBranch(Branch):
         CONSOLE.stdout(f' - Create local branch {Format.Git.ref(self.short_ref)}')
         if branch is not None:
             if remote is not None:
-                from pygoodle.git.model.branch.remote_branch import RemoteBranch
+                from clowder.util.git.model.branch.remote_branch import RemoteBranch
                 remote_branch = RemoteBranch(self.path, branch, remote)
                 if not remote_branch.exists:
                     branch = None
@@ -66,7 +66,7 @@ class LocalBranch(Branch):
 
     @property
     def exists(self) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.has_local_branch(self.path, self.name)
 
     @property

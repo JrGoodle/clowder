@@ -4,8 +4,8 @@
 
 """
 
-from pygoodle.app import Argument, Subcommand
-from pygoodle.format import Format
+from clowder.util.app import Argument, Subcommand
+from clowder.util.format import Format
 
 import clowder.util.formatting as fmt
 from clowder.controller import ClowderRepo, print_clowder_name, print_clowder_repo_status

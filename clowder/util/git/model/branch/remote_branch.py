@@ -7,14 +7,14 @@
 from pathlib import Path
 from typing import Optional
 
-from pygoodle.console import CONSOLE
-from pygoodle.git.constants import ORIGIN
-# from pygoodle.git.decorators import not_detached
-from pygoodle.format import Format
-# from pygoodle.git.decorators import error_msg
-from pygoodle.git.model.commit import Commit
-from pygoodle.git.offline import GitOffline
-from pygoodle.git.online import GitOnline
+from clowder.util.console import CONSOLE
+from clowder.util.git.constants import ORIGIN
+# from clowder.util.git.decorators import not_detached
+from clowder.util.format import Format
+# from clowder.util.git.decorators import error_msg
+from clowder.util.git.model.commit import Commit
+from clowder.util.git.offline import GitOffline
+from clowder.util.git.online import GitOnline
 
 from .branch import Branch
 
@@ -35,7 +35,7 @@ class RemoteBranch(Branch):
         :param bool is_default: Is branch default for remote repo
         """
 
-        from pygoodle.git.model.remote import Remote
+        from clowder.util.git.model.remote import Remote
         super().__init__(path, name)
         remote = ORIGIN if remote is None else remote
         self.remote: Remote = Remote(self.path, remote)
@@ -64,7 +64,7 @@ class RemoteBranch(Branch):
 
     @property
     def is_tracking_branch(self) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.has_tracking_branch(self.path, self.name)
 
     @property
@@ -74,7 +74,7 @@ class RemoteBranch(Branch):
 
     # @error_msg('Failed to delete remote branch')
     def delete(self) -> None:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         if not GitFactory.has_remote_branch_online(self.path, self.name, self.remote.name):
             CONSOLE.stdout(f" - Remote branch {Format.Git.ref(self.name)} doesn't exist")
             return
@@ -83,22 +83,22 @@ class RemoteBranch(Branch):
 
     @property
     def exists(self) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.has_remote_branch_offline(self.path, self.name, self.remote.name)
 
     def exists_online(self, url: Optional[str] = None) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.has_remote_branch_online(self.path, branch=self.name, remote=self.remote.name, url=url)
 
     # @error_msg('Failed to create remote branch')
     def create(self, branch: Optional[str] = None, remote: Optional[str] = None) -> None:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         if GitFactory.has_remote_branch_online(self.path, self.name, self.remote.name):
             CONSOLE.stdout(f' - Remote branch {Format.Git.ref(self.name)} already exists')
             return
         CONSOLE.stdout(f' - Create remote branch {Format.Git.ref(self.name)}')
         branch = self.name if branch is None else branch
-        from pygoodle.git.model.branch.local_branch import LocalBranch
+        from clowder.util.git.model.branch.local_branch import LocalBranch
         local_branch = LocalBranch(self.path, branch)
         GitOnline.fetch(self.path, prune=True)
         has_existing_branch = local_branch.exists

@@ -7,9 +7,9 @@
 from functools import partial
 from typing import Callable, Iterable, List, Optional, Union
 
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
-from pygoodle.tasks import ProgressTask, ProgressTaskPool, Task, TaskPool
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
+from clowder.util.tasks import ProgressTask, ProgressTaskPool, Task, TaskPool
 from clowder.controller import CLOWDER_CONTROLLER, ClowderRepo, ProjectRepo
 
 

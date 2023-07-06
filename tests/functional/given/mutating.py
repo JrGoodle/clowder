@@ -4,10 +4,10 @@ import os
 import shutil
 from pathlib import Path
 
-from pygoodle.git import GitOffline, HEAD, LocalBranch, RemoteBranch, Repo
+from clowder.util.git import GitOffline, HEAD, LocalBranch, RemoteBranch, Repo
 from pytest_bdd import given, parsers
 
-import pygoodle.filesystem as fs
+import clowder.util.filesystem as fs
 
 import tests.functional.util as util
 from tests.functional.util import ScenarioInfo

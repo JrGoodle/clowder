@@ -7,13 +7,13 @@
 from pathlib import Path
 from typing import Optional
 
-from pygoodle.console import CONSOLE
-from pygoodle.git.constants import ORIGIN
-# from pygoodle.git.decorators import not_detached
-from pygoodle.git.offline import GitOffline
-from pygoodle.git.online import GitOnline
-from pygoodle.format import Format
-# from pygoodle.git.decorators import error_msg
+from clowder.util.console import CONSOLE
+from clowder.util.git.constants import ORIGIN
+# from clowder.util.git.decorators import not_detached
+from clowder.util.git.offline import GitOffline
+from clowder.util.git.online import GitOnline
+from clowder.util.format import Format
+# from clowder.util.git.decorators import error_msg
 
 from .branch import Branch
 
@@ -66,7 +66,7 @@ class TrackingBranch(Branch):
 
     @property
     def exists(self) -> bool:
-        from pygoodle.git.model.factory import GitFactory
+        from clowder.util.git.model.factory import GitFactory
         return GitFactory.has_tracking_branch(self.path, self.name)
 
     # @error_msg('Failed to set tracking branch')

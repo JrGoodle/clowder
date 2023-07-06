@@ -7,7 +7,7 @@
 from enum import auto, unique
 from pathlib import Path
 
-from pygoodle.enum import AutoLowerName
+from clowder.util.enum import AutoLowerName
 
 
 @unique

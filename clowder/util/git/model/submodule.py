@@ -7,9 +7,9 @@
 from pathlib import Path
 from typing import Optional
 
-# from pygoodle.git.constants import ORIGIN
-from pygoodle.git.offline import GitOffline
-from pygoodle.git.online import GitOnline
+# from clowder.util.git.constants import ORIGIN
+from clowder.util.git.offline import GitOffline
+from clowder.util.git.online import GitOnline
 
 from .repo import Repo
 

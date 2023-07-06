@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import Subcommand
+from clowder.util.app import Subcommand
 
 from .jobs import ConfigSetJobsCommand
 from .projects import ConfigSetProjectsCommand

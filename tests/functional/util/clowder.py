@@ -4,8 +4,8 @@ import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 
-import pygoodle.filesystem as fs
-from pygoodle.git import Repo
+import clowder.util.filesystem as fs
+from clowder.util.git import Repo
 
 from .command import run_command
 

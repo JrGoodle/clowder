@@ -7,8 +7,8 @@
 from pathlib import Path
 from typing import List, Tuple
 
-from pygoodle.git.model.change import Change, ChangeType
-from pygoodle.util import sorted_tuple
+from clowder.util.git.model.change import Change, ChangeType
+from clowder.util.util import sorted_tuple
 
 
 class Diff:

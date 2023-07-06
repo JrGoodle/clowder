@@ -4,6 +4,6 @@
 
 """
 
-from pygoodle.log import Log
+from clowder.util.log import Log
 
-GIT_LOG = Log('PYGOODLE.GIT')
+GIT_LOG = Log('clowder.util.GIT')

@@ -6,9 +6,9 @@
 
 import os
 
-from pygoodle.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, SingleArgument, Subcommand
-from pygoodle.connectivity import network_connection_required
-from pygoodle.git import Protocol
+from clowder.util.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, SingleArgument, Subcommand
+from clowder.util.connectivity import network_connection_required
+from clowder.util.git import Protocol
 
 import clowder.util.parallel as parallel
 from clowder.controller import (

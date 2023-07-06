@@ -7,8 +7,8 @@
 import math
 from typing import List, Optional, Tuple, Union
 
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
 
 
 # TODO: Update to return list of all duplicates found
