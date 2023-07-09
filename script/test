@@ -3,18 +3,28 @@
 from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Optional
+import sys
 
-import pygoodle.filesystem as fs
-import pygoodle.command as cmd
-from pygoodle.app import App, BoolArgument, CountArgument, MutuallyExclusiveArgumentGroup, SingleArgument
+# Get the current directory
+current_dir = Path(__file__).resolve().parent
+
+# Get the parent directory
+parent_dir = current_dir.parent
+
+# Add the parent directory to the search path
+sys.path.insert(0, str(parent_dir))
+
+import clowder.util.filesystem as fs
+import clowder.util.command as cmd
+from clowder.util.app import App, BoolArgument, CountArgument, MutuallyExclusiveArgumentGroup, SingleArgument
 
 
 repo_path: Path = Path(__file__).resolve().parent.parent.resolve()
 build_dir: Path = fs.make_dir(repo_path / "build", exist_ok=True)
 temp_dir: Path = fs.make_dir(repo_path / "temp", exist_ok=True)
 coverage_dir: Path = fs.make_dir(build_dir / "coverage", exist_ok=True)
-junit_dir: Path = fs.make_dir(build_dir / f"junit", exist_ok=True)
-cucumber_dir: Path = fs.make_dir(build_dir / f"cucumber", exist_ok=True)
+junit_dir: Path = fs.make_dir(build_dir / "junit", exist_ok=True)
+cucumber_dir: Path = fs.make_dir(build_dir / "cucumber", exist_ok=True)
 
 
 def run_command(command: str) -> CompletedProcess:

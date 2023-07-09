@@ -4,9 +4,9 @@
 
 """
 
-from pygoodle.app import BoolArgument, SingleArgument, Subcommand
-from pygoodle.connectivity import network_connection_required
-from pygoodle.console import CONSOLE
+from clowder.util.app import BoolArgument, SingleArgument, Subcommand
+from clowder.util.connectivity import network_connection_required
+from clowder.util.console import CONSOLE
 
 from clowder.controller import (
     CLOWDER_CONTROLLER,

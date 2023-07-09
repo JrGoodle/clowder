@@ -9,11 +9,11 @@ from enum import auto, unique
 from functools import wraps
 from typing import Any, List, Optional, Tuple
 
-import pygoodle.filesystem as fs
-from pygoodle.console import CONSOLE
-from pygoodle.enum import AutoLowerName
-from pygoodle.format import Format
-from pygoodle.git import Protocol
+import clowder.util.filesystem as fs
+from clowder.util.console import CONSOLE
+from clowder.util.enum import AutoLowerName
+from clowder.util.format import Format
+from clowder.util.git import Protocol
 
 import clowder.util.formatting as fmt
 from clowder.environment import ENVIRONMENT

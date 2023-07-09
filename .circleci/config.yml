@@ -242,7 +242,7 @@ jobs:
           group: <<parameters.group>>
   test_write:
     docker:
-      - image: cimg/python:3.8
+      - image: cimg/python:3.8.16
     steps:
       - checkout
       - setup_ssh

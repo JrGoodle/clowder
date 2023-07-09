@@ -6,9 +6,9 @@
 
 # from typing import Tuple
 
-from pygoodle.app import BoolArgument, Subcommand
-# from pygoodle.connectivity import network_connection_required
-from pygoodle.console import CONSOLE
+from clowder.util.app import BoolArgument, Subcommand
+# from clowder.util.connectivity import network_connection_required
+from clowder.util.console import CONSOLE
 
 import clowder.util.formatting as fmt
 import clowder.util.parallel as parallel

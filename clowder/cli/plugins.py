@@ -8,7 +8,7 @@
 # import os
 # import importlib.util
 #
-# from pygoodle.cli import add_parser_arguments
+# from clowder.util.cli import add_parser_arguments
 #
 # from clowder.environment import clowder_repo_required, ENVIRONMENT
 # from clowder.clowder_controller import valid_clowder_yaml_required

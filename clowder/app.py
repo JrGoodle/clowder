@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import App, BoolArgument
+from clowder.util.app import App, BoolArgument
 
 import clowder.cli as cli
 from clowder.log import LOG

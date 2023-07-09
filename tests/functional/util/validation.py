@@ -5,8 +5,8 @@ import os
 from pathlib import Path
 from typing import List
 
-import pygoodle.filesystem as fs
-from pygoodle.format import Format
+import clowder.util.filesystem as fs
+from clowder.util.format import Format
 
 tests_dir = Path(__file__).resolve().parent.parent.resolve()
 clowder_project_tests = [

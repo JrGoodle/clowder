@@ -4,7 +4,7 @@
 
 """
 
-from pygoodle.app import SingleArgument, Subcommand
+from clowder.util.app import SingleArgument, Subcommand
 
 from clowder.controller import (
     ClowderRepo,

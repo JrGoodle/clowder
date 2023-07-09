@@ -6,8 +6,8 @@
 
 import os
 
-from pygoodle.app import BoolArgument, SingleArgument, Subcommand
-from pygoodle.console import CONSOLE
+from clowder.util.app import BoolArgument, SingleArgument, Subcommand
+from clowder.util.console import CONSOLE
 
 import clowder.util.parallel as parallel
 from clowder.controller import (

@@ -6,9 +6,9 @@
 
 from typing import List
 
-from pygoodle.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, Subcommand
-from pygoodle.connectivity import network_connection_required
-from pygoodle.console import CONSOLE
+from clowder.util.app import Argument, BoolArgument, MutuallyExclusiveArgumentGroup, Subcommand
+from clowder.util.connectivity import network_connection_required
+from clowder.util.console import CONSOLE
 
 from clowder.controller import (
     CLOWDER_CONTROLLER,

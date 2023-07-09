@@ -6,7 +6,7 @@
 
 from typing import List, Optional, Union
 
-from pygoodle.yaml import InvalidYamlError
+from clowder.util.yaml import InvalidYamlError
 
 from clowder.util.error import UnknownTypeError
 

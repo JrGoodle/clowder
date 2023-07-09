@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from pygoodle.git import GitOffline, HEAD, Repo, Submodule
+from clowder.util.git import GitOffline, HEAD, Repo, Submodule
 from pytest_bdd import then, parsers
 
 from tests.functional.util import ScenarioInfo

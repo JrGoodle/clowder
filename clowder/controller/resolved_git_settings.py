@@ -7,7 +7,7 @@
 import copy
 from typing import Dict, Optional
 
-from pygoodle.git import GitConfig
+from clowder.util.git import GitConfig
 
 from clowder.model import Defaults, Section, Project, GitSettings
 from clowder.util.error import UnknownArgumentError, UnknownTypeError

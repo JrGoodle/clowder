@@ -8,11 +8,11 @@ from functools import wraps
 from pathlib import Path
 from typing import Iterable, Optional, Tuple
 
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
-from pygoodle.tasks import Task, TaskPool
-from pygoodle.util import sorted_tuple
-from pygoodle.yaml import MissingYamlError, Yaml
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
+from clowder.util.tasks import Task, TaskPool
+from clowder.util.util import sorted_tuple
+from clowder.util.yaml import MissingYamlError, Yaml
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG

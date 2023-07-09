@@ -4,10 +4,10 @@
 
 """
 
-from pygoodle.app import BoolArgument, Subcommand
-from pygoodle.console import CONSOLE
+from clowder.util.app import BoolArgument, Subcommand
+from clowder.util.console import CONSOLE
 
-from pygoodle.yaml import Yaml
+from clowder.util.yaml import Yaml
 
 from clowder.controller import CLOWDER_CONTROLLER, valid_clowder_yaml_required
 

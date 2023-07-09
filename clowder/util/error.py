@@ -87,3 +87,23 @@ class UnknownTypeError(ClowderError):
 
 class UnknownSourceError(ClowderError):
     pass
+
+
+class ExistingFileError(Exception):
+    pass
+
+
+class ExistingSymlinkError(Exception):
+    pass
+
+
+class MissingFileError(Exception):
+    pass
+
+
+class UnknownArgumentError(Exception):
+    pass
+
+
+class GitError(Exception):
+    pass

@@ -9,10 +9,10 @@ from functools import wraps
 from pathlib import Path
 from typing import Optional, Tuple
 
-import pygoodle.command as cmd
-from pygoodle.console import CONSOLE
-from pygoodle.format import Format
-from pygoodle.git import ORIGIN, Repo
+import clowder.util.command as cmd
+from clowder.util.console import CONSOLE
+from clowder.util.format import Format
+from clowder.util.git import ORIGIN, Repo
 
 import clowder.util.formatting as fmt
 from clowder.log import LOG

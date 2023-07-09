@@ -4,8 +4,8 @@
 
 """
 
-from pygoodle.app import Subcommand
-from pygoodle.console import CONSOLE
+from clowder.util.app import Subcommand
+from clowder.util.console import CONSOLE
 
 from clowder.controller import (
     CLOWDER_CONTROLLER,

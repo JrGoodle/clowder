@@ -3,7 +3,7 @@
 from pathlib import Path
 from pytest_bdd import when, parsers
 
-from pygoodle.connectivity import get_gateway_ip_address, disable_network_connection, enable_network_connection
+from clowder.util.connectivity import get_gateway_ip_address, disable_network_connection, enable_network_connection
 from tests.functional.util import CommandResults, ScenarioInfo, run_command
 
 

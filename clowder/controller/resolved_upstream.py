@@ -7,7 +7,7 @@
 from pathlib import Path
 from typing import Optional, TypeVar
 
-from pygoodle.git import Protocol, Remote
+from clowder.util.git import Protocol, Remote
 
 from clowder.environment import ENVIRONMENT
 from clowder.model import Defaults, Section, Source, Upstream
