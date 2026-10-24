@@ -46,6 +46,13 @@ Update names and their expected output together. Preserve author credits, local 
 
 Coordinate updates to mutable test branches with the Clowder fixture changes. Keep tags and commit IDs stable so historical fixtures remain reproducible.
 
+Keep the published Cats and clowder-examples manifest names compatible until
+PR #641 merges. The renamed manifests are staged on `org-migration/master` and,
+for Cats, `org-migration/alt-branch`. Validate the draft against these branches;
+publish them to the active branches only at the coordinated merge. See the
+[cutover record](clowder-repository-transfer-status.md#cats-and-felidae-migration)
+for the exact commits. Retain the separate Beanstalk dependency.
+
 ### 3. Prepare Pages and service access
 
 Retain `clowder.cat` and `gh-pages`. Check DNS, HTTPS, and Pages domain verification. If the domain is verified under the personal account, arrange its verification for the organization as part of the move. Pages verification applies to the owning account or organization. [GitHub Pages domain verification](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages)

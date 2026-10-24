@@ -5,4 +5,4 @@ defaults:
     depth: 1
 
 clowder:
-  - name: JrGoodle/felidae
+  - name: polka-dot-cat/felidae

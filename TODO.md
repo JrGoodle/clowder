@@ -27,8 +27,18 @@ are separate from the initial review and were updated on 2026-10-23.
 - [x] Publish the restored-fork names in `misc-clowder-tests` and
   `clowder-examples`; update local Clowder fixtures and assertions. All 97 affected
   cases plus a new saved-defaults regression pass, including HTTPS and SSH coverage.
-- [ ] Coordinate remaining Cats/Felidae project-name assertions, manifests, and
-  submodule URLs; check the separate `ash` and Beanstalk dependencies.
+- [x] Transfer `ash` and publish canonical submodule URLs in Ash, Mu, and Felidae;
+  verify recursive clones and preserve tags and unrelated refs.
+- [x] Stage the remaining Cats and clowder-examples manifest names on migration
+  branches and prepare their matching Clowder assertions in draft PR #641.
+- [ ] At PR #641's merge, fast-forward the active manifest branches to the
+  [recorded commits](docs/clowder-repository-transfer-status.md#cats-and-felidae-migration)
+  and verify the tests against the published fixtures. Keep the old names until merge.
+- [ ] Verify Beanstalk's server host key, then check SSH access and run the 28
+  explicit source-URL cases. Retain Beanstalk; the owner confirmed the account
+  public key is already registered and chose to leave host verification pending.
+- [ ] Restore a runnable Actions baseline: draft PR run `40058163818` fails before
+  tests because the workflow uses deprecated `actions/upload-artifact@v2`.
 - [ ] Check organization Actions policy, Pages domain ownership, and service access.
 - [ ] Transfer `clowder`, update local remotes, publish the migration changes, and
   complete the transfer plan's verification checklist.
@@ -47,6 +57,7 @@ are separate from the initial review and were updated on 2026-10-23.
   [Test utilities](tests/functional/util/clowder.py) clone named external repos
   and can delete remote `pytest*` branches during SSH setup.
   [Network steps](tests/functional/when/when.py) disable host networking.
+  LFS scenarios can change global/system hooks and filters.
   Add local bare-repository fixtures and simulated connection failures where
   possible; isolate the remaining integration tests. Document a test selection
   that needs neither credentials nor changes to host networking or remote repos.

@@ -4,4 +4,4 @@ defaults:
   branch: felid
 
 clowder:
-  - name: JrGoodle/felidae
+  - name: polka-dot-cat/felidae

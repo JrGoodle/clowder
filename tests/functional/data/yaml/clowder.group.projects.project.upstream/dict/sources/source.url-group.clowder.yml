@@ -10,6 +10,6 @@ clowder:
       upstream:
         source: beanstalk
     projects:
-      - name: JrGoodle/felidae
+      - name: polka-dot-cat/felidae
         upstream:
           name: polka-dot-cat/felidae

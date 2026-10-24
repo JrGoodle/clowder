@@ -5,16 +5,17 @@ Updated October 23, 2026 (America/Chicago). Follow the
 
 ## Current state
 
-Preparation is complete for the first set of local URL changes. The main
-repository remains `JrGoodle/clowder`; its remote, default branch, and public
-visibility have not changed. The migration changes are committed locally on
-`codex-cleanup`.
+The migration is being prepared in draft
+[PR #641](https://github.com/JrGoodle/clowder/pull/641), on `codex-cleanup`.
+The main repository remains `JrGoodle/clowder`; its remote, default branch, and
+public visibility have not changed.
 Links to `polka-dot-cat/clowder` are prepared for publication after the transfer.
 
 `felidae` has been transferred to
 [polka-dot-cat/felidae](https://github.com/polka-dot-cat/felidae). Its repository ID
-is still `294826031`. Both branches and both tags match the backup, and the old
-repository URL resolves to the new owner. The mirror and its LFS object are saved.
+is still `294826031`. At transfer, both branches and both tags matched the backup,
+and the old URL resolved to the new owner. Subsequent submodule commits are
+recorded below. The original mirror and its LFS object are saved.
 
 The replacement test repositories are now available under `polka-dot-cat`:
 [djinni](https://github.com/polka-dot-cat/djinni),
@@ -22,8 +23,9 @@ The replacement test repositories are now available under `polka-dot-cat`:
 [sox](https://github.com/polka-dot-cat/sox). Their default branch is `master`.
 Their published manifests and the matching local Clowder assertions now use the
 organization names. All 97 cases affected by the deleted forks and one new
-saved-defaults regression pass. The broader Cats/Felidae name migration and main
-repository transfer remain separate steps.
+saved-defaults regression pass. The remaining Cats manifest changes are staged
+on migration branches. Their active branches keep the old project names until
+PR #641 merges. The main repository transfer remains pending.
 
 ## Backups and inventory
 
@@ -56,19 +58,19 @@ contains its absolute path. Keep these backups outside the repository.
 | `JrGoodle/mu`, `duke`, `kit`, `kishka`, `sasha`, `june`, `duffy` | Same repository names under `polka-dot-cat`; redirects verified |
 | `JrGoodle/felidae` | Transferred to `polka-dot-cat/felidae` in this transition |
 | `JrGoodle/djinni`, `gyp`, `sox` | Recreated under `polka-dot-cat`; published manifests and local test assertions now use the organization URLs |
-| `JrGoodle/ash` | Still exists under the personal account; referenced by `felidae`'s submodule |
+| `JrGoodle/ash` | Transferred to `polka-dot-cat/ash`; active submodule URLs updated |
 | `JrGoodle/swift` | Existing personal fork; no destination change selected |
 
 The local patch updates project links, build metadata, website and artifact
 scripts, test-repository clone URLs, and initialization expectations. Existing
-manifest project names remain aligned with the remotely served files. For
-example, `polka-dot-cat/cats` still declares projects as `JrGoodle/mu` and similar
-names. A broad owner-name substitution would change assertions before their
-input manifests change.
+manifest project names in the draft now match the staged Cats migration
+branches. The active `polka-dot-cat/cats` manifests still declare projects as
+`JrGoodle/mu` and similar names. Validate the draft with the staged manifests
+until the coordinated cutover below.
 
 The YAML source-URL tests also use a distinct Beanstalk host,
 `polka-dot-cat.git.beanstalkapp.com`. Those references are not GitHub organization
-URLs and need a separate access check.
+URLs. The owner chose to retain Beanstalk; its access check remains pending.
 
 ## Deleted fork impact
 
@@ -166,6 +168,108 @@ changes beyond restoring the existing examples. Replacing all three with random
 public repositories would retain the availability risk and could lose coverage
 of mixed hosts or branch history.
 
+## Cats and Felidae migration
+
+The owner chose to retain Beanstalk and keep published Cats manifest names
+compatible until PR #641 merges. The draft updates the matching project names,
+CLI arguments, expected YAML, environment-variable checks, and Cats guide.
+Author credits, local filesystem paths, historical recordings, and fixed refs
+remain unchanged.
+
+### Staged manifests: publish at merge
+
+These new branches are published. Existing `master` and `alt-branch` refs have
+not moved:
+
+| Repository / active branch | Current active commit | Migration branch | Prepared commit |
+| --- | --- | --- | --- |
+| `cats` / `master` | `2202007cc3d1cb957c7f4bfc08797b3350125e33` | `org-migration/master` | [`6767bc8`](https://github.com/polka-dot-cat/cats/commit/6767bc8cb483775cb13ecdf9ac50bb24307f2130) |
+| `cats` / `alt-branch` | `664d3c130482b941cfe96b5672d9ca49f1dc397e` | `org-migration/alt-branch` | [`ee06522`](https://github.com/polka-dot-cat/cats/commit/ee065226e79f8001478cae930bbff1a1564befcd) |
+| `clowder-examples` / `master` | `0a4714bdecbfb1fb9175cf870b490d607b964ddb` | `org-migration/master` | [`c1dd3c2`](https://github.com/polka-dot-cat/clowder-examples/commit/c1dd3c286dcafdfe4a28384aebe60f748fe1d168) |
+
+Before merge, use the [staged-fixture instructions](../tests/README.md#testing-the-draft-before-the-manifest-cutover)
+to validate the draft. The test process redirects only the root Cats clone to a
+local bare repository with the prepared active branches. Project repositories
+are fetched from GitHub. An ordinary test run against the published Cats
+`master` still sees the old names and can fail the draft's new assertions.
+
+At the transfer and merge window:
+
+1. Confirm the active refs still equal the current commits above, and the
+   migration refs still equal the linked prepared commits. If they differ,
+   review and revalidate the intervening changes.
+2. Complete the main repository transfer checks and merge PR #641 as specified
+   in the transfer plan.
+3. Fast-forward Cats' `master` and `alt-branch` from their matching migration
+   branches with one atomic push. Fast-forward clowder-examples' `master` from
+   its migration branch. Use normal fast-forward pushes; preserve all tags.
+4. Verify the published manifests and rerun the relevant checks without the
+   local URL override. Rerun any merge-triggered check that fetched fixtures
+   before both repositories completed their cutover.
+
+Keeping the active manifests unchanged preserves compatibility now. The cost is
+that the draft needs the staged fixture setup and the merge needs coordinated
+publication across repositories. GitHub cannot make that cross-repository
+cutover atomic.
+
+### Published submodule changes
+
+`ash` was transferred to [polka-dot-cat/ash](https://github.com/polka-dot-cat/ash).
+Repository ID `104600176`, both branches, and public visibility were preserved
+at transfer. It had no tags, releases, or Pages site. Its Git backup passed
+`git fsck --full`.
+
+These compatible URL and gitlink updates are now published:
+
+| Repository / branches | Published commit | Change |
+| --- | --- | --- |
+| `ash`: `master`, `herd-branch` | [`07b3ff8`](https://github.com/polka-dot-cat/ash/commit/07b3ff8280a5a67efaa96d324690e39d2de7b61d) | Use the canonical `polka-dot-cat/duffy` URL; preserve the Duffy gitlink. |
+| `mu`: `submodules` | [`eb6f03f`](https://github.com/polka-dot-cat/mu/commit/eb6f03ffe54f7b87bd14f7e38baef3c0d3b54aba) | Use `polka-dot-cat/ash` and its updated commit. |
+| `felidae`: `master`, `felid` | [`7c6f96c`](https://github.com/polka-dot-cat/felidae/commit/7c6f96c3eecbb693a75a79213c8dade99da380ba) | Use `polka-dot-cat/ash` and its updated commit. |
+
+Recursive clone checks passed for all three parent branch configurations before
+publication. All unrelated advertised refs, including tags, were unchanged
+after publication. Historical tags and the fixed Felidae commit retain their
+original objects; old submodule URLs in that history rely on GitHub redirects.
+The `felid` branch and tag are distinct refs and must not be confused.
+
+A fresh clone of the published Cats `master`, with its original `JrGoodle/...`
+names, successfully linked the `submodules` version and herded all projects.
+Mu, Ash, and Duffy were clean at the expected commits, and both nested
+`.gitmodules` URLs were canonical. This check used the live GitHub repositories
+without a URL override.
+
+### Beanstalk access: pending
+
+Retain `polka-dot-cat.git.beanstalkapp.com`, its `beanstalk` source alias, and the
+`polka-dot-cat/felidae` path. There are **28 explicit source-URL test cases** that
+need this separate service. Their YAML still passes the same schema checks.
+
+The read-only `git ls-remote` attempt stopped at host-key verification before
+account authentication. SSH is configured to use 1Password; the owner confirmed
+that the intended personal public key is already added to Beanstalk. This does
+not establish whether authentication or repository access succeeds.
+
+The observed RSA server fingerprint was
+`SHA256:pmFiLpVdAFqGS5dsrE1Wrk5U/wKoPJKg+M7+grPQwNw`. It is **unverified**:
+the connection itself is not an independent source of trust. The owner chose
+to leave validation pending. Verify it through a trusted existing connection
+or Beanstalk support, then configure host trust and retry:
+
+```sh
+GIT_SSH_COMMAND='ssh -oBatchMode=yes -oConnectTimeout=10 -oStrictHostKeyChecking=yes' \
+  git ls-remote git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git
+pipenv run python -m pytest tests/functional/test_schema_validation.py -q \
+  -k 'source_url and not implicit'
+```
+
+No Beanstalk key, account setting, repository, or local known-host entry was
+changed.
+
+The fixtures, before/after inventories, candidate commits, publication records,
+and validation logs for this phase are saved under
+`cats-felidae-migration-t3_1y2_0/` in the backup directory above.
+
 ## Validation
 
 Python 3.8.16 and Pipenv were unavailable. Validation used the installed Python
@@ -197,15 +301,34 @@ interpreter and dependency pins were unchanged.
   configuration problems, and pages outside the toctree (including these two
   transfer documents). Documentation cleanup remains in the existing backlog.
 
-No tests that disable host networking or modify remote branches were run. These
-checks do not establish a full CI baseline. GitHub returned no Actions runs or
-check runs in the queried baseline; the combined commit status had no component
-statuses. Existing required checks must still be reviewed.
+For the Cats/Felidae phase, all 220 changed local YAML files parse and retain
+their prior schema-validation results, including intentionally invalid cases.
+All 31 staged external manifests pass JSON Schema validation. Both changed
+environment-variable scripts pass `bash -n`. **473 selected cases passed**: 319
+Cats command cases and 154 GitHub-only project YAML integration cases. This
+includes eight initial smoke cases. The remaining cases ran in audited batches
+with isolated temporary workspaces; no completed case was repeated. The 28
+explicit Beanstalk source-URL cases remain pending. Collection now finds 1,111
+cases, including the earlier saved-defaults regression.
+
+A final comparison of branches and tags across all 11 audited repositories
+matched the planned state. GYP's remote `fork-branch` is also unchanged at its
+required commit.
+
+No tests that disable host networking, modify remote branches, or uninstall
+global/system LFS configuration were run. These checks do not establish a full
+CI baseline. The initial inventory had no Actions/check runs. The draft PR now
+has [Actions run 40058163818](https://github.com/JrGoodle/clowder/actions/runs/40058163818),
+which fails before tests because the workflow uses deprecated
+`actions/upload-artifact@v2`; the other matrix jobs were cancelled. This CI
+repair remains separate from the fixture-name migration. Existing required
+checks must still be reviewed.
 
 ## Remaining transfer steps
 
-1. Coordinate the remaining Cats/Felidae project-name changes and submodule URLs.
-   Check `ash` and Beanstalk dependencies while inventorying submodules and hosts.
+1. Complete the pending Beanstalk access check and restore the Actions baseline.
+   Keep the staged Cats manifests off the active branches until PR #641 merges;
+   use the recorded cutover sequence at merge.
 2. Inspect the organization's Actions policy. The current CLI token received
    HTTP 403 when reading it; repository-level Actions settings were readable.
 3. Check Pages domain ownership in account/organization settings and coordinate

@@ -1,8 +1,9 @@
 # Examples
 
-The GitHub links below use the current repository owners. The served manifests
-still contain some `JrGoodle/...` project names. Keep those names and the matching
-assertions together until the manifest migration is complete. See the
+The GitHub links below use the current repository owners. This draft uses
+`polka-dot-cat/...` project names. Cats' published `master` and `alt-branch`
+manifests retain the old names until PR #641 merges. Before that cutover, test
+the draft against the staged manifests described below. See the
 [transfer progress record](../docs/clowder-repository-transfer-status.md).
 
 ## Cats
@@ -17,6 +18,58 @@ https://github.com/polka-dot-cat/cats.git
 | `black-cats/sasha` | https://github.com/polka-dot-cat/sasha |
 | `duke` | https://github.com/polka-dot-cat/duke |
 | `mu` | https://github.com/polka-dot-cat/mu |
+
+### Testing the draft before the manifest cutover
+
+Cats has migration branches `org-migration/master` and
+`org-migration/alt-branch`. Use a temporary bare clone with those commits as its
+local active branches. This leaves the published fixtures compatible with the
+existing Clowder tests until the migration PR merges.
+
+```sh
+cats_fixture_dir=$(mktemp -d)
+git clone --bare https://github.com/polka-dot-cat/cats.git "$cats_fixture_dir/cats.git"
+git -C "$cats_fixture_dir/cats.git" update-ref refs/heads/master refs/heads/org-migration/master
+git -C "$cats_fixture_dir/cats.git" update-ref refs/heads/alt-branch refs/heads/org-migration/alt-branch
+
+env GIT_CONFIG_COUNT=2 \
+  GIT_CONFIG_KEY_0="url.file://$cats_fixture_dir/cats.git.insteadOf" \
+  GIT_CONFIG_VALUE_0=https://github.com/polka-dot-cat/cats.git \
+  GIT_CONFIG_KEY_1=protocol.file.allow GIT_CONFIG_VALUE_1=always \
+  pipenv run python -m pytest tests/functional/test_features.py -q \
+    -m 'cats and not (ssh or offline or write or lfs or help or init)' \
+    -k 'forall or yaml or submodules'
+```
+
+The URL override applies only to this command and the root Cats repository.
+Child repositories still use GitHub. Do not use this override for tests that
+assert the root Cats remote URL: Git reports the rewritten local URL.
+After the active manifests are updated, omit the override.
+
+### Felidae, submodules, and Beanstalk
+
+The GitHub YAML fixtures use `polka-dot-cat/felidae`. Its active `master` and
+`felid` branches, and `mu`'s `submodules` branch, now reference
+`polka-dot-cat/ash`; Ash references `polka-dot-cat/duffy`. Tags and fixed commits
+retain their original history and can still contain URLs served through GitHub
+redirects.
+
+The explicit `source.url` scenarios retain
+`git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git`.
+This is a separate hosting service, even though the project name matches GitHub.
+The 28 explicit source-URL cases need Beanstalk SSH access and a verified server
+host key. Adding an account public key does not establish server trust.
+
+The GitHub-only project YAML cases can run separately:
+
+```sh
+pipenv run python -m pytest tests/functional/test_schema_validation.py -q \
+  -k 'project and not upstream and not git_lfs and (not source_url or implicit)'
+```
+
+These YAML cases use GitHub SSH but do not use the Cats setup that deletes
+remote `pytest*` branches. Exclude the `lfs` scenarios on a shared workstation:
+some of their steps modify global/system Git LFS settings.
 
 ## Misc
 

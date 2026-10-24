@@ -6,4 +6,4 @@ defaults:
 clowder:
   cats:
     projects:
-      - JrGoodle/felidae
+      - polka-dot-cat/felidae

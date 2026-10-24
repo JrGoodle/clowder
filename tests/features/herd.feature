@@ -43,12 +43,12 @@ Feature: clowder herd
 
         Examples:
         | directory         | branch | remote | url                                    |
-        | mu                | knead  | origin | https://github.com/JrGoodle/mu.git     |
-        | duke              | purr   | origin | https://github.com/JrGoodle/duke.git   |
-        | black-cats/kishka | master | origin | https://github.com/JrGoodle/kishka.git |
-        | black-cats/kit    | master | origin | https://github.com/JrGoodle/kit.git    |
-        | black-cats/sasha  | master | origin | https://github.com/JrGoodle/sasha.git  |
-        | black-cats/june   | master | origin | https://github.com/JrGoodle/june.git   |
+        | mu                | knead  | origin | https://github.com/polka-dot-cat/mu.git     |
+        | duke              | purr   | origin | https://github.com/polka-dot-cat/duke.git   |
+        | black-cats/kishka | master | origin | https://github.com/polka-dot-cat/kishka.git |
+        | black-cats/kit    | master | origin | https://github.com/polka-dot-cat/kit.git    |
+        | black-cats/sasha  | master | origin | https://github.com/polka-dot-cat/sasha.git  |
+        | black-cats/june   | master | origin | https://github.com/polka-dot-cat/june.git   |
 
     @cats @subdirectory
     Scenario Outline: herd subdirectory
@@ -569,11 +569,11 @@ Feature: clowder herd
         | black-cats/june   | master |
 
     @cats
-    Scenario Outline: herd project name JrGoodle/mu included
+    Scenario Outline: herd project name polka-dot-cat/mu included
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
-        When I run 'clowder herd JrGoodle/mu'
+        When I run 'clowder herd polka-dot-cat/mu'
         Then the command succeeds
         And project at <directory> is a git repository
         And project at <directory> is on <branch>
@@ -585,11 +585,11 @@ Feature: clowder herd
         | mu-cat    | knead  |
 
     @cats
-    Scenario Outline: herd project name JrGoodle/mu excluded
+    Scenario Outline: herd project name polka-dot-cat/mu excluded
         Given cats example is initialized
         And linked groups clowder version
         And <directory> doesn't exist
-        When I run 'clowder herd JrGoodle/mu'
+        When I run 'clowder herd polka-dot-cat/mu'
         Then the command succeeds
         And <directory> doesn't exist
 
@@ -1231,12 +1231,12 @@ Feature: clowder herd
 
         Examples:
         | directory         | branch | tag        | repo            |
-        | mu                | knead  | pytest-tag | JrGoodle/mu     |
-        | duke              | purr   | pytest-tag | JrGoodle/duke   |
-        | black-cats/kit    | master | pytest-tag | JrGoodle/kit    |
-        | black-cats/kishka | master | pytest-tag | JrGoodle/kishka |
-        | black-cats/june   | master | pytest-tag | JrGoodle/june   |
-        | black-cats/sasha  | master | pytest-tag | JrGoodle/sasha  |
+        | mu                | knead  | pytest-tag | polka-dot-cat/mu     |
+        | duke              | purr   | pytest-tag | polka-dot-cat/duke   |
+        | black-cats/kit    | master | pytest-tag | polka-dot-cat/kit    |
+        | black-cats/kishka | master | pytest-tag | polka-dot-cat/kishka |
+        | black-cats/june   | master | pytest-tag | polka-dot-cat/june   |
+        | black-cats/sasha  | master | pytest-tag | polka-dot-cat/sasha  |
 
     @cats @internet
     Scenario Outline: herd tag - no repo, no tag
@@ -1251,12 +1251,12 @@ Feature: clowder herd
 
         Examples:
         | directory         | branch | tag                | repo            |
-        | mu                | knead  | pytest-tag-missing | JrGoodle/mu     |
-        | duke              | purr   | pytest-tag-missing | JrGoodle/duke   |
-        | black-cats/kit    | master | pytest-tag-missing | JrGoodle/kit    |
-        | black-cats/kishka | master | pytest-tag-missing | JrGoodle/kishka |
-        | black-cats/june   | master | pytest-tag-missing | JrGoodle/june   |
-        | black-cats/sasha  | master | pytest-tag-missing | JrGoodle/sasha  |
+        | mu                | knead  | pytest-tag-missing | polka-dot-cat/mu     |
+        | duke              | purr   | pytest-tag-missing | polka-dot-cat/duke   |
+        | black-cats/kit    | master | pytest-tag-missing | polka-dot-cat/kit    |
+        | black-cats/kishka | master | pytest-tag-missing | polka-dot-cat/kishka |
+        | black-cats/june   | master | pytest-tag-missing | polka-dot-cat/june   |
+        | black-cats/sasha  | master | pytest-tag-missing | polka-dot-cat/sasha  |
 
     @cats @internet
     Scenario Outline: herd tag - existing repo, existing tag
@@ -1270,12 +1270,12 @@ Feature: clowder herd
 
         Examples:
         | directory         | branch | tag        | repo            |
-        | mu                | knead  | pytest-tag | JrGoodle/mu     |
-        | duke              | purr   | pytest-tag | JrGoodle/duke   |
-        | black-cats/kit    | master | pytest-tag | JrGoodle/kit    |
-        | black-cats/kishka | master | pytest-tag | JrGoodle/kishka |
-        | black-cats/june   | master | pytest-tag | JrGoodle/june   |
-        | black-cats/sasha  | master | pytest-tag | JrGoodle/sasha  |
+        | mu                | knead  | pytest-tag | polka-dot-cat/mu     |
+        | duke              | purr   | pytest-tag | polka-dot-cat/duke   |
+        | black-cats/kit    | master | pytest-tag | polka-dot-cat/kit    |
+        | black-cats/kishka | master | pytest-tag | polka-dot-cat/kishka |
+        | black-cats/june   | master | pytest-tag | polka-dot-cat/june   |
+        | black-cats/sasha  | master | pytest-tag | polka-dot-cat/sasha  |
 
     @cats @internet
     Scenario Outline: herd tag - existing repo, no existing tag
@@ -1288,12 +1288,12 @@ Feature: clowder herd
 
         Examples:
         | directory         | branch | tag                | repo            |
-        | mu                | knead  | pytest-tag-missing | JrGoodle/mu     |
-        | duke              | purr   | pytest-tag-missing | JrGoodle/duke   |
-        | black-cats/kit    | master | pytest-tag-missing | JrGoodle/kit    |
-        | black-cats/kishka | master | pytest-tag-missing | JrGoodle/kishka |
-        | black-cats/june   | master | pytest-tag-missing | JrGoodle/june   |
-        | black-cats/sasha  | master | pytest-tag-missing | JrGoodle/sasha  |
+        | mu                | knead  | pytest-tag-missing | polka-dot-cat/mu     |
+        | duke              | purr   | pytest-tag-missing | polka-dot-cat/duke   |
+        | black-cats/kit    | master | pytest-tag-missing | polka-dot-cat/kit    |
+        | black-cats/kishka | master | pytest-tag-missing | polka-dot-cat/kishka |
+        | black-cats/june   | master | pytest-tag-missing | polka-dot-cat/june   |
+        | black-cats/sasha  | master | pytest-tag-missing | polka-dot-cat/sasha  |
 
 # TODO: Add more tests for local vs remote tags and annotated vs lightweight
 

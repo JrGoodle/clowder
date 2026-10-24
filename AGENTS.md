@@ -77,7 +77,7 @@ small test selection, then run the relevant functional scenarios:
 pipenv run python -m pytest tests/functional/test_features.py -q -m help -k empty_directory
 
 # Broader functional run; still needs network access for example repositories.
-pipenv run python script/test --markers 'not ssh and not offline and not write' --exitfirst
+pipenv run python script/test --markers 'not ssh and not offline and not write and not lfs' --exitfirst
 ```
 
 `script/test` writes coverage, JUnit, and Cucumber reports under `build/` and uses
@@ -91,6 +91,8 @@ Test markers describe behavior, not complete isolation guarantees:
   `clowder/util/connectivity.py`; use a disposable, isolated test environment.
 - `ssh` scenarios require suitable SSH access. `write` scenarios can change remote
   branches. SSH fixture cleanup can also delete remote `pytest*` branches.
+- `lfs` scenarios can uninstall Git LFS hooks and filters from global/system Git
+  configuration. Run them only in an isolated environment.
 - Many unmarked scenarios clone public example repositories. Excluding
   `internet` does not produce a reliable local-only test selection.
 - `test_schema_validation.py` binds integration scenarios that run Git operations;

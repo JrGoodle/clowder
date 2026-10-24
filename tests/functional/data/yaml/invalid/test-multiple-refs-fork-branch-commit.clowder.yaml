@@ -8,28 +8,28 @@ sources:
     url: github.com
 
 clowder:
-  - name: JrGoodle/mu
+  - name: polka-dot-cat/mu
     path: mu
     branch: knead
     groups: [cats]
     remote: upstream
     upstream:
-      name: JrGoodle/mu
+      name: polka-dot-cat/mu
       branch: branch
       commit: 4d322b0400530ebbacca4e45908b27807572d2d3 # ERROR
-  - name: JrGoodle/duke
+  - name: polka-dot-cat/duke
     path: duke
     branch: purr
     groups: [cats]
-  - name: JrGoodle/kit
+  - name: polka-dot-cat/kit
     path: black-cats/kit
     groups: [black-cats]
-  - name: JrGoodle/kishka
+  - name: polka-dot-cat/kishka
     path: black-cats/kishka
     groups: [black-cats]
-  - name: JrGoodle/june
+  - name: polka-dot-cat/june
     path: black-cats/june
     groups: [black-cats]
-  - name: JrGoodle/sasha
+  - name: polka-dot-cat/sasha
     path: black-cats/sasha
     groups: [black-cats]

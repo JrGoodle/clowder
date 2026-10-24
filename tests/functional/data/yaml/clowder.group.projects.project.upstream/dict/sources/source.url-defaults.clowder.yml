@@ -11,6 +11,6 @@ defaults:
 clowder:
   cats:
     projects:
-      - name: JrGoodle/felidae
+      - name: polka-dot-cat/felidae
         upstream:
           name: polka-dot-cat/felidae

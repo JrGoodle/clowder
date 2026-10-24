@@ -68,7 +68,7 @@ Feature: clowder config
     @cats
     Scenario Outline: config set groups config included
         Given cats example is initialized
-        And 'clowder config set projects JrGoodle/kishka JrGoodle/kit' was run
+        And 'clowder config set projects polka-dot-cat/kishka polka-dot-cat/kit' was run
         And <directory> doesn't exist
         When I run 'clowder herd'
         Then the command succeeds
@@ -84,7 +84,7 @@ Feature: clowder config
     @cats
     Scenario Outline: config set groups config excluded
         Given cats example is initialized
-        And 'clowder config set projects JrGoodle/kishka JrGoodle/kit' was run
+        And 'clowder config set projects polka-dot-cat/kishka polka-dot-cat/kit' was run
         And <directory> doesn't exist
         When I run 'clowder herd'
         Then the command succeeds

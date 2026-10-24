@@ -25,9 +25,9 @@ Feature: clowder status
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
         When I run 'clowder status'
-        And I run 'clowder status JrGoodle/kishka'
-        And I run 'clowder status JrGoodle/mu JrGoodle/duke'
-        And I run 'clowder status JrGoodle/mu JrGoodle/duke JrGoodle/kit'
+        And I run 'clowder status polka-dot-cat/kishka'
+        And I run 'clowder status polka-dot-cat/mu polka-dot-cat/duke'
+        And I run 'clowder status polka-dot-cat/mu polka-dot-cat/duke polka-dot-cat/kit'
         And I run 'clowder status black-cats'
         And I run 'clowder status black-cats cats'
         And I run 'clowder status black-cats cats all'
@@ -42,9 +42,9 @@ Feature: clowder status
         And project at mu has untracked file catnip.txt
         When I change to directory black-cats/kit
         And I run 'clowder status'
-        And I run 'clowder status JrGoodle/kishka'
-        And I run 'clowder status JrGoodle/mu JrGoodle/duke'
-        And I run 'clowder status JrGoodle/mu JrGoodle/duke JrGoodle/kit'
+        And I run 'clowder status polka-dot-cat/kishka'
+        And I run 'clowder status polka-dot-cat/mu polka-dot-cat/duke'
+        And I run 'clowder status polka-dot-cat/mu polka-dot-cat/duke polka-dot-cat/kit'
         And I run 'clowder status black-cats'
         And I run 'clowder status black-cats cats'
         And I run 'clowder status black-cats cats all'
@@ -58,9 +58,9 @@ Feature: clowder status
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
         When I run 'clowder status -f'
-        And I run 'clowder status -f JrGoodle/kishka'
-        And I run 'clowder status -f JrGoodle/mu JrGoodle/duke'
-        And I run 'clowder status -f JrGoodle/mu JrGoodle/duke JrGoodle/kit'
+        And I run 'clowder status -f polka-dot-cat/kishka'
+        And I run 'clowder status -f polka-dot-cat/mu polka-dot-cat/duke'
+        And I run 'clowder status -f polka-dot-cat/mu polka-dot-cat/duke polka-dot-cat/kit'
         And I run 'clowder status -f black-cats'
         And I run 'clowder status -f black-cats cats'
         And I run 'clowder status -f black-cats cats all'
@@ -75,9 +75,9 @@ Feature: clowder status
         And project at mu has untracked file catnip.txt
         When the network connection is disabled
         And I run 'clowder status'
-        And I run 'clowder status JrGoodle/kishka'
-        And I run 'clowder status JrGoodle/mu JrGoodle/duke'
-        And I run 'clowder status JrGoodle/mu JrGoodle/duke JrGoodle/kit'
+        And I run 'clowder status polka-dot-cat/kishka'
+        And I run 'clowder status polka-dot-cat/mu polka-dot-cat/duke'
+        And I run 'clowder status polka-dot-cat/mu polka-dot-cat/duke polka-dot-cat/kit'
         And I run 'clowder status black-cats'
         And I run 'clowder status black-cats cats'
         And I run 'clowder status black-cats cats all'
@@ -93,9 +93,9 @@ Feature: clowder status
         And project at mu has untracked file catnip.txt
         When the network connection is disabled
         And I run 'clowder status -f'
-        And I run 'clowder status -f JrGoodle/kishka'
-        And I run 'clowder status -f JrGoodle/mu JrGoodle/duke'
-        And I run 'clowder status -f JrGoodle/mu JrGoodle/duke JrGoodle/kit'
+        And I run 'clowder status -f polka-dot-cat/kishka'
+        And I run 'clowder status -f polka-dot-cat/mu polka-dot-cat/duke'
+        And I run 'clowder status -f polka-dot-cat/mu polka-dot-cat/duke polka-dot-cat/kit'
         And I run 'clowder status -f black-cats'
         And I run 'clowder status -f black-cats cats'
         And I run 'clowder status -f black-cats cats all'

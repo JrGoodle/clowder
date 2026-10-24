@@ -3,6 +3,6 @@ name: git.submodules-project
 clowder:
   cats:
     projects:
-      - name: JrGoodle/felidae
+      - name: polka-dot-cat/felidae
         git:
           submodules: recursive

@@ -190,7 +190,7 @@ Feature: clowder yaml validation
         And felidae directory doesn't exist
         When I run 'clowder herd'
         Then the command succeeds
-        And project at felidae has remote source with url git@github.com:JrGoodle/felidae.git
+        And project at felidae has remote source with url git@github.com:polka-dot-cat/felidae.git
 
     @ssh
     Scenario: validate implicit project.remote
@@ -199,7 +199,7 @@ Feature: clowder yaml validation
         And felidae directory doesn't exist
         When I run 'clowder herd'
         Then the command succeeds
-        And project at felidae has remote origin with url git@github.com:JrGoodle/felidae.git
+        And project at felidae has remote origin with url git@github.com:polka-dot-cat/felidae.git
 
     Scenario: validate project.source.protocol
         Given validating property <project_source_protocol>
@@ -216,7 +216,7 @@ Feature: clowder yaml validation
         And felidae directory doesn't exist
         When I run 'clowder herd'
         Then the command succeeds
-        And project at felidae has remote origin with url git@github.com:JrGoodle/felidae.git
+        And project at felidae has remote origin with url git@github.com:polka-dot-cat/felidae.git
 
     @ssh
     Scenario: validate project.source.url
@@ -234,7 +234,7 @@ Feature: clowder yaml validation
         And felidae directory doesn't exist
         When I run 'clowder herd'
         Then the command succeeds
-        And project at felidae has remote origin with url git@github.com:JrGoodle/felidae.git
+        And project at felidae has remote origin with url git@github.com:polka-dot-cat/felidae.git
 
     @ssh
     Scenario: validate project.tag
@@ -314,7 +314,7 @@ Feature: clowder yaml validation
         When I run 'clowder herd'
         Then the command succeeds
         And project at felidae has remote upstream with url git@polka-dot-cat.git.beanstalkapp.com:polka-dot-cat/felidae.git
-        And project at felidae has remote origin with url git@github.com:JrGoodle/felidae.git
+        And project at felidae has remote origin with url git@github.com:polka-dot-cat/felidae.git
 
     @ssh @upstream
     Scenario: validate implicit upstream.source.url

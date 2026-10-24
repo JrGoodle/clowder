@@ -95,7 +95,7 @@ Feature: clowder forall
     Scenario Outline: forall projects
         Given cats example is initialized and herded
         And project at <directory> is on <start_branch>
-        When I run 'clowder forall "git checkout -b v0.1" JrGoodle/mu JrGoodle/duke '
+        When I run 'clowder forall "git checkout -b v0.1" polka-dot-cat/mu polka-dot-cat/duke '
         Then the command succeeds
         And project at <directory> is on <end_branch>
 
@@ -111,12 +111,12 @@ Feature: clowder forall
     @cats
     Scenario: forall environment variables
         Given cats example is initialized and herded
-        When I run 'clowder forall "if [ $PROJECT_NAME != JrGoodle/kit ]; then exit 1; fi" JrGoodle/kit '
-        And I run 'clowder forall "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi" JrGoodle/kit '
-        And I run 'clowder forall "if [ $PROJECT_REF != refs/heads/master ]; then exit 1; fi" JrGoodle/kit '
-        And I run 'clowder forall "if [ $PROJECT_NAME != JrGoodle/duke ]; then exit 1; fi" JrGoodle/duke'
-        And I run 'clowder forall "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi" JrGoodle/duke'
-        And I run 'clowder forall "if [ $PROJECT_REF != refs/heads/purr ]; then exit 1; fi" JrGoodle/duke'
+        When I run 'clowder forall "if [ $PROJECT_NAME != polka-dot-cat/kit ]; then exit 1; fi" polka-dot-cat/kit '
+        And I run 'clowder forall "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi" polka-dot-cat/kit '
+        And I run 'clowder forall "if [ $PROJECT_REF != refs/heads/master ]; then exit 1; fi" polka-dot-cat/kit '
+        And I run 'clowder forall "if [ $PROJECT_NAME != polka-dot-cat/duke ]; then exit 1; fi" polka-dot-cat/duke'
+        And I run 'clowder forall "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi" polka-dot-cat/duke'
+        And I run 'clowder forall "if [ $PROJECT_REF != refs/heads/purr ]; then exit 1; fi" polka-dot-cat/duke'
         Then the commands succeed
 
     @fail @cats
@@ -161,8 +161,8 @@ Feature: clowder forall
     Scenario: forall script environment
         Given cats example is initialized and herded
         And forall test scripts were copied to the project directories
-        When I run 'clowder forall "./test_forall_env_kit.sh" JrGoodle/kit'
-        And I run 'clowder forall "./test_forall_env_duke.sh" JrGoodle/duke'
+        When I run 'clowder forall "./test_forall_env_kit.sh" polka-dot-cat/kit'
+        And I run 'clowder forall "./test_forall_env_duke.sh" polka-dot-cat/duke'
         Then the commands succeed
 
     @cats @subdirectory
@@ -170,8 +170,8 @@ Feature: clowder forall
         Given cats example is initialized and herded
         And forall test scripts were copied to the project directories
         When I change to directory mu
-        And I run 'clowder forall "./test_forall_env_kit.sh" JrGoodle/kit '
-        And I run 'clowder forall "./test_forall_env_duke.sh" JrGoodle/duke '
+        And I run 'clowder forall "./test_forall_env_kit.sh" polka-dot-cat/kit '
+        And I run 'clowder forall "./test_forall_env_duke.sh" polka-dot-cat/duke '
         Then the commands succeed
 
     @fail @cats

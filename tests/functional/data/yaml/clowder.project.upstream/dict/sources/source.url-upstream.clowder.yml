@@ -5,7 +5,7 @@ sources:
     url: polka-dot-cat.git.beanstalkapp.com
 
 clowder:
-  - name: JrGoodle/felidae
+  - name: polka-dot-cat/felidae
     upstream:
       name: polka-dot-cat/felidae
       source: beanstalk

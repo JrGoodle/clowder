@@ -5,4 +5,4 @@ clowder:
     defaults:
       branch: felid
     projects:
-      - JrGoodle/felidae
+      - polka-dot-cat/felidae

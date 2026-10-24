@@ -6,4 +6,4 @@ defaults:
       alias.something: "!echo 'Run git something alias installed via clowder'; touch something"
 
 clowder:
-  - JrGoodle/felidae
+  - polka-dot-cat/felidae

@@ -6,4 +6,4 @@ clowder:
       git:
         lfs: true
     projects:
-      - JrGoodle/felidae
+      - polka-dot-cat/felidae
