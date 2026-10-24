@@ -6,16 +6,48 @@ This file applies to the full repository. Follow applicable parent instructions;
 on this workstation, also read `/Users/jrgoodle/AGENTS.md`. Use clear, direct
 technical English. Track follow-up work in [TODO.md](TODO.md).
 
-Clowder is a Python CLI for managing multiple Git repositories from a
-`clowder.yml` or `clowder.yaml` manifest. The distribution is `clowder-repo`, the
-command is `clowder`, and the entry point is `clowder.app:main`. The version lives
-in `clowder/__init__.py`. macOS and Linux are the declared platforms; Windows
-support is incomplete.
+Clowder manages multiple Git repositories from a `clowder.yml` or `clowder.yaml`
+manifest. This branch builds the native Rust `clowder` CLI from `src/main.rs`.
+The retained Python reference uses `clowder.app:main` and the `clowder-repo`
+distribution. Keep `Cargo.toml`, `src/cli_spec.json`, and `clowder/__init__.py`
+version declarations consistent when preparing a release. macOS and Linux are
+the declared platforms; Windows support is incomplete.
 
 Read [README.md](README.md), [CONTRIBUTING.md](CONTRIBUTING.md), and the relevant
 command or schema documentation before changing behavior.
 
 ## Repository map
+
+### Rust migration branch
+
+The native CLI is in `src/`, with its build in `Cargo.toml` and `Cargo.lock`.
+Follow [docs/rust-migration.md](docs/rust-migration.md). Keep the Python CLI as
+the behavior reference and test-support library during migration. The Rust
+executable must not invoke Python to implement commands. Preserve all current
+Gherkin feature files.
+
+Use `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and
+`cargo test --locked`. Pytest builds and selects the native binary by default.
+Set `CLOWDER_EXECUTABLE` to an absolute executable path to test an existing build.
+For the Python reference, unset that variable and set `CLOWDER_IMPLEMENTATION=python`.
+The existing network, SSH, remote-write, and LFS precautions below
+still apply. `tests/rust_cli.rs` uses temporary repositories and captured Python
+output in `tests/data/rust/` for local regression checks.
+
+`src/cli_spec.json` embeds the legacy argument grammar and base help text;
+workspace-specific help tables are generated in Rust. Git remains an external
+runtime dependency. Each worker owns its subprocess working directory,
+environment, and output; do not change the process directory or environment
+inside parallel operations.
+
+`completions/` contains native Bash and Zsh wrappers. They invoke the executable
+with `CLOWDER_COMPLETE=1`; completion may read local manifests and refs but must
+not run a command handler or contact a remote.
+
+`script/package-rust` builds local archives without publishing. After dependency
+changes, use `script/update-rust-licenses` to regenerate `THIRD-PARTY-NOTICES.md`;
+see the installation guide for the pinned notice tool. Review new license types
+and source-text hashes in `about.toml` with the dependency update.
 
 | Location | Purpose |
 | --- | --- |

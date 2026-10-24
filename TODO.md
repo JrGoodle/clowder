@@ -9,6 +9,45 @@ Check an item off only after its completion criteria are met. Add regression
 coverage for behavior fixes. Abstract methods and pytest-bdd scenario bodies that
 contain `pass` are not automatically missing implementations.
 
+## Rust migration
+
+Follow [the migration plan](docs/rust-migration.md). Work in `rust-migration`
+and keep PR #642 as a draft until compatibility and distribution checks pass.
+
+- [x] Add the native Cargo binary, manifest schema validation and inheritance,
+  workspace discovery, and command dispatch without a Python runtime fallback.
+- [x] Route the existing Python harness to a selected native executable while
+  preserving the Python reference path and all Gherkin files.
+- [x] Capture representative Python output and add native regression tests for
+  formatting, parallel process isolation, exit codes, and dirty-tree protection.
+- [x] Pass the existing read-only functional suite against the Rust executable:
+  681 unique cases pass across local runs after harness repairs.
+- [x] Validate schema/source inheritance, recursive submodules, and LFS in
+  disposable containers. See the [validation record](docs/rust-migration-validation.md)
+  for transport limits. All 1,111 cases pass across the selected environments,
+  including 28 custom-URL cases against private mirrors. Retain the separate
+  pending Beanstalk host-key and live-service check.
+- [x] Validate remote-write behavior in isolation and through serialized CI.
+  All 89 cases pass in the isolated Linux environment and native CircleCI job
+  [3021](https://circleci.com/gh/polka-dot-cat/clowder/3021), with no skips.
+- [x] Validate all 63 offline scenarios in disposable environments. Repair the
+  Python harness gateway-output capture so these scenarios can run on Linux.
+- [x] Build and test the native CLI on macOS and Linux in hosted CI. Jobs
+  [3022](https://circleci.com/gh/polka-dot-cat/clowder/3022) and
+  [3023](https://circleci.com/gh/polka-dot-cat/clowder/3023) pass and publish native archives.
+- [x] Add native installation/release instructions and local archive packaging;
+  compare startup and parallel execution with the Python reference. See the
+  [native installation guide](docs/rust-installation.md) and validation record.
+  Release publication and signing remain separate tasks.
+- [x] Audit remaining behavior and output differences before removing the Python
+  CLI from the distribution. Keep Python support needed by the test harness.
+  The [compatibility notes](docs/rust-compatibility.md) record the current audit.
+- [x] Add native Bash and Zsh completion to replace Python `argcomplete`
+  integration, including local project/group/version/ref candidates.
+- [x] Validate Intel macOS runtime behavior. Both native Actions jobs in
+  [run 40106198988](https://github.com/polka-dot-cat/clowder/actions/runs/40106198988)
+  pass all 684 cases, including LFS, on `macos-15-intel`.
+
 ## Before the backlog: transfer the repository
 
 Follow the [transfer plan](docs/clowder-repository-transfer-plan.md) and
@@ -31,11 +70,15 @@ are separate from the initial review and were updated on 2026-10-24.
   verify recursive clones and preserve tags and unrelated refs.
 - [x] Stage the remaining Cats and clowder-examples manifest names on migration
   branches and prepare their matching Clowder assertions in draft PR #641.
-- [ ] At PR #641's merge, fast-forward the active manifest branches to the
-  [recorded commits](docs/clowder-repository-transfer-status.md#cats-and-felidae-migration)
-  and verify the tests against the published fixtures. Keep the old names until merge.
+- [x] After PR #641 merged, fast-forward the active Cats and clowder-examples
+  manifest branches to the [recorded commits](docs/clowder-repository-transfer-status.md#cats-and-felidae-migration).
+  Verify all published refs and preserve unrelated branches and tags.
+- [x] Validate hosted CI against the published manifests after removing the
+  temporary fixture pins and URL overrides. All four Actions jobs pass at
+  `ab1e9110` in [run 40100795242](https://github.com/polka-dot-cat/clowder/actions/runs/40100795242);
+  CircleCI native read-only and write checks also pass.
 - [ ] Verify Beanstalk's server host key, then check SSH access and run the 28
-  explicit source-URL cases. Retain Beanstalk; the owner confirmed the account
+  explicit source-URL cases against the actual service. Retain Beanstalk; the owner confirmed the account
   public key is already registered and chose to leave host verification pending.
 - [x] Validate the repaired Actions baseline. At `6607ba77`, all four Ubuntu/macOS
   and Python 3.8/3.11 jobs pass all 684 cases, including LFS. The documentation
@@ -57,19 +100,27 @@ are separate from the initial review and were updated on 2026-10-24.
 - [x] Register the additional CircleCI write key with GitHub. The owner added
   it, and its public key is verified in `JrGoodle`'s authentication-key list.
   The working read-only checkout key is separate.
-- [ ] Verify the hosted `test_write` rerun after key registration. Job `2982`
-  is running; the latest-commit workflow queues behind it to serialize fixture
-  writes. See the [preflight record](docs/clowder-transfer-preflight.md#remaining-circleci-key-repair).
+- [x] Verify the hosted `test_write` rerun after key registration. Job `2982`
+  passed all 89 cases with no failures or skips; its GitHub required status is
+  successful. See the [preflight record](docs/clowder-transfer-preflight.md#hosted-circleci-write-validation).
 - [x] Defer Qlty and Codecov at the owner's request. Disable the legacy Code
   Climate webhook, keep coverage uploads disabled, and remove their badges.
   Track reactivation separately below; neither service blocks the transfer.
-- [ ] Confirm retained CircleCI access to `polka-dot-cat`.
-  CircleCI's `test_write` check is still required.
+- [x] Confirm CircleCI's GitHub OAuth organization access to `polka-dot-cat`.
+  The owner confirmed access is granted on October 24.
+- [x] Verify a new hosted CircleCI `test_write` run under `polka-dot-cat`.
+  Job `3009` passes all 89 cases against the published manifests using the
+  native CLI. The unused Codecov orb and upload step have been removed;
+  Codecov remains inactive and organization security is unchanged.
+- [x] Audit canceled CircleCI job `2988`: permanent fixture refs are unchanged.
+  Remove its four temporary prune branches with ref leases and verify cleanup.
 - [x] Defer `clowder.cat` DNS, Pages, and domain-verification work at the owner's
   request. Website availability is not a transfer prerequisite; retain its
   current configuration and track restoration separately below.
-- [ ] Transfer `clowder`, update local remotes, publish the migration changes, and
-  complete the transfer plan's verification checklist.
+- [x] Transfer `clowder`, update the local remote, and merge PR #641. The owner
+  elected to merge before the latest checks completed. Verify repository identity,
+  refs, releases, issue/PR numbers, collaborators, protection, keys, and settings.
+- [ ] Merge the CI cleanup and complete the remaining transfer verification checks.
 
 ## Deferred website work — after transfer
 
@@ -101,6 +152,9 @@ coverage files and storing them as CI artifacts in the meantime.
   Verify default-branch coverage and PR comparisons against the uploaded commit
   before restoring its badge or enabling coverage checks. Review overlap with
   Qlty if both services are enabled.
+
+  For either service, collect Rust CLI coverage separately from Python harness
+  coverage. Python coverage from a native BDD run does not measure the Rust CLI.
 
 ## First: establish a repeatable development baseline
 

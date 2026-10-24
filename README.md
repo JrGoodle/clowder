@@ -4,6 +4,13 @@
 >
 > **herding cats** - An idiom that refers to a frustrating attempt to control or organize a class of entities which are uncontrollable or chaotic
 
+This branch contains the Rust migration in progress. Build the native CLI with
+`cargo build --locked` and run `target/debug/clowder`. See the
+[migration guide](docs/rust-migration.md) for requirements and validation.
+For an optimized build, Cargo installation, or a native archive, use the
+[native installation guide](docs/rust-installation.md).
+The Python installation instructions below describe the existing published release.
+
 |  |  |
 |:-|:-|
 | docs | [Documentation](https://clowder.cat) |

@@ -1,5 +1,38 @@
 # Contributing
 
+## Rust migration branch
+
+The native CLI is built from `src/`. Install the toolchain selected by
+`rust-toolchain.toml`, then run:
+
+```sh
+cargo build --locked
+cargo fmt --check
+cargo clippy --all-targets -- -D warnings
+cargo test --locked
+```
+
+Keep the Gherkin features unchanged. With the existing Python test dependencies
+installed, pytest builds/selects the native CLI by default. An explicit executable
+can select another native build:
+
+```sh
+export CLOWDER_EXECUTABLE="$PWD/target/debug/clowder"
+export PYTHONPATH="$PWD"
+python -m pytest tests/functional -q -m 'not ssh and not offline and not write and not lfs'
+```
+
+Use the interpreter from your test environment. This selection still uses public
+Git repositories. Run offline, LFS, and write scenarios in disposable or serialized
+environments as described in `AGENTS.md`. The Rust unit/integration tests use
+temporary local repositories and do not need credentials or Python.
+To compare behavior with Python, unset `CLOWDER_EXECUTABLE` and set
+`CLOWDER_IMPLEMENTATION=python`.
+
+See [the migration guide](docs/rust-migration.md) and
+[native packaging instructions](docs/rust-installation.md). The legacy setup
+below remains available for the Python behavior reference and published package.
+
 ## Getting Started
 
 Clone the repository:
