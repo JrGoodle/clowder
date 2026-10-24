@@ -80,10 +80,7 @@ Validation so far:
   with the collection fix before the Actions baseline can be marked complete.
 
 The first repaired run also exposed a missing parent temporary directory; that
-setup error is fixed in the published workflow. The collection fix is committed
-locally but has not been pushed: the SSH agent refused signing, and the CLI's
-HTTPS token lacks the `workflow` scope needed to push workflow edits. Publication
-is waiting for the owner to unlock or approve the existing SSH key.
+setup error and the collection fix are now published on the draft PR branch.
 
 ## Pages and DNS
 
@@ -120,27 +117,32 @@ changed during this preflight.
 
 | Service | Evidence | Remaining action |
 | --- | --- | --- |
-| Read the Docs | Project `clowder`, ID `154942`, still points to `https://github.com/JrGoodle/clowder.git`. Last recorded build failed July 9, 2023. Current webhook returns HTTP 400 because no shared secret is configured. | Resync the existing GitHub integration in Read the Docs. Update its repository URL after transfer and verify a build from the merged configuration. |
-| CircleCI | Project `bb8973a7-cc5b-4870-affe-eb39676286fb` still belongs to `JrGoodle`. Recent pipelines fail with `No follower's GitHub token could fetch config.yml`. The webhook itself returns HTTP 200. | Reconnect the authorized GitHub account and review organization access. `ci/circleci: test_write` remains required by branch protection. |
+| Read the Docs | Project `clowder`, ID `154942`, still points to `https://github.com/JrGoodle/clowder.git`. Last recorded build failed July 9, 2023. Its last webhook response was HTTP 400 because no shared secret was configured. | Owner chose to disable it for now. Hook `17286177` is disabled and verified; build badges are removed. The hosted project and build configuration are retained for later reactivation. |
+| CircleCI | Project `bb8973a7-cc5b-4870-affe-eb39676286fb` still belongs to `JrGoodle`. Recent pipelines fail with `No follower's GitHub token could fetch config.yml`. The webhook itself returns HTTP 200. | Owner chose to retain and reconnect it. Refresh the GitHub account permissions and confirm organization access. `ci/circleci: test_write` remains required by branch protection. |
 | Code Climate / Qlty | The old project URL redirects to Qlty's login for the personal-account project. The legacy webhook returns HTTP 200, which does not establish successful analysis. | Review the project and organization access in Qlty; do not treat a badge URL change as a completed migration. |
 | Codecov | Public API reports the personal-account project as inactive and not activated; its last update is January 30, 2024. The CircleCI coverage-upload workflow is commented out. | Decide whether to reactivate reporting after transfer; no active upload was established. |
 | Slack | Existing webhook is active and its last recorded response is HTTP 200. | Retain its configuration through transfer. No test message was sent. |
 | Requires.io | Last delivery was HTTP 405, and the domain now redirects to a sale page. | Owner authorized disabling hook `17286562`. It is disabled, verified, and its obsolete documentation badge is removed in the draft. |
 
-Read the Docs documents the repair under project Settings → Integrations →
-GitHub → **Resync webhook**. Configure the generated shared secret in the
-provider webhook as directed; do not put it in this repository or chat.
+If Read the Docs is reactivated later, update its repository URL and use project
+Settings → Integrations → GitHub → **Resync webhook**. Configure the generated
+shared secret in the provider webhook as directed, then re-enable delivery and
+verify a build. Do not put the secret in this repository or chat.
 [Read the Docs webhook update](https://blog.readthedocs.com/security-update-on-incoming-webhooks/)
 
 The draft also repairs `.readthedocs.yml`: it now declares Ubuntu 24.04 and
 Python 3.11 under `build`, uses the existing pinned requirements, and pins the
 build tools needed by the old package setup. The Actions Ubuntu/Python 3.11 job
-builds the same Sphinx documentation. Account-side resynchronization and the
-first successful hosted Read the Docs build remain separate checks.
+builds the same Sphinx documentation. A hosted Read the Docs build is deferred.
+
+For CircleCI, sign in with the existing GitHub identity and refresh permissions
+in User Settings. Confirm that CircleCI is authorized for `polka-dot-cat` before
+transfer, then verify a new pipeline can load the configuration. The account
+step remains pending. See [CircleCI's permissions guidance](https://circleci.zendesk.com/hc/en-us/articles/360048210711-How-to-Refresh-User-Permissions).
 
 Branch protection still requires CircleCI's `test_write` status in addition to
 the four Actions statuses. No protection, collaborator, OAuth grant, service
-credential, or integration other than Requires.io was changed. No browser
+credential, or integration other than Requires.io and Read the Docs was changed. No browser
 connection is available in this session, so account-side service access must be
 confirmed separately before treating the transfer preflight as complete.
 

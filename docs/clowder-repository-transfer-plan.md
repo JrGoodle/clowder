@@ -68,9 +68,9 @@ Identify which configured services remain active: CircleCI, Read the Docs, Codec
 
 The [service preflight record](clowder-transfer-preflight.md) now contains the
 owner-confirmed Actions/Pages settings, exact DNS cutover, CI repair, and service
-failures that need account-side work. Requires.io was disabled with the owner's
-approval. Keep the remaining service checks distinct from successful GitHub
-webhook delivery.
+failures that need account-side work. Requires.io and Read the Docs were disabled
+with the owner's approval. CircleCI is retained and needs account reconnection.
+Keep the remaining service checks distinct from successful GitHub webhook delivery.
 
 ### 4. Transfer ownership
 
@@ -88,7 +88,11 @@ Leave `JrGoodle/clowder` unused. Creating a replacement repository at that locat
 
 Merge the prepared migration changes and coordinate the test-repository updates. Confirm access, refs, releases, issues, protections, and clone behavior at the new location. Check the old repository redirect.
 
-Verify `clowder.cat`, HTTPS, and a Pages deployment. Update the existing Read the Docs project’s repository URL and verify its build trigger while retaining its documentation address. The repository URL is configured in the project’s settings. [Read the Docs repository setting](https://docs.readthedocs.com/platform/latest/reference/environment-variables.html)
+Verify `clowder.cat`, HTTPS, and a Pages deployment. Read the Docs is disabled for
+now at the owner's request. If reactivated later, update the existing project's
+repository URL, configure the webhook secret, and verify its build trigger while
+retaining its documentation address. The repository URL is configured in the
+project's settings. [Read the Docs repository setting](https://docs.readthedocs.com/platform/latest/reference/environment-variables.html)
 
 Run focused tests for changed names, URLs, and expected output. Verify SSH access separately, and run tests that change remote branches only against the intended test repositories. Keep existing Python and CI defects separate from the migration changes.
 
@@ -117,7 +121,7 @@ If validation fails, restore the affected configuration or revert the migration 
 - [ ] Branch protections and required checks are reviewed under the organization.
 - [ ] Old repository links redirect, and local clones use the new remote.
 - [ ] `clowder.cat` serves the expected site over HTTPS, and Pages can deploy.
-- [ ] The existing Read the Docs project points to the new repository and receives build events.
+- [x] Read the Docs is explicitly deferred; its GitHub webhook is disabled and build badges are removed.
 - [ ] Retained CI and reporting services can access the repository.
 - [ ] Active test manifests and Clowder assertions use the agreed repository mapping.
 - [ ] Focused migration tests pass; any unrelated build or environment failures are recorded separately.

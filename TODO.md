@@ -40,13 +40,15 @@ are separate from the initial review and were updated on 2026-10-23.
 - [ ] Finish validating the repaired Actions baseline; see the
   [preflight record](docs/clowder-transfer-preflight.md) for the matrix and run.
   Both Ubuntu versions passed 681 cases; all three LFS cases passed in Docker.
-  Publish the collection fix once SSH signing is available and verify the full matrix.
+  The collection fix is published; verify the full matrix on the updated branch.
 - [x] Check Actions repository eligibility and effective permissions on existing
   organization repositories; confirm Pages has no verified domain on either account.
 - [x] Inventory service failures and disable the obsolete Requires.io webhook
   with the owner's approval; remove its documentation badge.
-- [ ] Resync Read the Docs' webhook secret, restore CircleCI authorization, and
-  review Qlty/Codecov access or retention. CircleCI's `test_write` check is still required.
+- [x] Disable the Read the Docs webhook and remove its build badges at the owner's
+  request. Retain the project and build configuration for later reactivation.
+- [ ] Restore CircleCI authorization and review Qlty/Codecov access or retention.
+  The owner chose to retain CircleCI; its `test_write` check is still required.
 - [ ] During transfer, update the `www.clowder.cat` CNAME to
   `polka-dot-cat.github.io`; verify the domain under the organization afterward.
 - [ ] Transfer `clowder`, update local remotes, publish the migration changes, and

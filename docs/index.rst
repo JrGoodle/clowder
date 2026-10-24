@@ -29,9 +29,6 @@ clowder
 .. image:: https://img.shields.io/pypi/pyversions/clowder-repo.svg
     :target: https://pypi.python.org/pypi/clowder-repo
 
-.. image:: https://readthedocs.org/projects/clowder/badge/?version=latest
-    :target: http://clowder.readthedocs.io/en/latest/?badge=latest
-
 
 .. toctree::
    :maxdepth: 2
