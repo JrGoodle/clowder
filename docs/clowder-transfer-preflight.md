@@ -167,6 +167,14 @@ SSH remotes, including the remote `pytest*` branch mutations. A CircleCI serial
 group prevents these jobs from concurrently changing the same remote branches.
 Remove the temporary Cats preparation and overrides after manifest cutover.
 
+[Job 2970](https://circleci.com/gh/JrGoodle/clowder/2970) accepted this configuration
+and reached the tests. Its first fixture cleanup was rejected because SSH used
+the read-only checkout key for a remote write. The test command now explicitly
+selects the existing additional key with fingerprint
+`e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20`; host verification remains
+enabled and the checkout key remains read-only. The job reports a clear error
+if that additional key is missing. Full write-test validation remains pending.
+
 Branch protection still requires CircleCI's `test_write` status in addition to
 the four Actions statuses. Protection and collaborator settings are unchanged.
 The owner restored CircleCI authentication and its checkout key; Requires.io and

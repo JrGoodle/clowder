@@ -270,8 +270,14 @@ jobs:
             GIT_CONFIG_KEY_2: protocol.file.allow
             GIT_CONFIG_VALUE_2: always
           command: |
+            write_key="$HOME/.ssh/id_rsa_e97d20a051b29c22f6b95b5547c47c20"
+            if [[ ! -f "$write_key" ]]; then
+              echo 'Missing CircleCI additional SSH key e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20' >&2
+              exit 1
+            fi
+            export GIT_SSH_COMMAND="ssh -F /dev/null -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -i \"$write_key\""
             mkdir -p build/coverage build/junit build/cucumber
-            python -m pytest tests/functional -v -s --exitfirst \
+            python -m pytest tests/functional -v -s --tb=short --exitfirst \
               --basetemp=temp -m 'write and not offline' \
               --cov=clowder --cov-append --cov-config=.coveragerc \
               --cov-report=xml:build/coverage/coverage.write.xml \
