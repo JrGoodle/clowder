@@ -31,7 +31,7 @@ jobs:
       CATS_ALT_BRANCH_SHA: ee065226e79f8001478cae930bbff1a1564befcd
     # Keep the existing required-check names while selecting compatible runners.
     runs-on: ${{ matrix.os == 'macos-latest' && 'macos-15-intel' || 'ubuntu-24.04' }}
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:

@@ -76,8 +76,14 @@ Validation so far:
 - All three LFS cases passed with that fix in a disposable Docker container
   using Python 3.11 and the pinned requirements. No host Git configuration was
   mounted into the container; its system/global LFS changes were isolated.
-- The macOS jobs are still running. The complete matrix needs a hosted rerun
-  with the collection fix before the Actions baseline can be marked complete.
+- In that same run, macOS/Python 3.8 passed all 681 initialization and functional
+  cases, then reached the same GYP collection error. The macOS/Python 3.11 job
+  exceeded the 30-minute limit during functional tests. The workflow now allows
+  60 minutes per job to accommodate the longer macOS runs.
+- With the collection fix, both Ubuntu jobs in
+  [run 40063001549](https://github.com/JrGoodle/clowder/actions/runs/40063001549)
+  succeeded, including their LFS phases. The complete macOS matrix still needs
+  confirmation before the Actions baseline can be marked complete.
 
 The first repaired run also exposed a missing parent temporary directory; that
 setup error and the collection fix are now published on the draft PR branch.

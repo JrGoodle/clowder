@@ -39,8 +39,9 @@ are separate from the initial review and were updated on 2026-10-23.
   public key is already registered and chose to leave host verification pending.
 - [ ] Finish validating the repaired Actions baseline; see the
   [preflight record](docs/clowder-transfer-preflight.md) for the matrix and run.
-  Both Ubuntu versions passed 681 cases; all three LFS cases passed in Docker.
-  The collection fix is published; verify the full matrix on the updated branch.
+  Both Ubuntu jobs now pass all 684 cases, including LFS. The collection fix is
+  published and the job limit is raised to 60 minutes after a macOS timeout;
+  verify the complete macOS matrix on the updated branch.
 - [x] Check Actions repository eligibility and effective permissions on existing
   organization repositories; confirm Pages has no verified domain on either account.
 - [x] Inventory service failures and disable the obsolete Requires.io webhook
