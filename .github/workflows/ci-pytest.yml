@@ -78,7 +78,7 @@ jobs:
         git -C "$RUNNER_TEMP/cats.git" update-ref refs/heads/alt-branch "$CATS_ALT_BRANCH_SHA"
     - name: Run initialization tests against published URLs
       run: |
-        python -m pytest -v -n 4 --exitfirst \
+        python -m pytest tests/functional -v -n 4 --exitfirst \
           --basetemp=temp/init -m 'init and not ssh and not offline and not write' \
           --cov=clowder --cov-append --cov-config=.coveragerc \
           --cov-report=xml:build/coverage/init.xml \
@@ -92,7 +92,7 @@ jobs:
         GIT_CONFIG_KEY_1: protocol.file.allow
         GIT_CONFIG_VALUE_1: always
       run: |
-        python -m pytest -v -n 4 --exitfirst \
+        python -m pytest tests/functional -v -n 4 --exitfirst \
           --basetemp=temp/functional -m 'not init and not ssh and not offline and not write and not lfs' \
           --cov=clowder --cov-append --cov-config=.coveragerc \
           --cov-report=xml:build/coverage/functional.xml \
@@ -109,7 +109,7 @@ jobs:
         for filter in clean smudge process required; do
           sudo git config --system --unset-all "filter.lfs.$filter" || true
         done
-        python -m pytest -v --exitfirst \
+        python -m pytest tests/functional -v --exitfirst \
           --basetemp=temp/lfs -m 'lfs and not ssh and not offline and not write' \
           --cov=clowder --cov-append --cov-config=.coveragerc \
           --cov-report=xml:build/coverage/lfs.xml \
