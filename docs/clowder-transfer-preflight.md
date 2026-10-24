@@ -1,6 +1,6 @@
 # Transfer preflight: Actions, Pages, and integrations
 
-Checked October 23, 2026 (America/Chicago). The main repository is still
+Updated October 24, 2026 (America/Chicago). The main repository is still
 `JrGoodle/clowder`, and [PR #641](https://github.com/JrGoodle/clowder/pull/641)
 remains a draft. This record supplements the
 [transfer plan](clowder-repository-transfer-plan.md) and
@@ -61,7 +61,19 @@ temporary fixture preparation and overrides after the active manifests have
 completed their coordinated cutover; until then, ordinary published Cats names
 remain compatible with existing Clowder versions.
 
-Validation so far:
+The Actions baseline passed at commit `6607ba77` in
+[run 40065003927](https://github.com/JrGoodle/clowder/actions/runs/40065003927).
+All four jobs passed **684 cases each**, with no failures or skips, confirmed
+from their JUnit artifacts. The Ubuntu/Python 3.11 Sphinx build also passed.
+
+| Required check | Result | Job duration |
+| --- | --- | --- |
+| `pytest (ubuntu-latest, 3.8)` | 684 passed | 10m 18s |
+| `pytest (ubuntu-latest, 3.11)` | 684 passed | 11m 04s |
+| `pytest (macos-latest, 3.8)` | 684 passed | 25m 42s |
+| `pytest (macos-latest, 3.11)` | 684 passed | 50m 28s |
+
+Supporting checks and repair history:
 
 - Actionlint and shell checks pass. Collection checks confirm that the three
   groups retain all 684 cases from the previous Actions selection.
@@ -82,8 +94,12 @@ Validation so far:
   60 minutes per job to accommodate the longer macOS runs.
 - With the collection fix, both Ubuntu jobs in
   [run 40063001549](https://github.com/JrGoodle/clowder/actions/runs/40063001549)
-  succeeded, including their LFS phases. The complete macOS matrix still needs
-  confirmation before the Actions baseline can be marked complete.
+  and its macOS/Python 3.11 job passed all 684 cases. The macOS/Python 3.11 job
+  completed in 27 minutes. Its macOS/Python 3.8 functional group
+  stopped when Git could not resolve `github.com` while pulling Duke; its LFS
+  group passed. This was a network failure, separate from the collection fix.
+- The final macOS/Python 3.11 run needed 50 minutes. The 60-minute job limit
+  accommodates this observed duration; the former limit would have cancelled it.
 
 The first repaired run also exposed a missing parent temporary directory; that
 setup error and the collection fix are now published on the draft PR branch.
@@ -124,7 +140,7 @@ changed during this preflight.
 | Service | Evidence | Remaining action |
 | --- | --- | --- |
 | Read the Docs | Project `clowder`, ID `154942`, still points to `https://github.com/JrGoodle/clowder.git`. Last recorded build failed July 9, 2023. Its last webhook response was HTTP 400 because no shared secret was configured. | Owner chose to disable it for now. Hook `17286177` is disabled and verified; build badges are removed. The hosted project and build configuration are retained for later reactivation. |
-| CircleCI | Project `bb8973a7-cc5b-4870-affe-eb39676286fb` still belongs to `JrGoodle`. Account authorization and read-only checkout key `167499686` are restored. Job `2968` passed checkout and dependency setup, then failed because the legacy Code Climate reporter download returned HTML. | Owner chose to retain it. Validate the repaired write-test job and confirm organization access before transfer. `ci/circleci: test_write` remains required by branch protection. |
+| CircleCI | Account authorization and read-only checkout key `167499686` are restored. The retired reporter was removed from the active job. Job `2976` reaches the write-access preflight, where GitHub rejects the separate additional SSH key. | Restore the additional key's GitHub access, validate the 89 hosted write cases, and confirm organization access. `ci/circleci: test_write` remains required. |
 | Code Climate / Qlty | The old project URL redirects to Qlty's login for the personal-account project. The legacy webhook returns HTTP 200, which does not establish successful analysis. | Review the project and organization access in Qlty; do not treat a badge URL change as a completed migration. |
 | Codecov | Public API reports the personal-account project as inactive and not activated; its last update is January 30, 2024. The CircleCI coverage-upload workflow is commented out. | Decide whether to reactivate reporting after transfer; no active upload was established. |
 | Slack | Existing webhook is active and its last recorded response is HTTP 200. | Retain its configuration through transfer. No test message was sent. |
@@ -173,7 +189,57 @@ the read-only checkout key for a remote write. The test command now explicitly
 selects the existing additional key with fingerprint
 `e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20`; host verification remains
 enabled and the checkout key remains read-only. The job reports a clear error
-if that additional key is missing. Full write-test validation remains pending.
+if that additional key is missing.
+
+### Remaining CircleCI key repair
+
+[Job 2976](https://circleci.com/gh/JrGoodle/clowder/2976), at commit `6607ba77`,
+confirms that the additional key is present, but GitHub rejects it with
+`Permission denied (publickey)`. The job now checks write access with dry-run
+pushes before starting tests, so this failed attempt changed no remote branches.
+Its public key is not in the public authentication-key list for `JrGoodle`.
+
+The job exports only the public half as
+[`build/circleci-write-key.pub`](https://output.circle-artifacts.com/output/job/41f911c7-6fac-4e43-9f5a-0d6a2ab5a2fb/artifacts/0/build/circleci-write-key.pub).
+A durable local copy is in the evidence directory below. It is a 3072-bit RSA
+key with these fingerprints:
+
+```text
+SHA256:ky3y4jmLAltsuPekEZtFmkX4Y1rXnfHTV2j0B7ns4mY
+MD5:e9:7d:20:a0:51:b2:9c:22:f6:b9:5b:55:47:c4:7c:20
+```
+
+To restore the existing key, add that public key under GitHub **Settings → SSH
+and GPG keys → New SSH key**, selecting **Authentication Key**. Use an account
+with write access to `polka-dot-cat/mu`, `duke`, `kishka`, `kit`, `sasha`, and
+`june`. An account key inherits that account's repository access; a dedicated CI
+account limited to these fixtures is an alternative to the owner's account.
+The private key already exists in CircleCI. Keep the working Clowder checkout
+deploy key read-only.
+[GitHub key setup](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account),
+[CircleCI additional keys](https://circleci.com/docs/guides/integration/add-ssh-key/).
+
+If replacing the key instead, add the replacement through CircleCI project
+**Settings → SSH Keys → Additional SSH Keys** for `github.com`, register its
+public half with the intended GitHub account, and update both `add_ssh_keys`
+and the selected key filename in `.circleci/config.yml`. Rerun the latest
+pipeline and confirm all six dry-run access checks and all 89 write cases pass.
+The current CLI lacks authentication-key write scope, and this session has no
+authenticated CircleCI API or connected browser, so account repair remains open.
+
+### Isolated write-test result
+
+All **89 write cases passed** at commit `6607ba77` in 100.93 seconds using
+Python 3.11 and the pinned requirements in a disposable Docker container. The
+container used local bare copies of Cats and its six child repositories; Cats
+used the staged migration commits. Its network was disabled. A listener on the
+container's loopback interface satisfied Clowder's connectivity probe. Source
+code was unchanged, and no host Git configuration or credentials were mounted.
+
+This validates the migration assertions and Git branch operations against the
+copied histories. It does not validate GitHub SSH authorization or replace the
+required hosted CircleCI check. JUnit, Cucumber, build inputs, and the test log
+are saved in the evidence directory.
 
 Branch protection still requires CircleCI's `test_write` status in addition to
 the four Actions statuses. Protection and collaborator settings are unchanged.
@@ -188,3 +254,12 @@ Redacted inventories, owner confirmations, DNS observations, workflow metadata,
 test reports, and service responses are saved outside the repository under
 `../clowder-transfer-backups/20261024T023608Z/service-preflight-uds_8n9d/`.
 Webhook secrets and full webhook URLs were not copied into this record.
+
+The October 24 refresh adds `clowder-pre-transfer-20261024.bundle`, verified with
+`git bundle verify` and restored to a separate bare clone that passes
+`git fsck --full`, plus a separate settings/ref inventory located by
+`pre-transfer-refresh-path.txt`. All 78 original release assets still match
+their saved sizes and SHA-256 hashes. The original mirror and inventories are
+retained. The only added Clowder branch is `codex-cleanup`; existing branch and
+tag refs, release/asset identities, and branch protection match the original
+inventory. Published Cats refs and GYP's required `fork-branch` are unchanged.

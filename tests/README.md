@@ -58,6 +58,12 @@ cases. It rewrites only the root Cats SSH/HTTPS URLs; child repositories retain
 their GitHub SSH remotes and the tests can create/delete remote `pytest*` branches.
 A CircleCI serial group prevents concurrent write-test jobs. Coverage, JUnit,
 and Cucumber reports are stored as artifacts without the legacy Code Climate reporter.
+The job explicitly selects its additional SSH key and checks write access to all
+six child repositories with dry-run pushes before running tests. Its checkout
+deploy key stays read-only. See the
+[key repair record](../docs/clowder-transfer-preflight.md#remaining-circleci-key-repair)
+for the current authorization blocker; the isolated 89-case run does not validate
+hosted SSH access.
 
 ### Felidae, submodules, and Beanstalk
 

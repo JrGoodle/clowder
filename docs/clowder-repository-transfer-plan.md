@@ -71,6 +71,9 @@ owner-confirmed Actions/Pages settings, exact DNS cutover, CI repair, and servic
 failures that need account-side work. Requires.io and Read the Docs were disabled
 with the owner's approval. CircleCI is retained; account access and checkout are
 restored, while its repaired write-test job still needs validation.
+GitHub rejects that job's separate additional SSH key; the preflight record
+contains its public key fingerprint and exact account repair steps. All 89 write
+cases pass against isolated local fixtures, but hosted SSH validation is pending.
 Keep the remaining service checks distinct from successful GitHub webhook delivery.
 
 ### 4. Transfer ownership

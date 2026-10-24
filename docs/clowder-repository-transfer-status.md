@@ -1,6 +1,6 @@
 # Repository transfer progress
 
-Updated October 23, 2026 (America/Chicago). Follow the
+Updated October 24, 2026 (America/Chicago). Follow the
 [transfer plan](clowder-repository-transfer-plan.md) for the full sequence.
 
 ## Current state
@@ -50,6 +50,10 @@ contains its absolute path. Keep these backups outside the repository.
 - Test collection, dependency analysis, and validation logs are saved beside the
   backups. The GitHub inventory is a configuration snapshot, not a complete
   export of issue comments or other GitHub application data.
+- The October 24 preflight refresh adds a verified Git bundle through commit
+  `6607ba77` and a fresh settings/ref inventory, without replacing the original
+  backups. All 78 release assets still match their recorded sizes and hashes.
+  See the [preflight evidence paths](clowder-transfer-preflight.md#evidence).
 
 ## Repository mapping
 
@@ -326,23 +330,31 @@ has [Actions run 40058163818](https://github.com/JrGoodle/clowder/actions/runs/4
 which failed before tests because the workflow used deprecated
 `actions/upload-artifact@v2`; the other matrix jobs were cancelled. The subsequent
 [preflight repair](clowder-transfer-preflight.md#github-actions) updates the
-workflow and preserves the existing required-check names. CircleCI's required
+workflow and preserves the existing required-check names. At `6607ba77`, all
+four Actions jobs pass all 684 cases, including LFS, and the Ubuntu/Python 3.11
+documentation build passes. Reports are saved in the preflight evidence directory.
+CircleCI's required
 `test_write` check now loads its configuration and checks out the repository with
 the restored deploy key. Its active test job was repaired after the legacy
-Code Climate reporter returned HTML; the 89 write cases still need validation.
+Code Climate reporter returned HTML. All 89 write cases passed against local
+bare fixture copies in an isolated
+Python 3.11 container with networking disabled. The hosted job remains blocked:
+GitHub rejects CircleCI's separate additional SSH key during the new dry-run
+write-access check. The working checkout key remains read-only. See the
+[key repair steps](clowder-transfer-preflight.md#remaining-circleci-key-repair).
 
 ## Remaining transfer steps
 
-1. Confirm the corrected Actions run and complete the service account checks in
-   the [preflight record](clowder-transfer-preflight.md). Beanstalk access remains
+1. The corrected Actions baseline is verified. Complete the service account
+   checks in the [preflight record](clowder-transfer-preflight.md). Beanstalk access remains
    pending at the owner's request.
    Keep the staged Cats manifests off the active branches until PR #641 merges;
    use the recorded cutover sequence at merge.
 2. Coordinate the `www.clowder.cat` CNAME change from `jrgoodle.github.io` to
    `polka-dot-cat.github.io` with transfer. The owner confirmed no verified Pages
    domains on either account. Add organization verification after the transfer.
-3. Validate the retained CircleCI job and review CircleCI/Qlty organization
-   access. Codecov is inactive. Requires.io and Read the Docs are disabled;
-   Slack remains configured.
+3. Restore CircleCI's additional key authorization, validate its hosted write
+   job, and review CircleCI/Qlty organization access. Codecov is inactive.
+   Requires.io and Read the Docs are disabled; Slack remains configured.
 4. Transfer the main repository, update local remotes, publish the prepared patch,
    and complete the [plan's completion checks](clowder-repository-transfer-plan.md#completion-checks).

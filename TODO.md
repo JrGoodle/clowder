@@ -13,7 +13,7 @@ contain `pass` are not automatically missing implementations.
 
 Follow the [transfer plan](docs/clowder-repository-transfer-plan.md) and
 [progress record](docs/clowder-repository-transfer-status.md). The checks below
-are separate from the initial review and were updated on 2026-10-23.
+are separate from the initial review and were updated on 2026-10-24.
 
 - [x] Save the Clowder Git mirror, LFS objects, release assets, and settings inventory.
 - [x] Transfer `felidae` to `polka-dot-cat` and verify its ID, branches, tags, and redirect.
@@ -37,11 +37,10 @@ are separate from the initial review and were updated on 2026-10-23.
 - [ ] Verify Beanstalk's server host key, then check SSH access and run the 28
   explicit source-URL cases. Retain Beanstalk; the owner confirmed the account
   public key is already registered and chose to leave host verification pending.
-- [ ] Finish validating the repaired Actions baseline; see the
-  [preflight record](docs/clowder-transfer-preflight.md) for the matrix and run.
-  Both Ubuntu jobs now pass all 684 cases, including LFS. The collection fix is
-  published and the job limit is raised to 60 minutes after a macOS timeout;
-  verify the complete macOS matrix on the updated branch.
+- [x] Validate the repaired Actions baseline. At `6607ba77`, all four Ubuntu/macOS
+  and Python 3.8/3.11 jobs pass all 684 cases, including LFS. The documentation
+  build passes too. The [preflight record](docs/clowder-transfer-preflight.md)
+  links the run and its verified reports. The longest job needed 50 minutes.
 - [x] Check Actions repository eligibility and effective permissions on existing
   organization repositories; confirm Pages has no verified domain on either account.
 - [x] Inventory service failures and disable the obsolete Requires.io webhook
@@ -52,9 +51,14 @@ are separate from the initial review and were updated on 2026-10-23.
   loads the configuration and publishes the required status after the owner signed in.
 - [x] Restore CircleCI's checkout/deploy key. The owner recreated it; GitHub
   confirms read-only deploy key `167499686`, titled `CircleCI`.
-- [ ] Verify the repaired `test_write` job. Job `2968` passed checkout and setup,
-  then hit a retired Code Climate reporter download. The active job now runs all
-  89 cases directly against the staged Cats manifests and retains coverage artifacts.
+- [x] Repair CircleCI's active write job to avoid the retired Code Climate
+  reporter, select the additional SSH key, check write access before tests, and
+  serialize remote branch mutations. All 89 cases pass against isolated local copies.
+- [ ] Restore the additional CircleCI key's GitHub access and verify the hosted
+  `test_write` job. Job `2976` fails its dry-run access check with `Permission
+  denied (publickey)`. The public key, fingerprints, and account repair steps are
+  in the [preflight record](docs/clowder-transfer-preflight.md#remaining-circleci-key-repair).
+  The working read-only checkout key is separate. Hosted write validation remains pending.
 - [ ] Confirm retained CircleCI access to `polka-dot-cat` and review Qlty/Codecov
   access or retention. CircleCI's `test_write` check is still required.
 - [ ] During transfer, update the `www.clowder.cat` CNAME to
@@ -84,10 +88,11 @@ are separate from the initial review and were updated on 2026-10-23.
 - [ ] **Establish and record a CI baseline.** In
   [.circleci/config.yml](.circleci/config.yml), only `test_write` is enabled in
   the workflow; offline, parallel, and combined coverage jobs are commented out.
-  [GitHub Actions](.github/workflows/ci-pytest.yml) excludes SSH/offline tests and
-  uses older action versions. Update and validate the retained jobs, restore or
-  explicitly retire disabled coverage, and record results for the chosen platform
-  matrix. Fix or retire [AppVeyor](appveyor.yml), which uses an incomplete
+  [GitHub Actions](.github/workflows/ci-pytest.yml) excludes SSH/offline tests; its
+  action versions and setup were repaired during the transfer preflight. Finish
+  validating retained jobs, restore or explicitly retire disabled coverage, and
+  record results for the chosen platform matrix. Fix or retire
+  [AppVeyor](appveyor.yml), which uses an incomplete
   `pip3 install -e` command and an absent `examples/cats` directory.
 
 ## Next: fix incomplete or inconsistent behavior
