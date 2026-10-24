@@ -327,7 +327,8 @@ which failed before tests because the workflow used deprecated
 `actions/upload-artifact@v2`; the other matrix jobs were cancelled. The subsequent
 [preflight repair](clowder-transfer-preflight.md#github-actions) updates the
 workflow and preserves the existing required-check names. CircleCI's required
-`test_write` check remains blocked by its GitHub account authorization.
+`test_write` check now loads its configuration. The owner restored its missing
+checkout deploy key; the job still needs validation with that key.
 
 ## Remaining transfer steps
 
@@ -339,7 +340,7 @@ workflow and preserves the existing required-check names. CircleCI's required
 2. Coordinate the `www.clowder.cat` CNAME change from `jrgoodle.github.io` to
    `polka-dot-cat.github.io` with transfer. The owner confirmed no verified Pages
    domains on either account. Add organization verification after the transfer.
-3. Reconnect the retained CircleCI integration and review Qlty organization
+3. Validate the retained CircleCI job and review CircleCI/Qlty organization
    access. Codecov is inactive. Requires.io and Read the Docs are disabled;
    Slack remains configured.
 4. Transfer the main repository, update local remotes, publish the prepared patch,

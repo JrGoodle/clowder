@@ -124,7 +124,7 @@ changed during this preflight.
 | Service | Evidence | Remaining action |
 | --- | --- | --- |
 | Read the Docs | Project `clowder`, ID `154942`, still points to `https://github.com/JrGoodle/clowder.git`. Last recorded build failed July 9, 2023. Its last webhook response was HTTP 400 because no shared secret was configured. | Owner chose to disable it for now. Hook `17286177` is disabled and verified; build badges are removed. The hosted project and build configuration are retained for later reactivation. |
-| CircleCI | Project `bb8973a7-cc5b-4870-affe-eb39676286fb` still belongs to `JrGoodle`. Recent pipelines fail with `No follower's GitHub token could fetch config.yml`. The webhook itself returns HTTP 200. | Owner chose to retain and reconnect it. Refresh the GitHub account permissions and confirm organization access. `ci/circleci: test_write` remains required by branch protection. |
+| CircleCI | Project `bb8973a7-cc5b-4870-affe-eb39676286fb` still belongs to `JrGoodle`. After the owner signed in, pipeline `1578` loaded the configuration and started `test_write`. Job `2967` failed checkout with `Permission denied (publickey)`. The owner then recreated its deploy key; GitHub confirms key `167499686`, titled `CircleCI`, with read-only access. | Owner chose to retain it. Verify the job with the restored key and confirm organization access before transfer. `ci/circleci: test_write` remains required by branch protection. |
 | Code Climate / Qlty | The old project URL redirects to Qlty's login for the personal-account project. The legacy webhook returns HTTP 200, which does not establish successful analysis. | Review the project and organization access in Qlty; do not treat a badge URL change as a completed migration. |
 | Codecov | Public API reports the personal-account project as inactive and not activated; its last update is January 30, 2024. The CircleCI coverage-upload workflow is commented out. | Decide whether to reactivate reporting after transfer; no active upload was established. |
 | Slack | Existing webhook is active and its last recorded response is HTTP 200. | Retain its configuration through transfer. No test message was sent. |
@@ -141,14 +141,21 @@ Python 3.11 under `build`, uses the existing pinned requirements, and pins the
 build tools needed by the old package setup. The Actions Ubuntu/Python 3.11 job
 builds the same Sphinx documentation. A hosted Read the Docs build is deferred.
 
-For CircleCI, sign in with the existing GitHub identity and refresh permissions
-in User Settings. Confirm that CircleCI is authorized for `polka-dot-cat` before
-transfer, then verify a new pipeline can load the configuration. The account
-step remains pending. See [CircleCI's permissions guidance](https://circleci.zendesk.com/hc/en-us/articles/360048210711-How-to-Refresh-User-Permissions).
+CircleCI's configuration-fetch authorization is now restored. A fresh push of
+`b4a8015e` created pipeline `1578` without the earlier follower-token error and
+published the required GitHub status. [Job 2967](https://circleci.com/gh/JrGoodle/clowder/2967)
+failed before tests because its checkout SSH key was rejected; GitHub listed no
+deploy keys at that time. The owner recreated the repository checkout/deploy key
+through CircleCI. GitHub confirms read-only key `167499686`, created at
+`2026-10-24T04:53:21Z`. The separate Additional SSH Keys were left unchanged.
+The checkout-key API requires CircleCI authentication and returned HTTP 403 in
+this session. Validate the job and confirm `polka-dot-cat` access before transfer.
+See [CircleCI's checkout-key API](https://circleci.com/docs/api/v2/#tag/Project/operation/createCheckoutKey).
 
 Branch protection still requires CircleCI's `test_write` status in addition to
-the four Actions statuses. No protection, collaborator, OAuth grant, service
-credential, or integration other than Requires.io and Read the Docs was changed. No browser
+the four Actions statuses. Protection and collaborator settings are unchanged.
+The owner restored CircleCI authentication and its checkout key; Requires.io and
+Read the Docs webhooks were disabled with approval. No browser
 connection is available in this session, so account-side service access must be
 confirmed separately before treating the transfer preflight as complete.
 

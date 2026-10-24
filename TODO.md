@@ -48,8 +48,14 @@ are separate from the initial review and were updated on 2026-10-23.
   with the owner's approval; remove its documentation badge.
 - [x] Disable the Read the Docs webhook and remove its build badges at the owner's
   request. Retain the project and build configuration for later reactivation.
-- [ ] Restore CircleCI authorization and review Qlty/Codecov access or retention.
-  The owner chose to retain CircleCI; its `test_write` check is still required.
+- [x] Restore CircleCI's GitHub configuration-fetch authorization. Pipeline `1578`
+  loads the configuration and publishes the required status after the owner signed in.
+- [x] Restore CircleCI's checkout/deploy key. The owner recreated it; GitHub
+  confirms read-only deploy key `167499686`, titled `CircleCI`.
+- [ ] Verify `test_write` with the restored checkout key. Job `2967` failed
+  checkout before the replacement key was registered.
+- [ ] Confirm retained CircleCI access to `polka-dot-cat` and review Qlty/Codecov
+  access or retention. CircleCI's `test_write` check is still required.
 - [ ] During transfer, update the `www.clowder.cat` CNAME to
   `polka-dot-cat.github.io`; verify the domain under the organization afterward.
 - [ ] Transfer `clowder`, update local remotes, publish the migration changes, and
