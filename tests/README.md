@@ -53,6 +53,12 @@ cases run serially afterward on each disposable runner. Remove the workflow's
 temporary fixture pins and overrides once the active manifests are published.
 See the [CI preflight record](../docs/clowder-transfer-preflight.md#github-actions).
 
+CircleCI's active `test_write` job uses the same staged Cats commits for its 89
+cases. It rewrites only the root Cats SSH/HTTPS URLs; child repositories retain
+their GitHub SSH remotes and the tests can create/delete remote `pytest*` branches.
+A CircleCI serial group prevents concurrent write-test jobs. Coverage, JUnit,
+and Cucumber reports are stored as artifacts without the legacy Code Climate reporter.
+
 ### Felidae, submodules, and Beanstalk
 
 The GitHub YAML fixtures use `polka-dot-cat/felidae`. Its active `master` and

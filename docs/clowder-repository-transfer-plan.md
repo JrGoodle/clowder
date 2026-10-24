@@ -69,7 +69,8 @@ Identify which configured services remain active: CircleCI, Read the Docs, Codec
 The [service preflight record](clowder-transfer-preflight.md) now contains the
 owner-confirmed Actions/Pages settings, exact DNS cutover, CI repair, and service
 failures that need account-side work. Requires.io and Read the Docs were disabled
-with the owner's approval. CircleCI is retained and needs account reconnection.
+with the owner's approval. CircleCI is retained; account access and checkout are
+restored, while its repaired write-test job still needs validation.
 Keep the remaining service checks distinct from successful GitHub webhook delivery.
 
 ### 4. Transfer ownership

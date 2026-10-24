@@ -124,7 +124,7 @@ changed during this preflight.
 | Service | Evidence | Remaining action |
 | --- | --- | --- |
 | Read the Docs | Project `clowder`, ID `154942`, still points to `https://github.com/JrGoodle/clowder.git`. Last recorded build failed July 9, 2023. Its last webhook response was HTTP 400 because no shared secret was configured. | Owner chose to disable it for now. Hook `17286177` is disabled and verified; build badges are removed. The hosted project and build configuration are retained for later reactivation. |
-| CircleCI | Project `bb8973a7-cc5b-4870-affe-eb39676286fb` still belongs to `JrGoodle`. After the owner signed in, pipeline `1578` loaded the configuration and started `test_write`. Job `2967` failed checkout with `Permission denied (publickey)`. The owner then recreated its deploy key; GitHub confirms key `167499686`, titled `CircleCI`, with read-only access. | Owner chose to retain it. Verify the job with the restored key and confirm organization access before transfer. `ci/circleci: test_write` remains required by branch protection. |
+| CircleCI | Project `bb8973a7-cc5b-4870-affe-eb39676286fb` still belongs to `JrGoodle`. Account authorization and read-only checkout key `167499686` are restored. Job `2968` passed checkout and dependency setup, then failed because the legacy Code Climate reporter download returned HTML. | Owner chose to retain it. Validate the repaired write-test job and confirm organization access before transfer. `ci/circleci: test_write` remains required by branch protection. |
 | Code Climate / Qlty | The old project URL redirects to Qlty's login for the personal-account project. The legacy webhook returns HTTP 200, which does not establish successful analysis. | Review the project and organization access in Qlty; do not treat a badge URL change as a completed migration. |
 | Codecov | Public API reports the personal-account project as inactive and not activated; its last update is January 30, 2024. The CircleCI coverage-upload workflow is commented out. | Decide whether to reactivate reporting after transfer; no active upload was established. |
 | Slack | Existing webhook is active and its last recorded response is HTTP 200. | Retain its configuration through transfer. No test message was sent. |
@@ -151,6 +151,21 @@ through CircleCI. GitHub confirms read-only key `167499686`, created at
 The checkout-key API requires CircleCI authentication and returned HTTP 403 in
 this session. Validate the job and confirm `polka-dot-cat` access before transfer.
 See [CircleCI's checkout-key API](https://circleci.com/docs/api/v2/#tag/Project/operation/createCheckoutKey).
+
+[Job 2968](https://circleci.com/gh/JrGoodle/clowder/2968) confirms checkout,
+additional-key loading, Git setup, and dependency installation now succeed.
+It stopped before tests when the old Code Climate download returned an HTML
+404 page. The active `test_write` job now invokes pytest directly and retains
+JUnit, Cucumber, and coverage artifacts without requiring that reporter. The
+separate coverage-upload workflow remains disabled; no Qlty or Codecov account
+settings or webhooks were changed.
+
+The job retains all 89 `write and not offline` cases. Like Actions, it uses a
+temporary bare Cats clone pinned to the staged migration commits. Only the root
+Cats SSH/HTTPS URLs are rewritten; child repositories still use their GitHub
+SSH remotes, including the remote `pytest*` branch mutations. A CircleCI serial
+group prevents these jobs from concurrently changing the same remote branches.
+Remove the temporary Cats preparation and overrides after manifest cutover.
 
 Branch protection still requires CircleCI's `test_write` status in addition to
 the four Actions statuses. Protection and collaborator settings are unchanged.

@@ -327,8 +327,9 @@ which failed before tests because the workflow used deprecated
 `actions/upload-artifact@v2`; the other matrix jobs were cancelled. The subsequent
 [preflight repair](clowder-transfer-preflight.md#github-actions) updates the
 workflow and preserves the existing required-check names. CircleCI's required
-`test_write` check now loads its configuration. The owner restored its missing
-checkout deploy key; the job still needs validation with that key.
+`test_write` check now loads its configuration and checks out the repository with
+the restored deploy key. Its active test job was repaired after the legacy
+Code Climate reporter returned HTML; the 89 write cases still need validation.
 
 ## Remaining transfer steps
 

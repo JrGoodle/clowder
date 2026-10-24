@@ -52,8 +52,9 @@ are separate from the initial review and were updated on 2026-10-23.
   loads the configuration and publishes the required status after the owner signed in.
 - [x] Restore CircleCI's checkout/deploy key. The owner recreated it; GitHub
   confirms read-only deploy key `167499686`, titled `CircleCI`.
-- [ ] Verify `test_write` with the restored checkout key. Job `2967` failed
-  checkout before the replacement key was registered.
+- [ ] Verify the repaired `test_write` job. Job `2968` passed checkout and setup,
+  then hit a retired Code Climate reporter download. The active job now runs all
+  89 cases directly against the staged Cats manifests and retains coverage artifacts.
 - [ ] Confirm retained CircleCI access to `polka-dot-cat` and review Qlty/Codecov
   access or retention. CircleCI's `test_write` check is still required.
 - [ ] During transfer, update the `www.clowder.cat` CNAME to

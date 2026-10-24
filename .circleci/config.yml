@@ -243,16 +243,46 @@ jobs:
   test_write:
     docker:
       - image: cimg/python:3.8.16
+    environment:
+      CATS_MASTER_SHA: 6767bc8cb483775cb13ecdf9ac50bb24307f2130
+      CATS_ALT_BRANCH_SHA: ee065226e79f8001478cae930bbff1a1564befcd
     steps:
       - checkout
       - setup_ssh
       - install_git_lfs
       - setup_git_config
       - run: script/cibuild
-      - install_code_climate
-      - test:
-          markers: write and not offline
-          label: write
+      # Keep published fixture names compatible until the migration PR merges.
+      - run:
+          name: Prepare staged Cats fixtures
+          command: |
+            git clone --bare https://github.com/polka-dot-cat/cats.git /tmp/clowder-cats.git
+            git -C /tmp/clowder-cats.git update-ref refs/heads/master "$CATS_MASTER_SHA"
+            git -C /tmp/clowder-cats.git update-ref refs/heads/alt-branch "$CATS_ALT_BRANCH_SHA"
+      - run:
+          name: Run write tests against staged manifests
+          environment:
+            GIT_CONFIG_COUNT: '3'
+            GIT_CONFIG_KEY_0: url.file:///tmp/clowder-cats.git.insteadOf
+            GIT_CONFIG_VALUE_0: git@github.com:polka-dot-cat/cats.git
+            GIT_CONFIG_KEY_1: url.file:///tmp/clowder-cats.git.insteadOf
+            GIT_CONFIG_VALUE_1: https://github.com/polka-dot-cat/cats.git
+            GIT_CONFIG_KEY_2: protocol.file.allow
+            GIT_CONFIG_VALUE_2: always
+          command: |
+            mkdir -p build/coverage build/junit build/cucumber
+            python -m pytest tests/functional -v -s --exitfirst \
+              --basetemp=temp -m 'write and not offline' \
+              --cov=clowder --cov-append --cov-config=.coveragerc \
+              --cov-report=xml:build/coverage/coverage.write.xml \
+              --cov-report=html:build/coverage/html.write \
+              --cov-report=annotate:build/coverage/annotate.write \
+              --junitxml=build/junit/results.write.xml \
+              --cucumberjson=build/cucumber/results.write.json
+      - store_test_results:
+          path: build/junit/
+      - store_artifacts:
+          path: build
   test_offline:
     machine: true
     steps:
@@ -289,7 +319,9 @@ jobs:
 workflows:
   pytest:
     jobs:
-      - test_write
+      - test_write:
+          # These cases share remote pytest branches in the example repositories.
+          serial-group: << pipeline.project.slug >>/test-write
       # FIXME: Re-enable these tests
       # - test_offline
       # - test_parallel:
