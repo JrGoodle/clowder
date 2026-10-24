@@ -54,20 +54,33 @@ are separate from the initial review and were updated on 2026-10-24.
 - [x] Repair CircleCI's active write job to avoid the retired Code Climate
   reporter, select the additional SSH key, check write access before tests, and
   serialize remote branch mutations. All 89 cases pass against isolated local copies.
-- [ ] Restore the additional CircleCI key's GitHub access and verify the hosted
-  `test_write` job. Job `2976` fails its dry-run access check with `Permission
-  denied (publickey)`. The public key, fingerprints, and account repair steps are
-  in the [preflight record](docs/clowder-transfer-preflight.md#remaining-circleci-key-repair).
-  The working read-only checkout key is separate. Hosted write validation remains pending.
+- [x] Register the additional CircleCI write key with GitHub. The owner added
+  it, and its public key is verified in `JrGoodle`'s authentication-key list.
+  The working read-only checkout key is separate.
+- [ ] Verify the hosted `test_write` rerun after key registration. Job `2982`
+  is running; the latest-commit workflow queues behind it to serialize fixture
+  writes. See the [preflight record](docs/clowder-transfer-preflight.md#remaining-circleci-key-repair).
 - [x] Defer Qlty and Codecov at the owner's request. Disable the legacy Code
   Climate webhook, keep coverage uploads disabled, and remove their badges.
   Track reactivation separately below; neither service blocks the transfer.
 - [ ] Confirm retained CircleCI access to `polka-dot-cat`.
   CircleCI's `test_write` check is still required.
-- [ ] During transfer, update the `www.clowder.cat` CNAME to
-  `polka-dot-cat.github.io`; verify the domain under the organization afterward.
+- [x] Defer `clowder.cat` DNS, Pages, and domain-verification work at the owner's
+  request. Website availability is not a transfer prerequisite; retain its
+  current configuration and track restoration separately below.
 - [ ] Transfer `clowder`, update local remotes, publish the migration changes, and
   complete the transfer plan's verification checklist.
+
+## Deferred website work — after transfer
+
+- [ ] **Restore and verify `clowder.cat` under `polka-dot-cat`.** Review the
+  retained `gh-pages` source and custom-domain configuration, update the
+  `www.clowder.cat` CNAME from `jrgoodle.github.io` to `polka-dot-cat.github.io`,
+  and verify `clowder.cat` in the organization's Pages settings with GitHub's
+  supplied TXT record. Confirm a Pages deployment, HTTPS/certificate coverage,
+  and the expected site at both the apex and `www` hostnames. Website repair
+  can wait until after the repository move; availability is not required to
+  complete the transfer.
 
 ## Deferred reporting integrations — after transfer
 

@@ -338,9 +338,10 @@ CircleCI's required
 the restored deploy key. Its active test job was repaired after the legacy
 Code Climate reporter returned HTML. All 89 write cases passed against local
 bare fixture copies in an isolated
-Python 3.11 container with networking disabled. The hosted job remains blocked:
-GitHub rejects CircleCI's separate additional SSH key during the new dry-run
-write-access check. The working checkout key remains read-only. See the
+Python 3.11 container with networking disabled. The owner subsequently registered
+CircleCI's separate additional public key with GitHub; the registration was
+verified, and hosted rerun `2982` is running. Hosted write validation remains
+pending. The working checkout key remains read-only. See the
 [key repair steps](clowder-transfer-preflight.md#remaining-circleci-key-repair).
 
 ## Remaining transfer steps
@@ -350,13 +351,16 @@ write-access check. The working checkout key remains read-only. See the
    pending at the owner's request.
    Keep the staged Cats manifests off the active branches until PR #641 merges;
    use the recorded cutover sequence at merge.
-2. Coordinate the `www.clowder.cat` CNAME change from `jrgoodle.github.io` to
-   `polka-dot-cat.github.io` with transfer. The owner confirmed no verified Pages
-   domains on either account. Add organization verification after the transfer.
-3. Restore CircleCI's additional key authorization, validate its hosted write
-   job, and confirm CircleCI organization access. Qlty and Codecov are deferred
+2. Validate CircleCI's hosted write rerun and confirm organization access.
+   Qlty and Codecov are deferred
    to separate [TODOs](https://github.com/polka-dot-cat/clowder/blob/master/TODO.md#deferred-reporting-integrations--after-transfer);
    their upload workflow remains disabled and the legacy Code Climate webhook
    is disabled. Requires.io and Read the Docs are disabled; Slack remains configured.
-4. Transfer the main repository, update local remotes, publish the prepared patch,
+3. Transfer the main repository, update local remotes, publish the prepared patch,
    and complete the [plan's completion checks](clowder-repository-transfer-plan.md#completion-checks).
+
+The owner has deferred `clowder.cat` DNS changes, Pages/domain verification,
+and website restoration to a separate
+[TODO](https://github.com/polka-dot-cat/clowder/blob/master/TODO.md#deferred-website-work--after-transfer).
+Retain the current configuration during the move. Website availability is not
+a transfer prerequisite; the site can be restored later.

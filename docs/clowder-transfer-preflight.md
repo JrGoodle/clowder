@@ -106,6 +106,12 @@ setup error and the collection fix are now published on the draft PR branch.
 
 ## Pages and DNS
 
+The owner has deferred website work until after the repository transfer.
+DNS changes, Pages verification, HTTPS checks, and website restoration are not
+transfer prerequisites. Keep the existing configuration for the
+[website follow-up](https://github.com/polka-dot-cat/clowder/blob/master/TODO.md#deferred-website-work--after-transfer);
+the site may be unavailable until that work is complete.
+
 The owner confirmed that neither the personal account nor `polka-dot-cat` has
 any verified Pages domains. There is no existing verification claim to migrate.
 The repository's Pages API reports:
@@ -120,17 +126,17 @@ DNS is hosted by Hover (`ns1.hover.com`, `ns2.hover.com`). The apex uses GitHub'
 four IPv4 addresses, and no AAAA record was returned. The `www` CNAME still points
 to the personal Pages hostname.
 
-| Record | Current value | Action at transfer |
+| Record | Recorded value | Deferred follow-up |
 | --- | --- | --- |
 | `clowder.cat` A | `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` | Retain |
 | `www.clowder.cat` CNAME | `jrgoodle.github.io` | Change to `polka-dot-cat.github.io` |
 
-Keep the custom domain and branch source during the repository transfer, then
-update the `www` CNAME and verify both hostnames over HTTPS. After the repository
-belongs to the organization, add and verify `clowder.cat` in the organization's
-Pages settings, using the TXT value GitHub supplies. Do not verify it there
-before transfer: verification can release the domain from a site owned by
-another account. See [GitHub's domain-verification rules](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages).
+Keep the custom domain and branch source during the repository transfer. When
+website work resumes afterward, update the `www` CNAME and verify both hostnames
+over HTTPS. Add and verify `clowder.cat` in the organization's Pages settings,
+using the TXT value GitHub supplies. Do not verify it there before transfer:
+verification can release the domain from a site owned by another account. See
+[GitHub's domain-verification rules](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages).
 
 No DNS, Pages source, domain, certificate, or domain-verification setting was
 changed during this preflight.
@@ -140,7 +146,7 @@ changed during this preflight.
 | Service | Evidence | Remaining action |
 | --- | --- | --- |
 | Read the Docs | Project `clowder`, ID `154942`, still points to `https://github.com/JrGoodle/clowder.git`. Last recorded build failed July 9, 2023. Its last webhook response was HTTP 400 because no shared secret was configured. | Owner chose to disable it for now. Hook `17286177` is disabled and verified; build badges are removed. The hosted project and build configuration are retained for later reactivation. |
-| CircleCI | Account authorization and read-only checkout key `167499686` are restored. The retired reporter was removed from the active job. Job `2976` reaches the write-access preflight, where GitHub rejects the separate additional SSH key. | Restore the additional key's GitHub access, validate the 89 hosted write cases, and confirm organization access. `ci/circleci: test_write` remains required. |
+| CircleCI | Account authorization and read-only checkout key `167499686` are restored. The owner registered the separate additional write key with GitHub; its public key now matches an entry on `JrGoodle`. Job `2982` is running after that repair. | Validate the 89 hosted write cases and confirm organization access. `ci/circleci: test_write` remains required. |
 | Code Climate / Qlty | The old project URL redirects to Qlty's login for the personal-account project. No recent analysis was verified. The owner chose to leave it inactive; legacy webhook `249930018` is now disabled and verified. | Reactivation is deferred to its own TODO after transfer. Coverage uploads remain disabled and the old maintainability/coverage badges are removed. |
 | Codecov | Public API reports the personal-account project as inactive and not activated; its last update is January 30, 2024. The CircleCI coverage-upload workflow is commented out. | Owner chose to keep it inactive. Reactivation is a separate TODO after transfer; the coverage badge is removed. |
 | Slack | Existing webhook is active and its last recorded response is HTTP 200. | Retain its configuration through transfer. No test message was sent. |
@@ -202,11 +208,18 @@ if that additional key is missing.
 
 ### Remaining CircleCI key repair
 
+Update, October 24: the owner added the existing public key to GitHub, and its
+entry on `JrGoodle` was verified. [Job 2982](https://circleci.com/gh/JrGoodle/clowder/2982)
+is running after that change. Hosted write validation remains pending; later
+workflows queue behind this run to serialize writes to the shared fixtures.
+The failure record and recovery instructions below are retained for reference.
+
 [Job 2976](https://circleci.com/gh/JrGoodle/clowder/2976), at commit `6607ba77`,
 confirms that the additional key is present, but GitHub rejects it with
 `Permission denied (publickey)`. The job now checks write access with dry-run
 pushes before starting tests, so this failed attempt changed no remote branches.
-Its public key is not in the public authentication-key list for `JrGoodle`.
+At the time of that failure, its public key was absent from the public
+authentication-key list for `JrGoodle`.
 
 The job exports only the public half as
 [`build/circleci-write-key.pub`](https://output.circle-artifacts.com/output/job/41f911c7-6fac-4e43-9f5a-0d6a2ab5a2fb/artifacts/0/build/circleci-write-key.pub).
@@ -234,7 +247,8 @@ public half with the intended GitHub account, and update both `add_ssh_keys`
 and the selected key filename in `.circleci/config.yml`. Rerun the latest
 pipeline and confirm all six dry-run access checks and all 89 write cases pass.
 The current CLI lacks authentication-key write scope, and this session has no
-authenticated CircleCI API or connected browser, so account repair remains open.
+authenticated CircleCI API or connected browser. The owner completed the
+registration step; the hosted rerun must now verify access and test behavior.
 
 ### Isolated write-test result
 

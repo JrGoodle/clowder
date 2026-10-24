@@ -8,7 +8,7 @@ validation results, and the deleted test-fork assessment.
 
 Move `JrGoodle/clowder` to `polka-dot-cat/clowder` through GitHub’s native repository transfer. Prepare the migration changes first, then merge them immediately after the transfer. Complete this move before starting the existing TODO backlog.
 
-Keep the repository name `clowder`, public visibility, default branch `master`, Python package name `clowder-repo`, and website domain `clowder.cat` during the move. Keeping these stable limits disruption and makes transfer problems easier to identify.
+Keep the repository name `clowder`, public visibility, default branch `master`, and Python package name `clowder-repo` during the move. Retain the existing `clowder.cat` and `gh-pages` configuration for later website work. The owner has deferred DNS updates, Pages verification, and website restoration; website availability does not block the repository transfer.
 
 A native transfer preserves Git history, issues, pull requests, stars, watchers, and fork relationships. GitHub redirects the old repository URL and Git clone, fetch, and push operations. [GitHub transfer documentation](https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository)
 
@@ -53,21 +53,21 @@ publish them to the active branches only at the coordinated merge. See the
 [cutover record](clowder-repository-transfer-status.md#cats-and-felidae-migration)
 for the exact commits. Retain the separate Beanstalk dependency.
 
-### 3. Prepare Pages and service access
+### 3. Prepare retained service access
 
-Retain `clowder.cat` and `gh-pages`. Check DNS, HTTPS, and Pages domain verification. If the domain is verified under the personal account, arrange its verification for the organization as part of the move. Pages verification applies to the owning account or organization. [GitHub Pages domain verification](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages)
-
-Coordinate domain verification with the ownership change. Verifying a domain for
-the organization while the personal account still serves it can release the domain
-from that site. Do not treat an absent DNS TXT response as proof that GitHub has no
-existing domain verification.
+Website work is deferred to a separate
+[TODO](https://github.com/polka-dot-cat/clowder/blob/master/TODO.md#deferred-website-work--after-transfer).
+The [preflight record](clowder-transfer-preflight.md#pages-and-dns) preserves the
+DNS, HTTPS, Pages source, and domain-verification findings for that follow-up.
+Keep the existing configuration during transfer. The site may be unavailable
+until the deferred work is complete.
 
 Check the organization’s Actions policy, allowed third-party actions, workflow token permissions, and access to test repositories. Organization policy can restrict which repositories and actions may run. [GitHub Actions organization settings](https://docs.github.com/en/organizations/managing-organization-settings/disabling-or-limiting-github-actions-for-your-organization)
 
 Identify which configured services remain active: CircleCI, Read the Docs, Codecov, and Code Climate. Prepare any required organization authorization or project reconnection. Repository secrets, webhooks, and deploy keys stay associated with a transferred repository; verify external service access separately. [GitHub transfer behavior](https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository)
 
 The [service preflight record](clowder-transfer-preflight.md) now contains the
-owner-confirmed Actions/Pages settings, exact DNS cutover, CI repair, and service
+owner-confirmed Actions/Pages settings, deferred DNS changes, CI repair, and service
 failures that need account-side work. Requires.io and Read the Docs were disabled
 with the owner's approval. Qlty and Codecov are also deferred: the legacy Code
 Climate webhook is disabled, coverage uploads remain off, and separate
@@ -75,8 +75,9 @@ Climate webhook is disabled, coverage uploads remain off, and separate
 reactivation. They are not transfer prerequisites.
 CircleCI is retained; account access and checkout are
 restored, while its repaired write-test job still needs validation.
-GitHub rejects that job's separate additional SSH key; the preflight record
-contains its public key fingerprint and exact account repair steps. All 89 write
+The owner registered that job's separate additional SSH key with GitHub and
+started a rerun. The preflight record contains its fingerprint and recovery
+instructions. All 89 write
 cases pass against isolated local fixtures, but hosted SSH validation is pending.
 Keep the remaining service checks distinct from successful GitHub webhook delivery.
 
@@ -96,8 +97,9 @@ Leave `JrGoodle/clowder` unused. Creating a replacement repository at that locat
 
 Merge the prepared migration changes and coordinate the test-repository updates. Confirm access, refs, releases, issues, protections, and clone behavior at the new location. Check the old repository redirect.
 
-Verify `clowder.cat`, HTTPS, and a Pages deployment. Read the Docs is disabled for
-now at the owner's request. If reactivated later, update the existing project's
+Website restoration, HTTPS checks, and Pages deployment validation are deferred
+to the website TODO. Read the Docs is disabled for now at the owner's request.
+If reactivated later, update the existing project's
 repository URL, configure the webhook secret, and verify its build trigger while
 retaining its documentation address. The repository URL is configured in the
 project's settings. [Read the Docs repository setting](https://docs.readthedocs.com/platform/latest/reference/environment-variables.html)
@@ -128,7 +130,7 @@ If validation fails, restore the affected configuration or revert the migration 
 - [ ] Branches, tags, releases, issues, and pull requests match the pre-transfer inventory.
 - [ ] Branch protections and required checks are reviewed under the organization.
 - [ ] Old repository links redirect, and local clones use the new remote.
-- [ ] `clowder.cat` serves the expected site over HTTPS, and Pages can deploy.
+- [x] Website DNS, Pages, and domain-verification work is explicitly deferred to its own TODO; website availability does not block transfer completion.
 - [x] Read the Docs is explicitly deferred; its GitHub webhook is disabled and build badges are removed.
 - [x] Qlty and Codecov are explicitly deferred, with uploads inactive, the legacy Code Climate webhook disabled, badges removed, and separate follow-up TODOs.
 - [ ] Retained CI and reporting services can access the repository.
