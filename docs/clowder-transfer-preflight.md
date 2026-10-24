@@ -141,10 +141,19 @@ changed during this preflight.
 | --- | --- | --- |
 | Read the Docs | Project `clowder`, ID `154942`, still points to `https://github.com/JrGoodle/clowder.git`. Last recorded build failed July 9, 2023. Its last webhook response was HTTP 400 because no shared secret was configured. | Owner chose to disable it for now. Hook `17286177` is disabled and verified; build badges are removed. The hosted project and build configuration are retained for later reactivation. |
 | CircleCI | Account authorization and read-only checkout key `167499686` are restored. The retired reporter was removed from the active job. Job `2976` reaches the write-access preflight, where GitHub rejects the separate additional SSH key. | Restore the additional key's GitHub access, validate the 89 hosted write cases, and confirm organization access. `ci/circleci: test_write` remains required. |
-| Code Climate / Qlty | The old project URL redirects to Qlty's login for the personal-account project. The legacy webhook returns HTTP 200, which does not establish successful analysis. | Review the project and organization access in Qlty; do not treat a badge URL change as a completed migration. |
-| Codecov | Public API reports the personal-account project as inactive and not activated; its last update is January 30, 2024. The CircleCI coverage-upload workflow is commented out. | Decide whether to reactivate reporting after transfer; no active upload was established. |
+| Code Climate / Qlty | The old project URL redirects to Qlty's login for the personal-account project. No recent analysis was verified. The owner chose to leave it inactive; legacy webhook `249930018` is now disabled and verified. | Reactivation is deferred to its own TODO after transfer. Coverage uploads remain disabled and the old maintainability/coverage badges are removed. |
+| Codecov | Public API reports the personal-account project as inactive and not activated; its last update is January 30, 2024. The CircleCI coverage-upload workflow is commented out. | Owner chose to keep it inactive. Reactivation is a separate TODO after transfer; the coverage badge is removed. |
 | Slack | Existing webhook is active and its last recorded response is HTTP 200. | Retain its configuration through transfer. No test message was sent. |
 | Requires.io | Last delivery was HTTP 405, and the domain now redirects to a sale page. | Owner authorized disabling hook `17286562`. It is disabled, verified, and its obsolete documentation badge is removed in the draft. |
+
+Qlty and Codecov reactivation are deferred at the owner's request and are not
+transfer prerequisites. The legacy Code Climate webhook was disabled on
+October 24 without changing its stored configuration or event selection.
+Neither service has an active coverage-upload job; existing CI coverage artifacts
+remain available. Hosted projects and inactive configuration are retained.
+Separate [follow-up tasks](https://github.com/polka-dot-cat/clowder/blob/master/TODO.md#deferred-reporting-integrations--after-transfer)
+cover organization access, configuration, uploads, and verification before
+restoring badges or enabling checks.
 
 If Read the Docs is reactivated later, update its repository URL and use project
 Settings → Integrations → GitHub → **Resync webhook**. Configure the generated
@@ -173,8 +182,8 @@ additional-key loading, Git setup, and dependency installation now succeed.
 It stopped before tests when the old Code Climate download returned an HTML
 404 page. The active `test_write` job now invokes pytest directly and retains
 JUnit, Cucumber, and coverage artifacts without requiring that reporter. The
-separate coverage-upload workflow remains disabled; no Qlty or Codecov account
-settings or webhooks were changed.
+separate coverage-upload workflow remains disabled. The later reporting
+deferral also disables the legacy Code Climate webhook as recorded above.
 
 The job retains all 89 `write and not offline` cases. Like Actions, it uses a
 temporary bare Cats clone pinned to the staged migration commits. Only the root

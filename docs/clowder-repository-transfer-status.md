@@ -354,7 +354,9 @@ write-access check. The working checkout key remains read-only. See the
    `polka-dot-cat.github.io` with transfer. The owner confirmed no verified Pages
    domains on either account. Add organization verification after the transfer.
 3. Restore CircleCI's additional key authorization, validate its hosted write
-   job, and review CircleCI/Qlty organization access. Codecov is inactive.
-   Requires.io and Read the Docs are disabled; Slack remains configured.
+   job, and confirm CircleCI organization access. Qlty and Codecov are deferred
+   to separate [TODOs](https://github.com/polka-dot-cat/clowder/blob/master/TODO.md#deferred-reporting-integrations--after-transfer);
+   their upload workflow remains disabled and the legacy Code Climate webhook
+   is disabled. Requires.io and Read the Docs are disabled; Slack remains configured.
 4. Transfer the main repository, update local remotes, publish the prepared patch,
    and complete the [plan's completion checks](clowder-repository-transfer-plan.md#completion-checks).

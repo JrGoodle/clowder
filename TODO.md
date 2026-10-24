@@ -59,12 +59,35 @@ are separate from the initial review and were updated on 2026-10-24.
   denied (publickey)`. The public key, fingerprints, and account repair steps are
   in the [preflight record](docs/clowder-transfer-preflight.md#remaining-circleci-key-repair).
   The working read-only checkout key is separate. Hosted write validation remains pending.
-- [ ] Confirm retained CircleCI access to `polka-dot-cat` and review Qlty/Codecov
-  access or retention. CircleCI's `test_write` check is still required.
+- [x] Defer Qlty and Codecov at the owner's request. Disable the legacy Code
+  Climate webhook, keep coverage uploads disabled, and remove their badges.
+  Track reactivation separately below; neither service blocks the transfer.
+- [ ] Confirm retained CircleCI access to `polka-dot-cat`.
+  CircleCI's `test_write` check is still required.
 - [ ] During transfer, update the `www.clowder.cat` CNAME to
   `polka-dot-cat.github.io`; verify the domain under the organization afterward.
 - [ ] Transfer `clowder`, update local remotes, publish the migration changes, and
   complete the transfer plan's verification checklist.
+
+## Deferred reporting integrations — after transfer
+
+Both services stay inactive until their reactivation is requested. Keep generating
+coverage files and storing them as CI artifacts in the meantime.
+
+- [ ] **Set up Qlty under `polka-dot-cat`.** Connect the organization's GitHub
+  app to the transferred Clowder repository, review the existing hosted project,
+  and migrate the analysis configuration. Add a supported coverage uploader;
+  account for reports from Actions and CircleCI without duplicate matrix uploads.
+  Verify analysis and coverage for the correct default-branch and PR commits
+  before restoring badges or enabling quality/coverage gates. Replace the
+  retired Code Climate reporter and review removal of its disabled webhook.
+
+- [ ] **Reactivate Codecov under `polka-dot-cat`.** Configure organization and
+  repository access, replace the old disabled upload integration with a supported
+  uploader and authentication, and define how retained CI reports are combined.
+  Verify default-branch coverage and PR comparisons against the uploaded commit
+  before restoring its badge or enabling coverage checks. Review overlap with
+  Qlty if both services are enabled.
 
 ## First: establish a repeatable development baseline
 

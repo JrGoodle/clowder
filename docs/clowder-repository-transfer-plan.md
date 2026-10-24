@@ -69,7 +69,11 @@ Identify which configured services remain active: CircleCI, Read the Docs, Codec
 The [service preflight record](clowder-transfer-preflight.md) now contains the
 owner-confirmed Actions/Pages settings, exact DNS cutover, CI repair, and service
 failures that need account-side work. Requires.io and Read the Docs were disabled
-with the owner's approval. CircleCI is retained; account access and checkout are
+with the owner's approval. Qlty and Codecov are also deferred: the legacy Code
+Climate webhook is disabled, coverage uploads remain off, and separate
+[TODOs](https://github.com/polka-dot-cat/clowder/blob/master/TODO.md#deferred-reporting-integrations--after-transfer) cover later
+reactivation. They are not transfer prerequisites.
+CircleCI is retained; account access and checkout are
 restored, while its repaired write-test job still needs validation.
 GitHub rejects that job's separate additional SSH key; the preflight record
 contains its public key fingerprint and exact account repair steps. All 89 write
@@ -126,6 +130,7 @@ If validation fails, restore the affected configuration or revert the migration 
 - [ ] Old repository links redirect, and local clones use the new remote.
 - [ ] `clowder.cat` serves the expected site over HTTPS, and Pages can deploy.
 - [x] Read the Docs is explicitly deferred; its GitHub webhook is disabled and build badges are removed.
+- [x] Qlty and Codecov are explicitly deferred, with uploads inactive, the legacy Code Climate webhook disabled, badges removed, and separate follow-up TODOs.
 - [ ] Retained CI and reporting services can access the repository.
 - [ ] Active test manifests and Clowder assertions use the agreed repository mapping.
 - [ ] Focused migration tests pass; any unrelated build or environment failures are recorded separately.

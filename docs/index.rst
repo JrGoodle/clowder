@@ -17,12 +17,6 @@ clowder
 .. image:: https://circleci.com/gh/polka-dot-cat/clowder.svg?style=shield
     :target: https://circleci.com/gh/polka-dot-cat/clowder
 
-.. image:: https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability
-    :target: https://codeclimate.com/github/polka-dot-cat/clowder/maintainability
-
-.. image:: https://codecov.io/gh/polka-dot-cat/clowder/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/polka-dot-cat/clowder
-
 .. image:: https://badge.fury.io/py/clowder-repo.svg
     :target: https://badge.fury.io/py/clowder-repo
 
