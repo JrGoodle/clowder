@@ -209,7 +209,7 @@ Feature: clowder forall
     @misc @upstream
     Scenario: forall environment variables upstream
         Given misc example is initialized and herded with https
-        When I run 'clowder forall "if [ $PROJECT_NAME != JrGoodle/gyp ]; then exit 1; fi" gyp'
+        When I run 'clowder forall "if [ $PROJECT_NAME != polka-dot-cat/gyp ]; then exit 1; fi" gyp'
         And I run 'clowder forall "if [ $PROJECT_REMOTE != origin ]; then exit 1; fi" gyp'
         And I run 'clowder forall "if [ $PROJECT_REF != refs/heads/fork-branch ]; then exit 1; fi" gyp'
         And I run 'clowder forall "if [ $UPSTREAM_NAME != external/gyp ]; then exit 1; fi" gyp'

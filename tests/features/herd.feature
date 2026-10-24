@@ -329,11 +329,11 @@ Feature: clowder herd
 
         Examples:
         | directory | branch      | remote   | url                                                |
-        | djinni    | master      | origin   | git@github.com:JrGoodle/djinni.git                 |
+        | djinni    | master      | origin   | git@github.com:polka-dot-cat/djinni.git            |
         | djinni    | master      | upstream | git@github.com:dropbox/djinni.git                  |
-        | gyp       | fork-branch | origin   | git@github.com:JrGoodle/gyp.git                    |
+        | gyp       | fork-branch | origin   | git@github.com:polka-dot-cat/gyp.git               |
         | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
-        | sox       | master      | origin   | git@github.com:JrGoodle/sox.git                    |
+        | sox       | master      | origin   | git@github.com:polka-dot-cat/sox.git               |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
@@ -351,11 +351,11 @@ Feature: clowder herd
 
         Examples:
         | directory | branch      | remote   | url                                                |
-        | djinni    | master      | origin   | https://github.com/JrGoodle/djinni.git             |
+        | djinni    | master      | origin   | https://github.com/polka-dot-cat/djinni.git        |
         | djinni    | master      | upstream | https://github.com/dropbox/djinni.git              |
-        | gyp       | fork-branch | origin   | https://github.com/JrGoodle/gyp.git                |
+        | gyp       | fork-branch | origin   | https://github.com/polka-dot-cat/gyp.git           |
         | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
-        | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
+        | sox       | master      | origin   | https://github.com/polka-dot-cat/sox.git           |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
@@ -373,11 +373,11 @@ Feature: clowder herd
 
         Examples:
         | directory | branch      | remote   | url                                                |
-        | djinni    | master      | origin   | git@github.com:JrGoodle/djinni.git                 |
+        | djinni    | master      | origin   | git@github.com:polka-dot-cat/djinni.git            |
         | djinni    | master      | upstream | git@github.com:dropbox/djinni.git                  |
-        | gyp       | fork-branch | origin   | git@github.com:JrGoodle/gyp.git                    |
+        | gyp       | fork-branch | origin   | git@github.com:polka-dot-cat/gyp.git               |
         | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
-        | sox       | master      | origin   | git@github.com:JrGoodle/sox.git                    |
+        | sox       | master      | origin   | git@github.com:polka-dot-cat/sox.git               |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
@@ -394,14 +394,29 @@ Feature: clowder herd
 
         Examples:
         | directory | branch      | remote   | url                                                |
-        | djinni    | master      | origin   | https://github.com/JrGoodle/djinni.git             |
+        | djinni    | master      | origin   | https://github.com/polka-dot-cat/djinni.git        |
         | djinni    | master      | upstream | https://github.com/dropbox/djinni.git              |
-        | gyp       | fork-branch | origin   | https://github.com/JrGoodle/gyp.git                |
+        | gyp       | fork-branch | origin   | https://github.com/polka-dot-cat/gyp.git           |
         | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
-        | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
+        | sox       | master      | origin   | https://github.com/polka-dot-cat/sox.git           |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for logic renaming remotes
+
+    @misc @upstream
+    Scenario: herd saved defaults with explicit upstream sources
+        Given misc example is initialized
+        And linked defaults clowder version
+        When I run 'clowder herd -p https'
+        Then the command succeeds
+        And project at djinni has remote origin with url https://github.com/polka-dot-cat/djinni.git
+        And project at djinni has remote upstream with url https://github.com/dropbox/djinni.git
+        And project at gyp has remote origin with url https://github.com/polka-dot-cat/gyp.git
+        And project at gyp has remote upstream with url https://chromium.googlesource.com/external/gyp.git
+        And project at gyp is on branch fork-branch
+        And project at gyp is on commit bd11dd1c51ef17592384df927c47023071639f96
+        And project at sox has remote origin with url https://github.com/polka-dot-cat/sox.git
+        And project at sox has remote upstream with url https://git.code.sf.net/p/sox/code.git
 
     @misc @upstream
     Scenario: herd project with branch behind upstream

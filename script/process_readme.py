@@ -17,10 +17,10 @@ def main():
     readme_contents = readme_contents[2:]
 
     output = "\n".join(readme_contents)
-    output = output.replace('](CONTRIBUTING', '](https://github.com/JrGoodle/clowder/blob/master/CONTRIBUTING')
+    output = output.replace('](CONTRIBUTING', '](https://github.com/polka-dot-cat/clowder/blob/master/CONTRIBUTING')
 
     pattern = r'\]\(docs\/(.+?)\)'
-    replace = r'](https://github.com/JrGoodle/clowder/blob/master/docs/\1)'
+    replace = r'](https://github.com/polka-dot-cat/clowder/blob/master/docs/\1)'
     output = re.sub(pattern, replace, output)
 
     if 'SETUP_PY' in globals():

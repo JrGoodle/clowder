@@ -1,5 +1,5 @@
 name: implicit
 
 clowder:
-  - name: JrGoodle/djinni
+  - name: polka-dot-cat/djinni
     upstream: dropbox/djinni

@@ -4,7 +4,7 @@ protocol: https
 
 clowder:
   cats:
-    - name: JrGoodle/gyp
+    - name: polka-dot-cat/gyp
       upstream:
         name: external/gyp
         source:

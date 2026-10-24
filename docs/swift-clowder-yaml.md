@@ -1,6 +1,6 @@
 # The `clowder.yaml` File
 
-The examples are based on the [swift projects clowder.yaml files](https://github.com/JrGoodle/swift-clowder)
+The examples are based on the [swift projects clowder.yaml files](https://github.com/polka-dot-cat/swift-clowder)
 
 ## Defaults
 

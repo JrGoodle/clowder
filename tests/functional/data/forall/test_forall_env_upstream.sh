@@ -16,7 +16,7 @@ set -euo pipefail
 # fi
 
 echo "PROJECT_NAME = $PROJECT_NAME"
-if [ "$PROJECT_NAME" != 'JrGoodle/gyp' ]; then
+if [ "$PROJECT_NAME" != 'polka-dot-cat/gyp' ]; then
     exit 1
 fi
 

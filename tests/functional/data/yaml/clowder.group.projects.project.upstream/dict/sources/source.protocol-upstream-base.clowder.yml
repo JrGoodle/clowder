@@ -9,7 +9,7 @@ sources:
 clowder:
   cats:
     projects:
-      - name: JrGoodle/gyp
+      - name: polka-dot-cat/gyp
         upstream:
           name: external/gyp
           source: chromium

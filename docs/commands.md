@@ -1,6 +1,6 @@
 # `clowder` Commands
 
-Examples based on the [Swift projects clowder.yml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yml)
+Examples based on the [Swift projects clowder.yml](https://github.com/polka-dot-cat/swift-clowder/blob/master/clowder.yml)
 
 * [main commands](#main-commands)
   * [clowder init](#clowder-init)
@@ -35,10 +35,10 @@ Clone repo containing `clowder.yml` file (referred to as the "clowder repo")
 
 ```bash
 # Clone clowder repo
-clowder init https://github.com/JrGoodle/swift-clowder.git
+clowder init https://github.com/polka-dot-cat/swift-clowder.git
 
 # Clone clowder repo from branch 'tags'
-clowder init https://github.com/JrGoodle/cats.git -b tags
+clowder init https://github.com/polka-dot-cat/cats.git -b tags
 ```
 
 ### clowder herd

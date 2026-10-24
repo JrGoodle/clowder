@@ -1,6 +1,6 @@
 # Swift `update-checkout-config.json`
 
-Swift uses the [update-checkout-config.json file](https://github.com/apple/swift/blob/master/utils/update_checkout/update-checkout-config.json) to track various branch schemes. The [swift-clowder repo](https://github.com/JrGoodle/swift-clowder) contains equivalent `clowder.yaml` files
+Swift uses the [update-checkout-config.json file](https://github.com/apple/swift/blob/master/utils/update_checkout/update-checkout-config.json) to track various branch schemes. The [swift-clowder repo](https://github.com/polka-dot-cat/swift-clowder) contains equivalent `clowder.yaml` files
 
 ## Default Configuration
 
@@ -102,7 +102,7 @@ The default branch setup is represented in `update-checkout-config.json`
 }
 ```
 
-An equivalent [default clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/clowder.yaml)
+An equivalent [default clowder.yaml](https://github.com/polka-dot-cat/swift-clowder/blob/master/clowder.yaml)
 
 ```yaml
 defaults:
@@ -191,7 +191,7 @@ The `swift-5.2-branch` version is represented in `update-checkout-config.json`
 },
 ```
 
-An equivalent [swift-5.2-branch clowder.yaml](https://github.com/JrGoodle/swift-clowder/blob/master/versions/swift-5.2-branch.clowder.yaml)
+An equivalent [swift-5.2-branch clowder.yaml](https://github.com/polka-dot-cat/swift-clowder/blob/master/versions/swift-5.2-branch.clowder.yaml)
 
 ```yaml
 defaults:

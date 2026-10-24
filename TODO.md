@@ -9,6 +9,30 @@ Check an item off only after its completion criteria are met. Add regression
 coverage for behavior fixes. Abstract methods and pytest-bdd scenario bodies that
 contain `pass` are not automatically missing implementations.
 
+## Before the backlog: transfer the repository
+
+Follow the [transfer plan](docs/clowder-repository-transfer-plan.md) and
+[progress record](docs/clowder-repository-transfer-status.md). The checks below
+are separate from the initial review and were updated on 2026-10-23.
+
+- [x] Save the Clowder Git mirror, LFS objects, release assets, and settings inventory.
+- [x] Transfer `felidae` to `polka-dot-cat` and verify its ID, branches, tags, and redirect.
+- [x] Prepare canonical clone URLs and post-transfer project links locally.
+- [x] Validate the preparation with CLI help and 28 focused test cases.
+- [x] Count the impact of the deleted forks: 97 collected cases depend on them;
+  reproduce a missing-repository failure without remote writes.
+- [x] Provision `polka-dot-cat/djinni`, `gyp`, and `sox` from their original
+  upstreams; set GYP's `fork-branch` to
+  `bd11dd1c51ef17592384df927c47023071639f96` and verify its upstream fast-forward.
+- [x] Publish the restored-fork names in `misc-clowder-tests` and
+  `clowder-examples`; update local Clowder fixtures and assertions. All 97 affected
+  cases plus a new saved-defaults regression pass, including HTTPS and SSH coverage.
+- [ ] Coordinate remaining Cats/Felidae project-name assertions, manifests, and
+  submodule URLs; check the separate `ash` and Beanstalk dependencies.
+- [ ] Check organization Actions policy, Pages domain ownership, and service access.
+- [ ] Transfer `clowder`, update local remotes, publish the migration changes, and
+  complete the transfer plan's verification checklist.
+
 ## First: establish a repeatable development baseline
 
 - [ ] **Align Python support and dependency setup.** `.python-version` and Pipenv
