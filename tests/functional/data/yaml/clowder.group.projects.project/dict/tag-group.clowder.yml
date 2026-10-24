@@ -5,4 +5,4 @@ clowder:
     defaults:
       tag: cat
     projects:
-      - name: JrGoodle/felidae
+      - name: polka-dot-cat/felidae

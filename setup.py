@@ -26,7 +26,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     version=__version__,
-    url='https://github.com/JrGoodle/clowder',
+    url='https://github.com/polka-dot-cat/clowder',
     project_urls={
         "Documentation": "https://clowder.readthedocs.io/en/latest/"
     },

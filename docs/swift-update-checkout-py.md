@@ -18,7 +18,7 @@ git clone git@github.com:apple/swift.git
 ```bash
 mkdir swift-source
 cd swift-source
-clowder init git@github.com:JrGoodle/swift-clowder.git
+clowder init git@github.com:polka-dot-cat/swift-clowder.git
 clowder herd --parallel
 ```
 

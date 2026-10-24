@@ -7,7 +7,7 @@ source "script/utils.sh"
 
 GH_PAGES_DIR="$( cd .. && pwd)/clowder-gh-pages"
 run rm -rf "$GH_PAGES_DIR"
-run git clone git@github.com:JrGoodle/clowder.git -b gh-pages "$GH_PAGES_DIR"
+run git clone git@github.com:polka-dot-cat/clowder.git -b gh-pages "$GH_PAGES_DIR"
 
 run script/process_readme.py
 

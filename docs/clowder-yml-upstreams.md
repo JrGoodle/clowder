@@ -21,19 +21,19 @@ projects:
   - name: dropbox/djinni
     remote: upstream
     fork:
-      name: JrGoodle/djinni
+      name: polka-dot-cat/djinni
   - name: external/gyp
     source: chromium
     remote: upstream
     fork:
-      name: JrGoodle/gyp
+      name: polka-dot-cat/gyp
       branch: fork-branch
   - name: p/sox/code
     path: sox
     remote: upstream
     source: sourceforge
     fork:
-      name: JrGoodle/sox
+      name: polka-dot-cat/sox
 ```
 
 ---
@@ -62,7 +62,7 @@ The `protocol` is set specifically to `https` for repositories where the user ma
 - name: dropbox/djinni
   remote: upstream
   fork:
-    name: JrGoodle/djinni
+    name: polka-dot-cat/djinni
 ```
 
 The original repository will be cloned with a remote named `upstream`. The `fork` uses the default remote `origin`.
@@ -72,7 +72,7 @@ The original repository will be cloned with a remote named `upstream`. The `fork
   source: chromium
   remote: upstream
   fork:
-    name: JrGoodle/gyp
+    name: polka-dot-cat/gyp
     branch: fork-branch
 ```
 
@@ -84,7 +84,7 @@ The user's fork will track `fork-branch`.
   remote: upstream
   source: sourceforge
   fork:
-    name: JrGoodle/sox
+    name: polka-dot-cat/sox
 ```
 
 The project is cloned to to the `sox` directory, rather than `code`.

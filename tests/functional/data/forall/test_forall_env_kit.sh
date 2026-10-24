@@ -12,7 +12,7 @@
 # fi
 
 echo "PROJECT_NAME = $PROJECT_NAME"
-if [ $PROJECT_NAME != "JrGoodle/kit" ]; then
+if [ $PROJECT_NAME != "polka-dot-cat/kit" ]; then
     exit 1
 fi
 

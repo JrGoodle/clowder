@@ -1,5 +1,5 @@
 name: groups-project
 
 clowder:
-  - name: JrGoodle/felidae
+  - name: polka-dot-cat/felidae
     groups: [cats-group, cats]

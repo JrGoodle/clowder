@@ -166,7 +166,7 @@ def given_did_create_file_in_test_directory(tmp_path: Path, filename: str, test_
 @given("cloned cats repo in <directory>")
 def given_created_git_dir_in_dir(tmp_path: Path, directory: str) -> None:
     path = tmp_path / directory
-    util.run_command("git clone https://github.com/JrGoodle/cats.git", path)
+    util.run_command("git clone https://github.com/polka-dot-cat/cats.git", path)
     cats_dir = path / "cats"
     repo = Repo(cats_dir)
     assert repo.exists

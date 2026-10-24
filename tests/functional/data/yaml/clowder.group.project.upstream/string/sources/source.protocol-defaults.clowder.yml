@@ -11,5 +11,5 @@ defaults:
 
 clowder:
   cats:
-    - name: JrGoodle/gyp
+    - name: polka-dot-cat/gyp
       upstream: external/gyp

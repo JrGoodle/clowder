@@ -1,5 +1,5 @@
 name: remote-project
 
 clowder:
-  - name: JrGoodle/felidae
+  - name: polka-dot-cat/felidae
     remote: source

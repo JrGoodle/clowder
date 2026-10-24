@@ -5,6 +5,6 @@ defaults:
     remote: source
 
 clowder:
-  - name: JrGoodle/djinni
+  - name: polka-dot-cat/djinni
     upstream:
       name: dropbox/djinni

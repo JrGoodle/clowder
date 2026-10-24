@@ -5,7 +5,7 @@
 Clone the repository:
 
 ```bash
-git clone git@github.com:JrGoodle/clowder.git
+git clone git@github.com:polka-dot-cat/clowder.git
 cd clowder
 ```
 

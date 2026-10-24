@@ -7,4 +7,4 @@ clowder:
         config:
           alias.something: "!echo 'Run git something alias installed via clowder'; touch something"
     projects:
-      - name: JrGoodle/felidae
+      - name: polka-dot-cat/felidae

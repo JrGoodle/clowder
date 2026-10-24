@@ -6,4 +6,4 @@ clowder:
       git:
         depth: 1
     projects:
-      - JrGoodle/felidae
+      - polka-dot-cat/felidae

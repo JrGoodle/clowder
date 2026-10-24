@@ -6,29 +6,22 @@
 clowder
 =======
 
-.. image:: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FJrGoodle%2Fclowder%2Fbadge&style=flat
-    :target: https://actions-badge.atrox.dev/JrGoodle/clowder/goto
+.. toctree::
+   :hidden:
 
-.. image:: https://circleci.com/gh/JrGoodle/clowder.svg?style=shield
-    :target: https://circleci.com/gh/JrGoodle/clowder
+   clowder-transfer-preflight
 
-.. image:: https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability
-    :target: https://codeclimate.com/github/JrGoodle/clowder/maintainability
+.. image:: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fpolka-dot-cat%2Fclowder%2Fbadge&style=flat
+    :target: https://actions-badge.atrox.dev/polka-dot-cat/clowder/goto
 
-.. image:: https://codecov.io/gh/JrGoodle/clowder/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/JrGoodle/clowder
+.. image:: https://circleci.com/gh/polka-dot-cat/clowder.svg?style=shield
+    :target: https://circleci.com/gh/polka-dot-cat/clowder
 
 .. image:: https://badge.fury.io/py/clowder-repo.svg
     :target: https://badge.fury.io/py/clowder-repo
 
 .. image:: https://img.shields.io/pypi/pyversions/clowder-repo.svg
     :target: https://pypi.python.org/pypi/clowder-repo
-
-.. image:: https://requires.io/github/JrGoodle/clowder/requirements.svg?branch=master
-    :target: https://requires.io/github/JrGoodle/clowder/requirements/?branch=master
-
-.. image:: https://readthedocs.org/projects/clowder/badge/?version=latest
-    :target: http://clowder.readthedocs.io/en/latest/?badge=latest
 
 
 .. toctree::

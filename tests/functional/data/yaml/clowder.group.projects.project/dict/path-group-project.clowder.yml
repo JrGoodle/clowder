@@ -4,5 +4,5 @@ clowder:
   cats:
     path: carnivora
     projects:
-      - name: JrGoodle/felidae
+      - name: polka-dot-cat/felidae
         path: feliforma/felidae

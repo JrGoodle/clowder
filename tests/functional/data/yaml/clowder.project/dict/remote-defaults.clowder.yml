@@ -4,4 +4,4 @@ defaults:
   remote: source
 
 clowder:
-  - name: JrGoodle/felidae
+  - name: polka-dot-cat/felidae

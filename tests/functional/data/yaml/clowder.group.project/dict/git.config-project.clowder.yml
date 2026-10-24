@@ -2,7 +2,7 @@ name: git.config-project
 
 clowder:
   cats:
-    - name: JrGoodle/felidae
+    - name: polka-dot-cat/felidae
       git:
         config:
           alias.something: "!echo 'Run git something alias installed via clowder'; touch something"

@@ -13,9 +13,9 @@ from .command import run_command
 TestRepoInfo = Dict[str, Dict[str, str]]
 
 TEST_REPOS: TestRepoInfo = {
-    'cats': {'url': 'github.com', 'name': 'JrGoodle/cats'},
-    'misc': {'url': 'github.com', 'name': 'JrGoodle/misc-clowder-tests'},
-    'swift': {'url': 'github.com', 'name': 'JrGoodle/swift-clowder'}
+    'cats': {'url': 'github.com', 'name': 'polka-dot-cat/cats'},
+    'misc': {'url': 'github.com', 'name': 'polka-dot-cat/misc-clowder-tests'},
+    'swift': {'url': 'github.com', 'name': 'polka-dot-cat/swift-clowder'}
 }
 
 CATS_REPOS_DEFAULT: TestRepoInfo = {

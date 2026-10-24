@@ -9,5 +9,5 @@ defaults:
     source: beanstalk
 
 clowder:
-  - name: JrGoodle/felidae
+  - name: polka-dot-cat/felidae
     upstream: polka-dot-cat/felidae

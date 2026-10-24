@@ -2,7 +2,7 @@ name: source.url-upstream
 
 clowder:
   cats:
-    - name: JrGoodle/felidae
+    - name: polka-dot-cat/felidae
       upstream:
         name: polka-dot-cat/felidae
         source:

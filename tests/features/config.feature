@@ -35,11 +35,11 @@ Feature: clowder config
 
         Examples:
         | directory | branch      | remote   | url                                                |
-        | djinni    | master      | origin   | https://github.com/JrGoodle/djinni.git             |
+        | djinni    | master      | origin   | https://github.com/polka-dot-cat/djinni.git        |
         | djinni    | master      | upstream | https://github.com/dropbox/djinni.git              |
-        | gyp       | fork-branch | origin   | https://github.com/JrGoodle/gyp.git                |
+        | gyp       | fork-branch | origin   | https://github.com/polka-dot-cat/gyp.git           |
         | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
-        | sox       | master      | origin   | https://github.com/JrGoodle/sox.git                |
+        | sox       | master      | origin   | https://github.com/polka-dot-cat/sox.git           |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     # TODO: Add tests for groups/projects
@@ -58,17 +58,17 @@ Feature: clowder config
 
         Examples:
         | directory | branch      | remote   | url                                                |
-        | djinni    | master      | origin   | git@github.com:JrGoodle/djinni.git                 |
+        | djinni    | master      | origin   | git@github.com:polka-dot-cat/djinni.git            |
         | djinni    | master      | upstream | git@github.com:dropbox/djinni.git                  |
-        | gyp       | fork-branch | origin   | git@github.com:JrGoodle/gyp.git                    |
+        | gyp       | fork-branch | origin   | git@github.com:polka-dot-cat/gyp.git               |
         | gyp       | fork-branch | upstream | https://chromium.googlesource.com/external/gyp.git |
-        | sox       | master      | origin   | git@github.com:JrGoodle/sox.git                    |
+        | sox       | master      | origin   | git@github.com:polka-dot-cat/sox.git               |
         | sox       | master      | upstream | https://git.code.sf.net/p/sox/code.git             |
 
     @cats
     Scenario Outline: config set groups config included
         Given cats example is initialized
-        And 'clowder config set projects JrGoodle/kishka JrGoodle/kit' was run
+        And 'clowder config set projects polka-dot-cat/kishka polka-dot-cat/kit' was run
         And <directory> doesn't exist
         When I run 'clowder herd'
         Then the command succeeds
@@ -84,7 +84,7 @@ Feature: clowder config
     @cats
     Scenario Outline: config set groups config excluded
         Given cats example is initialized
-        And 'clowder config set projects JrGoodle/kishka JrGoodle/kit' was run
+        And 'clowder config set projects polka-dot-cat/kishka polka-dot-cat/kit' was run
         And <directory> doesn't exist
         When I run 'clowder herd'
         Then the command succeeds

@@ -4,4 +4,4 @@ defaults:
   tag: cat
 
 clowder:
-  - name: JrGoodle/felidae
+  - name: polka-dot-cat/felidae

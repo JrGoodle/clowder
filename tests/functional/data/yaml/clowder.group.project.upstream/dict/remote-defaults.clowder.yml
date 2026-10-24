@@ -6,6 +6,6 @@ defaults:
 
 clowder:
   cats:
-    - name: JrGoodle/djinni
+    - name: polka-dot-cat/djinni
       upstream:
         name: dropbox/djinni

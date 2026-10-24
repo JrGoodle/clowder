@@ -25,9 +25,9 @@ Feature: clowder diff
         And created file catnip.txt in directory mu
         And project at mu has untracked file catnip.txt
         When I run 'clowder diff'
-        And I run 'clowder diff JrGoodle/kishka'
-        And I run 'clowder diff JrGoodle/mu JrGoodle/duke'
-        And I run 'clowder diff JrGoodle/mu JrGoodle/duke JrGoodle/kit'
+        And I run 'clowder diff polka-dot-cat/kishka'
+        And I run 'clowder diff polka-dot-cat/mu polka-dot-cat/duke'
+        And I run 'clowder diff polka-dot-cat/mu polka-dot-cat/duke polka-dot-cat/kit'
         And I run 'clowder diff black-cats'
         And I run 'clowder diff black-cats cats'
         And I run 'clowder diff black-cats cats all'
@@ -42,9 +42,9 @@ Feature: clowder diff
         And project at mu has untracked file catnip.txt
         When I change to directory black-cats/kishka
         And I run 'clowder diff'
-        And I run 'clowder diff JrGoodle/kishka'
-        And I run 'clowder diff JrGoodle/mu JrGoodle/duke'
-        And I run 'clowder diff JrGoodle/mu JrGoodle/duke JrGoodle/kit'
+        And I run 'clowder diff polka-dot-cat/kishka'
+        And I run 'clowder diff polka-dot-cat/mu polka-dot-cat/duke'
+        And I run 'clowder diff polka-dot-cat/mu polka-dot-cat/duke polka-dot-cat/kit'
         And I run 'clowder diff black-cats'
         And I run 'clowder diff black-cats cats'
         And I run 'clowder diff black-cats cats all'
@@ -59,9 +59,9 @@ Feature: clowder diff
         And project at mu has untracked file catnip.txt
         When the network connection is disabled
         And I run 'clowder diff'
-        And I run 'clowder diff JrGoodle/kishka'
-        And I run 'clowder diff JrGoodle/mu JrGoodle/duke'
-        And I run 'clowder diff JrGoodle/mu JrGoodle/duke JrGoodle/kit'
+        And I run 'clowder diff polka-dot-cat/kishka'
+        And I run 'clowder diff polka-dot-cat/mu polka-dot-cat/duke'
+        And I run 'clowder diff polka-dot-cat/mu polka-dot-cat/duke polka-dot-cat/kit'
         And I run 'clowder diff black-cats'
         And I run 'clowder diff black-cats cats'
         And I run 'clowder diff black-cats cats all'

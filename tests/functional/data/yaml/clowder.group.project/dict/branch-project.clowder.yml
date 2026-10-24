@@ -2,5 +2,5 @@ name: branch-project
 
 clowder:
   cats:
-    - name: JrGoodle/felidae
+    - name: polka-dot-cat/felidae
       branch: felid

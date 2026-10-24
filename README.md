@@ -6,8 +6,8 @@
 
 |  |  |
 |:-|:-|
-| docs | [![Documentation Status](https://readthedocs.org/projects/clowder/badge/?version=latest)](http://clowder.readthedocs.io) |
-| tests | [![GitHub Actions Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FJrGoodle%2Fclowder%2Fbadge&style=flat)](https://actions-badge.atrox.dev/JrGoodle/clowder/goto) [![CircleCI](https://circleci.com/gh/JrGoodle/clowder.svg?style=shield)](https://circleci.com/gh/JrGoodle/clowder) [![Code Climate Maintainability](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/maintainability)](https://codeclimate.com/github/JrGoodle/clowder/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/56c92799de08f9ef9258/test_coverage)](https://codeclimate.com/github/JrGoodle/clowder/test_coverage) |
+| docs | [Documentation](https://clowder.cat) |
+| tests | [![GitHub Actions Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fpolka-dot-cat%2Fclowder%2Fbadge&style=flat)](https://actions-badge.atrox.dev/polka-dot-cat/clowder/goto) [![CircleCI](https://circleci.com/gh/polka-dot-cat/clowder.svg?style=shield)](https://circleci.com/gh/polka-dot-cat/clowder) |
 | package | [![PyPI version](https://badge.fury.io/py/clowder-repo.svg)](https://badge.fury.io/py/clowder-repo) [![Python versions](https://img.shields.io/pypi/pyversions/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![License](https://img.shields.io/pypi/l/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) [![Status](https://img.shields.io/pypi/status/clowder-repo.svg)](https://pypi.python.org/pypi/clowder-repo) |
 
 <details>
@@ -263,13 +263,13 @@ clowder:
         protocol: https
 ```
 
-For more examples, see the [clowder-examples repo](https://github.com/JrGoodle/clowder-examples/tree/master/versions)
+For more examples, see the [clowder-examples repo](https://github.com/polka-dot-cat/clowder-examples/tree/master/versions)
 
 ## Command Usage
 
 For the full command reference, see [the commands doc](docs/commands.md)
 
-The following examples use an [existing repo](https://github.com/JrGoodle/clowder-examples) containing a [clowder.yml](https://github.com/JrGoodle/clowder-examples/blob/master/clowder.yml) file.
+The following examples use an [existing repo](https://github.com/polka-dot-cat/clowder-examples) containing a [clowder.yml](https://github.com/polka-dot-cat/clowder-examples/blob/master/clowder.yml) file.
 
 To follow along, create a directory where all the projects will be cloned:
 
@@ -283,12 +283,12 @@ cd cats
 <summary>clowder init</summary>
 
 ```bash
-clowder init git@github.com:JrGoodle/clowder-examples.git
+clowder init git@github.com:polka-dot-cat/clowder-examples.git
 ```
 
 The `clowder init` command does the following:
 
-* Clones the [examples clowder repo](https://github.com/JrGoodle/clowder-examples) in the `.clowder` directory
+* Clones the [examples clowder repo](https://github.com/polka-dot-cat/clowder-examples) in the `.clowder` directory
 * Creates a symlink in the `cats` directory: `clowder.yml` -> `.clowder/clowder.yml`
 
 ![clowder init](docs/examples/clowder-init.gif)

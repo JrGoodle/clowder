@@ -10,6 +10,6 @@ defaults:
     source: chromium
 
 clowder:
-  - name: JrGoodle/gyp
+  - name: polka-dot-cat/gyp
     upstream:
       name: external/gyp

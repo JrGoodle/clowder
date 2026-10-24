@@ -24,31 +24,31 @@ Feature: clowder init
     Scenario: init default
         Given .clowder directory doesn't exist
         And test directory is empty
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command succeeds
         And directory at .clowder is a git repository
         And repo at .clowder is on branch master
         And repo at .clowder is clean
-        And repo at .clowder has remote origin with url https://github.com/JrGoodle/cats.git
+        And repo at .clowder has remote origin with url https://github.com/polka-dot-cat/cats.git
         And default clowder version is linked
 
     @cats @ssh
     Scenario: init default
         Given .clowder directory doesn't exist
         And test directory is empty
-        When I run 'clowder init git@github.com:JrGoodle/cats.git'
+        When I run 'clowder init git@github.com:polka-dot-cat/cats.git'
         Then the command succeeds
         And directory at .clowder is a git repository
         And repo at .clowder is on branch master
         And repo at .clowder is clean
-        And repo at .clowder has remote origin with url git@github.com:JrGoodle/cats.git
+        And repo at .clowder has remote origin with url git@github.com:polka-dot-cat/cats.git
         And default clowder version is linked
 
     @cats
     Scenario: init branch
         Given .clowder directory doesn't exist
         And test directory is empty
-        When I run 'clowder init https://github.com/JrGoodle/cats.git -b alt-branch'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git -b alt-branch'
         Then the command succeeds
         And directory at .clowder is a git repository
         And repo at .clowder is on branch alt-branch
@@ -59,7 +59,7 @@ Feature: clowder init
     Scenario: init existing empty directory
         Given test directory is empty
         And created directory .clowder
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command succeeds
         And directory at .clowder is a git repository
         And repo at .clowder is on branch master
@@ -71,7 +71,7 @@ Feature: clowder init
         Given test directory is empty
         And created directory .clowder
         And created file something in directory .clowder
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command fails
         And .clowder directory exists
         And directory at .clowder is not a git repository
@@ -81,7 +81,7 @@ Feature: clowder init
     Scenario: init existing non-symlink yml file
         Given cats example non-symlink yml file exists
         And .clowder directory doesn't exist
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command fails
         And .clowder directory exists
         And directory at .clowder is a git repository
@@ -93,7 +93,7 @@ Feature: clowder init
         Given .clowder directory doesn't exist
         And created file something-to-link-to in directory .
         And created clowder.yml symlink pointing to something-to-link-to
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command succeeds
         And .clowder directory exists
         And directory at .clowder is a git repository
@@ -106,7 +106,7 @@ Feature: clowder init
         And .clowder directory doesn't exist
         And clowder.yaml and clowder.yml files exist
         And clowder.yaml and clowder.yml are not symlinks
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command fails
         And .clowder directory exists
         And directory at .clowder is a git repository
@@ -121,7 +121,7 @@ Feature: clowder init
         And created clowder.yml symlink pointing to something-to-link-to
         And clowder.yaml file exists
         And clowder.yaml is not a symlink
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command fails
         And .clowder directory exists
         And directory at .clowder is a git repository
@@ -134,7 +134,7 @@ Feature: clowder init
         Given .clowder directory doesn't exist
         And created file something-to-link-to in directory .
         And created clowder.yml and clowder.yaml symlinks pointing to something-to-link-to
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command succeeds
         And .clowder directory exists
         And directory at .clowder is a git repository
@@ -145,7 +145,7 @@ Feature: clowder init
     Scenario: init existing .clowder file
         Given test directory is empty
         And created file .clowder in directory .
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command fails
         And .clowder file exists
         And .clowder is not a directory
@@ -156,7 +156,7 @@ Feature: clowder init
         Given cats example clowder repo symlink exists
         And .clowder is a symlink
         And clowder.yaml and clowder.yml symlinks don't exist
-        When I run 'clowder init https://github.com/JrGoodle/cats.git'
+        When I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command fails
         And .clowder symlink exists
         And clowder.yaml and clowder.yml symlinks don't exist
@@ -166,7 +166,7 @@ Feature: clowder init
         Given .clowder directory doesn't exist
         And test directory is empty
         When the network connection is disabled
-        And I run 'clowder init https://github.com/JrGoodle/cats.git'
+        And I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         And the network connection is enabled
         Then the command fails
         And .clowder directory doesn't exist
@@ -178,11 +178,11 @@ Feature: clowder init
         Given cats example is initialized and herded
         And mu/.clowder directory doesn't exist
         When I change to directory mu
-        And I run 'clowder init https://github.com/JrGoodle/cats.git'
+        And I run 'clowder init https://github.com/polka-dot-cat/cats.git'
         Then the command succeeds
         And directory at mu/.clowder is a git repository
         And repo at mu/.clowder is on branch master
         And repo at mu/.clowder is clean
-        And repo at mu/.clowder has remote origin with url https://github.com/JrGoodle/cats.git
+        And repo at mu/.clowder has remote origin with url https://github.com/polka-dot-cat/cats.git
 #        FIXME: Allow checking this in other directories
 #        And default clowder version is linked

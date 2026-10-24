@@ -16,6 +16,9 @@ defaults:
   run:
     shell: bash
 
+permissions:
+  contents: read
+
 jobs:
   pytest:
     env:
@@ -23,8 +26,14 @@ jobs:
       OS_NAME: ${{ matrix.os }}
       CLOWDER_DEBUG: true
       PYTHONPATH: ${{ github.workspace }}
-    runs-on: ${{ matrix.os }}
+      # Keep published fixture names compatible until the migration PR merges.
+      CATS_MASTER_SHA: 6767bc8cb483775cb13ecdf9ac50bb24307f2130
+      CATS_ALT_BRANCH_SHA: ee065226e79f8001478cae930bbff1a1564befcd
+    # Keep the existing required-check names while selecting compatible runners.
+    runs-on: ${{ matrix.os == 'macos-latest' && 'macos-15-intel' || 'ubuntu-24.04' }}
+    timeout-minutes: 60
     strategy:
+      fail-fast: false
       matrix:
         os: [
           macos-latest,
@@ -38,43 +47,78 @@ jobs:
           '3.11'
         ]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        lfs: true
+        persist-credentials: false
     - name: Setup python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup git config
       run: |
-        git config --global user.email "joe@polka.cat";
+        git config --global user.email "joe@polka.cat"
         git config --global user.name "GitHub Actions Workflow"
-    - if: runner.os == 'macOS'
-      name: Fix Python PATH on macOS
-      run: |
-        ls -al /usr/local/bin
-        sudo rm -rf /usr/local/bin/python
-        ls -al /usr/local/bin
     - name: Install clowder
+      id: install
       run: |
-        script/cibuild
-    - name: Run pytest functional tests
+        python -m pip install --upgrade 'pip<25' setuptools==67.8.0 wheel==0.40.0
+        python -m pip install -r requirements.txt
+        python -m pip install --no-deps --no-build-isolation -e .
+        python -m clowder.app --help
+        mkdir -p temp build/coverage build/junit build/cucumber
+    - name: Build documentation
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+      run: python -m sphinx -b html docs build/docs/html
+    - name: Prepare staged Cats fixtures
+      id: fixtures
       run: |
-        script/test \
-          --markers 'not ssh and not offline' \
-          --parallel \
-          --exitfirst
-    - uses: actions/upload-artifact@v2
+        git clone --bare https://github.com/polka-dot-cat/cats.git "$RUNNER_TEMP/cats.git"
+        git -C "$RUNNER_TEMP/cats.git" update-ref refs/heads/master "$CATS_MASTER_SHA"
+        git -C "$RUNNER_TEMP/cats.git" update-ref refs/heads/alt-branch "$CATS_ALT_BRANCH_SHA"
+    - name: Run initialization tests against published URLs
+      run: |
+        python -m pytest tests/functional -v -n 4 --exitfirst \
+          --basetemp=temp/init -m 'init and not ssh and not offline and not write' \
+          --cov=clowder --cov-append --cov-config=.coveragerc \
+          --cov-report=xml:build/coverage/init.xml \
+          --junitxml=build/junit/init.xml --cucumberjson=build/cucumber/init.json
+    - name: Run functional tests against staged manifests
+      if: ${{ !cancelled() && steps.fixtures.outcome == 'success' }}
+      env:
+        GIT_CONFIG_COUNT: '2'
+        GIT_CONFIG_KEY_0: url.file://${{ runner.temp }}/cats.git.insteadOf
+        GIT_CONFIG_VALUE_0: https://github.com/polka-dot-cat/cats.git
+        GIT_CONFIG_KEY_1: protocol.file.allow
+        GIT_CONFIG_VALUE_1: always
+      run: |
+        python -m pytest tests/functional -v -n 4 --exitfirst \
+          --basetemp=temp/functional -m 'not init and not ssh and not offline and not write and not lfs' \
+          --cov=clowder --cov-append --cov-config=.coveragerc \
+          --cov-report=xml:build/coverage/functional.xml \
+          --junitxml=build/junit/functional.xml --cucumberjson=build/cucumber/functional.json
+    - name: Run LFS tests serially on the disposable runner
+      if: ${{ !cancelled() && steps.fixtures.outcome == 'success' }}
+      env:
+        GIT_CONFIG_COUNT: '2'
+        GIT_CONFIG_KEY_0: url.file://${{ runner.temp }}/cats.git.insteadOf
+        GIT_CONFIG_VALUE_0: https://github.com/polka-dot-cat/cats.git
+        GIT_CONFIG_KEY_1: protocol.file.allow
+        GIT_CONFIG_VALUE_1: always
+      run: |
+        for filter in clean smudge process required; do
+          sudo git config --system --unset-all "filter.lfs.$filter" || true
+        done
+        python -m pytest tests/functional -v --exitfirst \
+          --basetemp=temp/lfs -m 'lfs and not ssh and not offline and not write' \
+          --cov=clowder --cov-append --cov-config=.coveragerc \
+          --cov-report=xml:build/coverage/lfs.xml \
+          --junitxml=build/junit/lfs.xml --cucumberjson=build/cucumber/lfs.json
+    - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      if: always()
       with:
         name: coverage-ghworkflow-${{ matrix.os }}-${{ matrix.python-version }}
         path: |
           build/cucumber
           build/junit
           build/coverage
-    - uses: deblockt/cucumber-report-annotations-action@v1.6
-      with:
-        access-token: ${{ secrets.GITHUB_TOKEN }}
-        path: build/cucumber/results.json
-    - uses: ashley-taylor/junit-report-annotations-action@1.3
-      if: always()
-      with:
-        access-token: ${{ secrets.GITHUB_TOKEN }}
-        path: build/junit/results.xml
