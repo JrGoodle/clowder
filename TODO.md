@@ -37,9 +37,18 @@ are separate from the initial review and were updated on 2026-10-23.
 - [ ] Verify Beanstalk's server host key, then check SSH access and run the 28
   explicit source-URL cases. Retain Beanstalk; the owner confirmed the account
   public key is already registered and chose to leave host verification pending.
-- [ ] Restore a runnable Actions baseline: draft PR run `40058163818` fails before
-  tests because the workflow uses deprecated `actions/upload-artifact@v2`.
-- [ ] Check organization Actions policy, Pages domain ownership, and service access.
+- [ ] Finish validating the repaired Actions baseline; see the
+  [preflight record](docs/clowder-transfer-preflight.md) for the matrix and run.
+  Both Ubuntu versions passed 681 cases; all three LFS cases passed in Docker.
+  Publish the collection fix once SSH signing is available and verify the full matrix.
+- [x] Check Actions repository eligibility and effective permissions on existing
+  organization repositories; confirm Pages has no verified domain on either account.
+- [x] Inventory service failures and disable the obsolete Requires.io webhook
+  with the owner's approval; remove its documentation badge.
+- [ ] Resync Read the Docs' webhook secret, restore CircleCI authorization, and
+  review Qlty/Codecov access or retention. CircleCI's `test_write` check is still required.
+- [ ] During transfer, update the `www.clowder.cat` CNAME to
+  `polka-dot-cat.github.io`; verify the domain under the organization afterward.
 - [ ] Transfer `clowder`, update local remotes, publish the migration changes, and
   complete the transfer plan's verification checklist.
 
@@ -47,7 +56,7 @@ are separate from the initial review and were updated on 2026-10-23.
 
 - [ ] **Align Python support and dependency setup.** `.python-version` and Pipenv
   select 3.8.16; `setup.py` lists 3.8–3.11; GitHub Actions selects 3.8/3.11;
-  Docker selects 3.8.5; Read the Docs selects 3.7; AppVeyor selects 3.6–3.8.
+  Docker selects 3.8.5; Read the Docs now selects 3.11; AppVeyor selects 3.6–3.8.
   Choose the supported range, add package `python_requires`, and align these
   files. Verify installation, CLI help, and test collection in a fresh environment.
   Preserve the `pytest-bdd==4.0.2` constraint until migration is tested, and check

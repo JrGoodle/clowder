@@ -66,6 +66,12 @@ Check the organization’s Actions policy, allowed third-party actions, workflow
 
 Identify which configured services remain active: CircleCI, Read the Docs, Codecov, and Code Climate. Prepare any required organization authorization or project reconnection. Repository secrets, webhooks, and deploy keys stay associated with a transferred repository; verify external service access separately. [GitHub transfer behavior](https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository)
 
+The [service preflight record](clowder-transfer-preflight.md) now contains the
+owner-confirmed Actions/Pages settings, exact DNS cutover, CI repair, and service
+failures that need account-side work. Requires.io was disabled with the owner's
+approval. Keep the remaining service checks distinct from successful GitHub
+webhook delivery.
+
 ### 4. Transfer ownership
 
 In the existing repository, open **Settings → General → Danger Zone → Transfer**. Select `polka-dot-cat`, retain the name `clowder`, review GitHub’s transfer details, and complete the transfer.

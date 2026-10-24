@@ -10,6 +10,8 @@ The migration is being prepared in draft
 The main repository remains `JrGoodle/clowder`; its remote, default branch, and
 public visibility have not changed.
 Links to `polka-dot-cat/clowder` are prepared for publication after the transfer.
+The [Actions, Pages, and integration preflight](clowder-transfer-preflight.md)
+records the next phase, including the CI repair and remaining account-side work.
 
 `felidae` has been transferred to
 [polka-dot-cat/felidae](https://github.com/polka-dot-cat/felidae). Its repository ID
@@ -315,29 +317,29 @@ A final comparison of branches and tags across all 11 audited repositories
 matched the planned state. GYP's remote `fork-branch` is also unchanged at its
 required commit.
 
-No tests that disable host networking, modify remote branches, or uninstall
-global/system LFS configuration were run. These checks do not establish a full
-CI baseline. The initial inventory had no Actions/check runs. The draft PR now
+This fixture-validation phase did not run tests that disable host networking,
+modify remote branches, or uninstall global/system LFS configuration. The later
+[preflight phase](clowder-transfer-preflight.md#github-actions) ran the three LFS
+cases in a disposable container. These checks do not establish a full CI
+baseline. The initial inventory had no Actions/check runs. The draft PR now
 has [Actions run 40058163818](https://github.com/JrGoodle/clowder/actions/runs/40058163818),
-which fails before tests because the workflow uses deprecated
-`actions/upload-artifact@v2`; the other matrix jobs were cancelled. This CI
-repair remains separate from the fixture-name migration. Existing required
-checks must still be reviewed.
+which failed before tests because the workflow used deprecated
+`actions/upload-artifact@v2`; the other matrix jobs were cancelled. The subsequent
+[preflight repair](clowder-transfer-preflight.md#github-actions) updates the
+workflow and preserves the existing required-check names. CircleCI's required
+`test_write` check remains blocked by its GitHub account authorization.
 
 ## Remaining transfer steps
 
-1. Complete the pending Beanstalk access check and restore the Actions baseline.
+1. Confirm the corrected Actions run and complete the service account checks in
+   the [preflight record](clowder-transfer-preflight.md). Beanstalk access remains
+   pending at the owner's request.
    Keep the staged Cats manifests off the active branches until PR #641 merges;
    use the recorded cutover sequence at merge.
-2. Inspect the organization's Actions policy. The current CLI token received
-   HTTP 403 when reading it; repository-level Actions settings were readable.
-3. Check Pages domain ownership in account/organization settings and coordinate
-   any verification change with the transfer. `clowder.cat` currently responds
-   over HTTPS; Pages serves `gh-pages` from its root with HTTPS enforced. DNS is
-   hosted at Hover. No DNS or domain verification changes have been made.
-4. Confirm which integrations to retain and their organization access. Active
-   webhook hosts include CircleCI, Read the Docs, Code Climate, Requires.io, and
-   Slack; Codecov also appears in project configuration. New badge URLs alone do
-   not reconnect those services.
-5. Transfer the main repository, update local remotes, publish the prepared patch,
+2. Coordinate the `www.clowder.cat` CNAME change from `jrgoodle.github.io` to
+   `polka-dot-cat.github.io` with transfer. The owner confirmed no verified Pages
+   domains on either account. Add organization verification after the transfer.
+3. Restore Read the Docs' webhook secret and review CircleCI/Qlty organization
+   access. Codecov is inactive. Requires.io is disabled; Slack remains configured.
+4. Transfer the main repository, update local remotes, publish the prepared patch,
    and complete the [plan's completion checks](clowder-repository-transfer-plan.md#completion-checks).

@@ -46,6 +46,13 @@ Child repositories still use GitHub. Do not use this override for tests that
 assert the root Cats remote URL: Git reports the rewritten local URL.
 After the active manifests are updated, omit the override.
 
+GitHub Actions uses these same staged commits until cutover. It runs the 14
+initialization cases against the published URLs, then 667 other non-SSH,
+non-offline, non-write, non-LFS cases against the staged fixtures. The three LFS
+cases run serially afterward on each disposable runner. Remove the workflow's
+temporary fixture pins and overrides once the active manifests are published.
+See the [CI preflight record](../docs/clowder-transfer-preflight.md#github-actions).
+
 ### Felidae, submodules, and Beanstalk
 
 The GitHub YAML fixtures use `polka-dot-cat/felidae`. Its active `master` and

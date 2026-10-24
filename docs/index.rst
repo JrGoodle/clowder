@@ -6,6 +6,11 @@
 clowder
 =======
 
+.. toctree::
+   :hidden:
+
+   clowder-transfer-preflight
+
 .. image:: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fpolka-dot-cat%2Fclowder%2Fbadge&style=flat
     :target: https://actions-badge.atrox.dev/polka-dot-cat/clowder/goto
 
@@ -23,9 +28,6 @@ clowder
 
 .. image:: https://img.shields.io/pypi/pyversions/clowder-repo.svg
     :target: https://pypi.python.org/pypi/clowder-repo
-
-.. image:: https://requires.io/github/polka-dot-cat/clowder/requirements.svg?branch=master
-    :target: https://requires.io/github/polka-dot-cat/clowder/requirements/?branch=master
 
 .. image:: https://readthedocs.org/projects/clowder/badge/?version=latest
     :target: http://clowder.readthedocs.io/en/latest/?badge=latest
