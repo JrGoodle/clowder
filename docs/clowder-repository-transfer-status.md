@@ -339,10 +339,13 @@ the restored deploy key. Its active test job was repaired after the legacy
 Code Climate reporter returned HTML. All 89 write cases passed against local
 bare fixture copies in an isolated
 Python 3.11 container with networking disabled. The owner subsequently registered
-CircleCI's separate additional public key with GitHub; the registration was
-verified, and hosted rerun `2982` is running. Hosted write validation remains
-pending. The working checkout key remains read-only. See the
-[key repair steps](clowder-transfer-preflight.md#remaining-circleci-key-repair).
+CircleCI's separate additional public key with GitHub. Hosted
+[job 2982](https://circleci.com/gh/JrGoodle/clowder/2982), at `e94b8e33`, then
+passed all **89 write cases**, with no failures, errors, or skips, confirmed from
+its JUnit artifact. Its required GitHub status is successful. The job completed
+in 41 minutes, including 39m 43s of tests against the real GitHub SSH fixtures.
+The working checkout key remains read-only. See the
+[hosted validation record](clowder-transfer-preflight.md#hosted-circleci-write-validation).
 
 ## Remaining transfer steps
 
@@ -351,7 +354,11 @@ pending. The working checkout key remains read-only. See the
    pending at the owner's request.
    Keep the staged Cats manifests off the active branches until PR #641 merges;
    use the recorded cutover sequence at merge.
-2. Validate CircleCI's hosted write rerun and confirm organization access.
+2. Hosted CircleCI write validation is complete, and the owner confirmed GitHub
+   OAuth organization access is granted. The latest PR commit must still pass
+   its required checks before merge. After transfer, verify CircleCI's project
+   configuration, keys, and status reporting under `polka-dot-cat`. Let old-path
+   write jobs finish before starting new-path jobs, since their serial groups differ.
    Qlty and Codecov are deferred
    to separate [TODOs](https://github.com/polka-dot-cat/clowder/blob/master/TODO.md#deferred-reporting-integrations--after-transfer);
    their upload workflow remains disabled and the legacy Code Climate webhook

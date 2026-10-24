@@ -146,7 +146,7 @@ changed during this preflight.
 | Service | Evidence | Remaining action |
 | --- | --- | --- |
 | Read the Docs | Project `clowder`, ID `154942`, still points to `https://github.com/JrGoodle/clowder.git`. Last recorded build failed July 9, 2023. Its last webhook response was HTTP 400 because no shared secret was configured. | Owner chose to disable it for now. Hook `17286177` is disabled and verified; build badges are removed. The hosted project and build configuration are retained for later reactivation. |
-| CircleCI | Account authorization and read-only checkout key `167499686` are restored. The owner registered the separate additional write key with GitHub; its public key now matches an entry on `JrGoodle`. Job `2982` is running after that repair. | Validate the 89 hosted write cases and confirm organization access. `ci/circleci: test_write` remains required. |
+| CircleCI | Account authorization, read-only checkout key `167499686`, and the separate additional write key are restored. Job `2982` passed all 89 hosted write cases; its required GitHub status is successful. The owner confirmed GitHub OAuth organization access is granted. | Verify the transferred project, keys, and required `ci/circleci: test_write` status after the move. |
 | Code Climate / Qlty | The old project URL redirects to Qlty's login for the personal-account project. No recent analysis was verified. The owner chose to leave it inactive; legacy webhook `249930018` is now disabled and verified. | Reactivation is deferred to its own TODO after transfer. Coverage uploads remain disabled and the old maintainability/coverage badges are removed. |
 | Codecov | Public API reports the personal-account project as inactive and not activated; its last update is January 30, 2024. The CircleCI coverage-upload workflow is commented out. | Owner chose to keep it inactive. Reactivation is a separate TODO after transfer; the coverage badge is removed. |
 | Slack | Existing webhook is active and its last recorded response is HTTP 200. | Retain its configuration through transfer. No test message was sent. |
@@ -180,7 +180,8 @@ deploy keys at that time. The owner recreated the repository checkout/deploy key
 through CircleCI. GitHub confirms read-only key `167499686`, created at
 `2026-10-24T04:53:21Z`. The separate Additional SSH Keys were left unchanged.
 The checkout-key API requires CircleCI authentication and returned HTTP 403 in
-this session. Validate the job and confirm `polka-dot-cat` access before transfer.
+this session. Hosted job validation now passes, and the owner confirmed GitHub
+OAuth access to `polka-dot-cat` is granted.
 See [CircleCI's checkout-key API](https://circleci.com/docs/api/v2/#tag/Project/operation/createCheckoutKey).
 
 [Job 2968](https://circleci.com/gh/JrGoodle/clowder/2968) confirms checkout,
@@ -206,13 +207,40 @@ selects the existing additional key with fingerprint
 enabled and the checkout key remains read-only. The job reports a clear error
 if that additional key is missing.
 
-### Remaining CircleCI key repair
+### Hosted CircleCI write validation
 
-Update, October 24: the owner added the existing public key to GitHub, and its
-entry on `JrGoodle` was verified. [Job 2982](https://circleci.com/gh/JrGoodle/clowder/2982)
-is running after that change. Hosted write validation remains pending; later
-workflows queue behind this run to serialize writes to the shared fixtures.
+After the owner registered the additional public key with GitHub,
+[job 2982](https://circleci.com/gh/JrGoodle/clowder/2982), at commit `e94b8e33`,
+completed successfully on October 24. Its JUnit artifact records **89 tests,
+zero failures, zero errors, and zero skips**. GitHub reports
+`ci/circleci: test_write` as successful for that commit. The job took 41m 05s;
+the test suite took 39m 43s. Checkout, key loading, staged-fixture preparation,
+test execution, and report uploads all passed.
+
+This validates the additional key and remote branch operations against the real
+`polka-dot-cat` fixture repositories. The read-only checkout key is unchanged.
+JUnit, Cucumber, coverage, the available test log, and a sanitized job summary
+are saved under `circleci-2982/` in the evidence directory below.
+
+The owner also confirmed on October 24 that CircleCI's GitHub OAuth organization
+access to `polka-dot-cat` is granted. This is owner-confirmed evidence from GitHub
+**Settings → Applications → Authorized OAuth Apps → CircleCI**, separate from the
+SSH test result. After transfer, verify that CircleCI receives hooks, loads the
+project configuration, retains its keys, and publishes the required status at the
+new repository path.
+[CircleCI organization authorization](https://circleci.com/docs/guides/permissions-authentication/users-organizations-and-integrations-guide/#github-third-party-application-restrictions-for-oauth-integrations)
+
+The latest PR commit must pass its required checks before merge. The repository
+transfer itself can proceed while checks run. The serial group includes
+`pipeline.project.slug`, which changes with ownership. Let all old-path write
+jobs finish before triggering a new-path job so both groups cannot mutate the
+shared fixtures concurrently. Recheck CI after transfer and rerun interrupted
+checks as needed.
+
+### CircleCI key repair history
+
 The failure record and recovery instructions below are retained for reference.
+Registration and hosted validation are complete.
 
 [Job 2976](https://circleci.com/gh/JrGoodle/clowder/2976), at commit `6607ba77`,
 confirms that the additional key is present, but GitHub rejects it with
@@ -248,7 +276,7 @@ and the selected key filename in `.circleci/config.yml`. Rerun the latest
 pipeline and confirm all six dry-run access checks and all 89 write cases pass.
 The current CLI lacks authentication-key write scope, and this session has no
 authenticated CircleCI API or connected browser. The owner completed the
-registration step; the hosted rerun must now verify access and test behavior.
+registration step, and job `2982` verified access and test behavior.
 
 ### Isolated write-test result
 
@@ -261,15 +289,17 @@ code was unchanged, and no host Git configuration or credentials were mounted.
 
 This validates the migration assertions and Git branch operations against the
 copied histories. It does not validate GitHub SSH authorization or replace the
-required hosted CircleCI check. JUnit, Cucumber, build inputs, and the test log
+hosted CircleCI check, which job `2982` subsequently passed. JUnit, Cucumber,
+build inputs, and the test log
 are saved in the evidence directory.
 
 Branch protection still requires CircleCI's `test_write` status in addition to
 the four Actions statuses. Protection and collaborator settings are unchanged.
-The owner restored CircleCI authentication and its checkout key; Requires.io and
-Read the Docs webhooks were disabled with approval. No browser
-connection is available in this session, so account-side service access must be
-confirmed separately before treating the transfer preflight as complete.
+The owner restored CircleCI authentication and both keys; hosted write validation
+now passes. Requires.io and Read the Docs webhooks were disabled with approval.
+GitHub OAuth organization access is confirmed by the owner. This session has no
+authenticated CircleCI API or connected browser; verify the retained project's
+settings and required status after transfer.
 
 ## Evidence
 

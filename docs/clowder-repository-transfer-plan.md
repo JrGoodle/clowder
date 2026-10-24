@@ -73,17 +73,24 @@ with the owner's approval. Qlty and Codecov are also deferred: the legacy Code
 Climate webhook is disabled, coverage uploads remain off, and separate
 [TODOs](https://github.com/polka-dot-cat/clowder/blob/master/TODO.md#deferred-reporting-integrations--after-transfer) cover later
 reactivation. They are not transfer prerequisites.
-CircleCI is retained; account access and checkout are
-restored, while its repaired write-test job still needs validation.
-The owner registered that job's separate additional SSH key with GitHub and
-started a rerun. The preflight record contains its fingerprint and recovery
-instructions. All 89 write
-cases pass against isolated local fixtures, but hosted SSH validation is pending.
+CircleCI is retained; account access, checkout, and hosted write tests are
+restored. After the owner registered the separate additional SSH key with
+GitHub, [job 2982](https://circleci.com/gh/JrGoodle/clowder/2982) passed all 89
+write cases with no failures or skips. The required GitHub status is successful.
+The owner confirmed CircleCI's GitHub OAuth access to `polka-dot-cat` is granted.
+After transfer, verify the project's configuration, keys, and required status.
+The preflight record contains the hosted evidence and key recovery history.
 Keep the remaining service checks distinct from successful GitHub webhook delivery.
 
 ### 4. Transfer ownership
 
 In the existing repository, open **Settings → General → Danger Zone → Transfer**. Select `polka-dot-cat`, retain the name `clowder`, review GitHub’s transfer details, and complete the transfer.
+
+The ownership transfer can proceed while PR checks are running. Required checks
+must pass before merge. Let any old-path CircleCI write jobs finish before
+triggering jobs at the new path: the serial group uses `pipeline.project.slug`,
+so jobs using the two paths could otherwise mutate the shared fixtures at once.
+Recheck CI after transfer and rerun interrupted checks as needed.
 
 Update each local clone’s remote:
 

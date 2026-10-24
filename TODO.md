@@ -57,14 +57,17 @@ are separate from the initial review and were updated on 2026-10-24.
 - [x] Register the additional CircleCI write key with GitHub. The owner added
   it, and its public key is verified in `JrGoodle`'s authentication-key list.
   The working read-only checkout key is separate.
-- [ ] Verify the hosted `test_write` rerun after key registration. Job `2982`
-  is running; the latest-commit workflow queues behind it to serialize fixture
-  writes. See the [preflight record](docs/clowder-transfer-preflight.md#remaining-circleci-key-repair).
+- [x] Verify the hosted `test_write` rerun after key registration. Job `2982`
+  passed all 89 cases with no failures or skips; its GitHub required status is
+  successful. See the [preflight record](docs/clowder-transfer-preflight.md#hosted-circleci-write-validation).
 - [x] Defer Qlty and Codecov at the owner's request. Disable the legacy Code
   Climate webhook, keep coverage uploads disabled, and remove their badges.
   Track reactivation separately below; neither service blocks the transfer.
-- [ ] Confirm retained CircleCI access to `polka-dot-cat`.
-  CircleCI's `test_write` check is still required.
+- [x] Confirm CircleCI's GitHub OAuth organization access to `polka-dot-cat`.
+  The owner confirmed access is granted on October 24.
+- [ ] After transfer, verify CircleCI's project configuration, keys, and required
+  `test_write` status. Let old-path write jobs finish before starting new-path
+  jobs, because their serial-group names differ.
 - [x] Defer `clowder.cat` DNS, Pages, and domain-verification work at the owner's
   request. Website availability is not a transfer prerequisite; retain its
   current configuration and track restoration separately below.
